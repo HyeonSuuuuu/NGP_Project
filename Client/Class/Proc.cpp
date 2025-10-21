@@ -1,7 +1,4 @@
-#include <vector>
-#include <string>
-#include <random>
-#include <functional>
+#include "pch.h"
 
 #include "NGP_Client_Agario.h"
 #include "Player.h"

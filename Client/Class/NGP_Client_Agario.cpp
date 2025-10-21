@@ -1,4 +1,4 @@
-﻿#include "framework.h"
+﻿#include "pch.h"
 #include "NGP_Client_Agario.h"
 
 #define MAX_LOADSTRING 100

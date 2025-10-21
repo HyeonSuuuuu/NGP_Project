@@ -16,16 +16,10 @@
     <Filter Include="헤더 파일\setting">
       <UniqueIdentifier>{1971712b-c51b-4bb7-b817-9631feba5898}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Manager">
-      <UniqueIdentifier>{86f49548-3fae-4d01-bc64-3d4c085dcba5}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="framework.h">
-      <Filter>헤더 파일\setting</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>헤더 파일\setting</Filter>
@@ -44,6 +38,12 @@
     </ClInclude>
     <ClInclude Include="Class\constant.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>헤더 파일\setting</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -71,6 +71,9 @@
     </ClCompile>
     <ClCompile Include="Class\debugUtil.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>헤더 파일\setting</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

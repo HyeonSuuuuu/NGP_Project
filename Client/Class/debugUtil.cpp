@@ -1,8 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
-
-#include <windows.h>
-#include <string>
-
+#include "pch.h"
 #include "debugUtil.h"
 
 void DebugPrint(const char* message) {

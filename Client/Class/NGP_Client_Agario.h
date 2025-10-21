@@ -1,7 +1,6 @@
 #ifndef NGP_CLIENT_AGARIO
 #define NGP_CLIENT_AGARIO
 
-#include "framework.h"
 #include "resource.h"
 #include "constant.h"
 
