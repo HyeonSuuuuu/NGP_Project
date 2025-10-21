@@ -45,6 +45,9 @@
     <ClInclude Include="pch.h">
       <Filter>헤더 파일\setting</Filter>
     </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="NGP_Client_Agario.rc">
@@ -76,6 +79,9 @@
       <Filter>헤더 파일\setting</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

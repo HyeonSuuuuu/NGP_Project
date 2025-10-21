@@ -13,9 +13,7 @@
 #define FRAME 60
 #define FRAME_PER_MILLISECOND 1000.0f / FRAME
 
-// 타이머
-#define MOVE_TIMER 1
-#define COLLISION_TIMER 2
-#define FEEDS_REGEN 3
+// 대각 이동 보정값 1 / sqrt(2)
+#define DIAGONAL_FACTOR 0.70710678f
 
 #endif // CONSTANT

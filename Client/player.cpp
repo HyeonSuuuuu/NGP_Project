@@ -3,7 +3,7 @@
 #include "Player.h"
 #include "constant.h"
 
-void UNIT::Move(const std::vector<bool>& keyStates)
+void UNIT::Move(const std::vector<bool>& keyStates, float deltaTime)
 {
 
 }
@@ -40,57 +40,48 @@ COLOR UNIT::GetColor() const
 
 
 // ------------- Player -------------
-void Player::Move(const std::vector<bool>& keyStates)
+void Player::Move(const std::vector<bool>& keyStates, float deltaTime)
 {
-    bool isHorizontal = false; // 수평
-    bool isVertical = false; // 수직
 
-    if (keyStates[VK_LEFT]) isHorizontal = !isHorizontal;
-    if (keyStates[VK_RIGHT]) isHorizontal = !isHorizontal;
-    if (keyStates[VK_UP])    isVertical = !isVertical;
-    if (keyStates[VK_DOWN])  isVertical = !isVertical;
+    if (deltaTime <= 0.f) return;
 
-    if (isHorizontal == false && isVertical == false) return;
+    float dx = 0.f;
+    float dy = 0.f;
 
-    // 수평 방향 이동
-    if (isHorizontal == true)
-    {
-        // 수직 방향도 이동
-        if (isVertical == true)
-        {
-            if (keyStates[VK_LEFT])   _position.x -= sqrt(_speed);
-            if (keyStates[VK_RIGHT])  _position.x += sqrt(_speed);
-        }
-        // 수평 방향으로만 
-        else
-        {
-            if (keyStates[VK_LEFT])  _position.x -= _speed;
-            if (keyStates[VK_RIGHT]) _position.x += _speed;
-        }
+    // 이동 벡터 계산
+    if (keyStates[VK_LEFT] && !keyStates[VK_RIGHT])
+        dx -= 1.f;
+    else if (keyStates[VK_RIGHT] && !keyStates[VK_LEFT])
+        dx += 1.f;
+    if (keyStates[VK_UP] && !keyStates[VK_DOWN])
+        dy -= 1.f;
+    else if (keyStates[VK_DOWN] && !keyStates[VK_UP])
+        dy += 1.f;
 
-        if (_position.x < -AGARIO_WIDTH) _position.x = -AGARIO_WIDTH;
-        if (_position.x > AGARIO_WIDTH) _position.x = AGARIO_WIDTH;
+    if (dx == 0.f && dy == 0.f) return;
+
+    // 대각선 이동 보정 (Nomarization)
+    if (dx != 0.f && dy != 0.f) {
+        dx *= DIAGONAL_FACTOR;
+        dy *= DIAGONAL_FACTOR;
     }
 
-    // 수직 방향 이동
-    if (isVertical == true)
-    {
-        // 수평 방향도 이동
-        if (isHorizontal == true)
-        {
-            if (keyStates[VK_UP])    _position.y -= sqrt(_speed);
-            if (keyStates[VK_DOWN])  _position.y += sqrt(_speed);
-        }
-        // 수직 방향으로만 
-        else
-        {
-            if (keyStates[VK_UP])    _position.y -= _speed;
-            if (keyStates[VK_DOWN])  _position.y += _speed;
-        }
+    float moveAmount = _speed * deltaTime;
+    
+    _position.x += dx * moveAmount;
+    _position.y += dy * moveAmount;
 
-        if (_position.y < -AGARIO_HEIGHT) _position.y = -AGARIO_HEIGHT;
-        if (_position.y > AGARIO_HEIGHT) _position.y = AGARIO_HEIGHT;
-    }
+    // 경계값 검사
+    // X 경계
+    if (_position.x < -AGARIO_WIDTH)
+        _position.x = -AGARIO_WIDTH;
+    else if (_position.x > AGARIO_WIDTH)
+        _position.x = AGARIO_WIDTH;
+    // Y 경계
+    if (_position.y < -AGARIO_HEIGHT)
+        _position.y = -AGARIO_HEIGHT;
+    else if (_position.y > AGARIO_HEIGHT)
+        _position.y = AGARIO_HEIGHT;
 }
 
 float Player::GetSpeed() const

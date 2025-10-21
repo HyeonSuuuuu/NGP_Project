@@ -24,7 +24,7 @@ public:
 		: _position(position), _color(color), _value(value)	{};
 
 
-	virtual void Move(const std::vector<bool>& keyStates);
+	virtual void Move(const std::vector<bool>& keyStates, float deltaTime);
 
 	void SetPosition(POSITION position);
 	POSITION GetPosition() const;
@@ -54,10 +54,10 @@ public:
 class Player : public UNIT {
 	float _speed;
 public:
-	Player() : UNIT(1.0f), _speed(3.0f) {};
+	Player() : UNIT(1.0f), _speed(100.0f) {};
 	Player(float speed) : UNIT(1.0f), _speed(speed) {};
 
-	virtual void Move(const std::vector<bool>& keyStates) override;
+	virtual void Move(const std::vector<bool>& keyStates, float deltaTime) override;
 
 	float GetSpeed() const;
 
