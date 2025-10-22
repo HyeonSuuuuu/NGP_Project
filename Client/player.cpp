@@ -88,6 +88,10 @@ void Player::Move(const std::vector<bool>& keyStates, float deltaTime)
         _position.y = AGARIO_HEIGHT;
 }
 
+void Player::Draw()
+{
+}
+
 float Player::GetSpeed() const
 {
 	return _speed;
