@@ -1,6 +1,6 @@
 #include "ColorKeyCode.h"
 
-#define UNIT_SIZE_VALUE 5
+
 
 enum class direction {
 	RIGHT,
@@ -15,14 +15,14 @@ struct POSITION {
 
 class UNIT {
 protected:
-	POSITION _position;
-	COLOR _color;
-	float _value;
+	POSITION _position = { 0, 0 };
+	COLOR _color = { 255, 255, 255 };
+	float _value = { 0.5f };
 public:
 	UNIT(float value) : _value(value) {};
 	UNIT(POSITION position = { 0, 0 }, COLOR color = { 255, 255, 255 }, float value = 0.5f)
 		: _position(position), _color(color), _value(value)	{};
-
+	virtual ~UNIT() {}
 
 	virtual void Move(const std::vector<bool>& keyStates, float deltaTime);
 	virtual void Draw();

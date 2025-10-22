@@ -16,4 +16,7 @@
 // 대각 이동 보정값 1 / sqrt(2)
 #define DIAGONAL_FACTOR 0.70710678f
 
+#define UNIT_SIZE_VALUE 10
+#define FEED_COUNT 1000
+#define MAX_PLAYER_SCREEN_SIZE 100
 #endif // CONSTANT
