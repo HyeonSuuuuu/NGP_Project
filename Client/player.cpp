@@ -8,6 +8,10 @@ void UNIT::Move(const std::vector<bool>& keyStates, float deltaTime)
 
 }
 
+void UNIT::Draw()
+{
+}
+
 void UNIT::SetPosition(POSITION position)
 {
 	_position = position;

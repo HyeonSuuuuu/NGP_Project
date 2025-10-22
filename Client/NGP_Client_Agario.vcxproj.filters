@@ -1,52 +1,56 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="리소스 파일">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="헤더 파일\setting">
+    <Filter Include="Util">
+      <UniqueIdentifier>{c80b219f-25a6-4438-af0f-786b408e5b88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{c3d02704-f342-4257-95ed-2dc2cd37260b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="setting">
       <UniqueIdentifier>{1971712b-c51b-4bb7-b817-9631feba5898}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{53c5646b-f08a-4689-80c1-5fe3987c76d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{a0cbfd8d-cfb1-4597-9ba8-45567eafc634}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Resource.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>헤더 파일\setting</Filter>
-    </ClInclude>
-    <ClInclude Include="Class\Player.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Class\debugUtil.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Class\ColorKeyCode.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Class\NGP_Client_Agario.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Class\constant.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>setting</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>헤더 파일\setting</Filter>
+      <Filter>setting</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\debugUtil.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\Player.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="GameManager.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\NGP_Client_Agario.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\ColorKeyCode.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\constant.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>리소스 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -63,26 +67,23 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Class\NGP_Client_Agario.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Class\Proc.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="pch.cpp">
+      <Filter>setting</Filter>
     </ClCompile>
     <ClCompile Include="Class\debugUtil.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Util</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>헤더 파일\setting</Filter>
+    <ClCompile Include="Player.cpp">
+      <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Util</Filter>
     </ClCompile>
     <ClCompile Include="GameManager.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\NGP_Client_Agario.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
