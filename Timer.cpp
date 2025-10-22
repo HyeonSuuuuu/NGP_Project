@@ -5,6 +5,7 @@ Timer::Timer() : m_lastTime(std::chrono::steady_clock::now())
 {
 	m_frameTimes.resize(MAX_SAMPLE_COUNT, 0.016f);
 }
+// 400명동접 로비서버 room 방 100개
 
 float Timer::Tick(float lockFPS)
 {
@@ -17,10 +18,12 @@ float Timer::Tick(float lockFPS)
 	if (lockFPS > 0.f) {
 		float targetSeconds = 1.f / lockFPS; // 60FPS 기준 0.1666...초
 		while (deltaTime < targetSeconds) {
-			std::this_thread::yield();
 			currentTime = std::chrono::steady_clock::now();
 			elapsed = currentTime - m_lastTime;
 			deltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(elapsed).count();
+			if (deltaTime < targetSeconds) {
+				std::this_thread::yield();
+			}
 		}
 	}
 
@@ -39,7 +42,7 @@ float Timer::Tick(float lockFPS)
 		m_frameCount = 0;
 		m_fpsTimeElapsed -= 1.f;
 	}
-	return GetTimeElapsed();
+	return deltaTime;
 }
 
 float Timer::GetTimeElapsed() const
