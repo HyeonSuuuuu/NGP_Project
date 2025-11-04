@@ -1,0 +1,26 @@
+#define WIN32_LEAN_AND_MEAN
+
+
+#include <windows.h>
+#include <WinSock2.h>
+#include <ws2tcpip.h>
+
+#pragma comment(lib, "ws2_32.lib")
+
+// C
+#include <tchar.h>
+
+// C++
+
+#include <iostream>
+#include <atomic>
+#include <vector>
+#include <mutex>
+#include <thread>
+
+// custom
+#include "Packet.h"
+#include "PlayerInfo.h"
+#include "Obstacle.h"
+#include "ErrCode.h"
+#include "Constant.h"
