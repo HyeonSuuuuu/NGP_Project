@@ -55,5 +55,3 @@ void err_display(int errCode)
 	MessageBoxA(NULL, (const char*)lpMsgBuf, "¿À·ù", MB_ICONERROR);
 	LocalFree(lpMsgBuf);
 }
-
-

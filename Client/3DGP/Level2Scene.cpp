@@ -23,10 +23,10 @@ void CLevel2Scene::BuildObjects()
 {
 	m_objects.resize(1);
 
-	CGroundMesh* pGroundMesh = new CGroundMesh(300, 0, 300, 50);
+	CGroundMesh* pGroundMesh = new CGroundMesh(100, 0, 100, 10);
 	m_objects[0].SetMesh(pGroundMesh);
 	m_objects[0].SetColor(RGB(0, 0, 0));
-	m_objects[0].SetPosition(0.f, 0.f, 0.f);
+	m_objects[0].SetPosition(0.f, 0.f, 40.f);
 
 
 	m_barrierObjects.resize(10);
@@ -34,7 +34,7 @@ void CLevel2Scene::BuildObjects()
 	for (int i = 0; i < 10; ++i) {
 		m_barrierObjects[i].SetMesh(pCubeMesh);
 		m_barrierObjects[i].SetColor(RGB(0, 255, 0));
-		m_barrierObjects[i].SetPosition(RandF(-50.f, 50.f), 2.f, RandF(10.f, 100.f));
+		m_barrierObjects[i].SetPosition(RandF(-50.f, 50.f), 2.f, RandF(10.f, 90.f));
 	}
 
 	CTankMesh* pTankMesh = new CTankMesh(6.f, 3.f, 6.f);

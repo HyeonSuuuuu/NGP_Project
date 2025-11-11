@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Session.h"
 
-DWORD __stdcall Session::SessionThreadFunc(void*)
+DWORD WINAPI Session::NetworkThreadFunc(void*)
 {
 	// TODO: Recv / Send Ã³¸®
 	return 0;

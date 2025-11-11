@@ -18,9 +18,9 @@
 #include <mutex>
 #include <thread>
 
-// custom
+// User Defined
 #include "Packet.h"
 #include "PlayerInfo.h"
 #include "Obstacle.h"
-#include "ErrCode.h"
 #include "Constant.h"
+#include "ErrCode.h"

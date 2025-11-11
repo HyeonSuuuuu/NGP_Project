@@ -35,6 +35,9 @@
     <ClCompile Include="Timer.cpp">
       <Filter>Util</Filter>
     </ClCompile>
+    <ClCompile Include="SessionManager.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
@@ -63,6 +66,9 @@
     </ClInclude>
     <ClInclude Include="Constant.h">
       <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionManager.h">
+      <Filter>Contents</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

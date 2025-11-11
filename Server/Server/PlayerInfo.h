@@ -6,3 +6,6 @@ struct PlayerInfo {
 	int32_t gold;
 	bool isDead;
 };
+
+
+
