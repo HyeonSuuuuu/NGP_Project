@@ -22,5 +22,5 @@
 #include "Packet.h"
 #include "PlayerInfo.h"
 #include "Obstacle.h"
-#include "Constant.h"
-#include "ErrCode.h"
+#include "Common.h"
+#include "Thread.h"

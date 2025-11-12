@@ -1,21 +1,23 @@
-enum class ERR_CODE : short
+#include "stdafx.h"
+#include "Common.h"
+
+// 전역변수 ===========================================
+GameTimer g_timer;
+std::vector<Session> g_sessions;
+CRITICAL_SECTION g_csSessions;
+std::vector<Obstacle> g_obstacles;
+std::atomic<bool> g_isRunning;
+
+
+void InitGlobals()
 {
-	NONE = 0,
+	g_isRunning.store(true);
+	InitializeCriticalSection(&g_csSessions);
+}
 
-	// 서버 오류
-	WSASTARTUP_FAIL = 11,
-	SOCK_CREATE_FAIL = 12,
-	SOCK_BIND_FAIL = 13,
-	SOCK_LISTEN_FAIL = 14,
 
-	ACCEPT_FAIL = 21,
 
-	SEND_FAIL = 26,
-
-	RECV_FAIL = 31,
-
-};
-
+// 에러처리 ============================================
 void err_quit(const char* msg)
 {
 	LPVOID lpMsgBuf;

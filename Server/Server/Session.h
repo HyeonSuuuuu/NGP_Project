@@ -1,15 +1,11 @@
 #pragma once
 
-class Session {
-public:
-	DWORD WINAPI NetworkThreadFunc(void* args);
+struct Session {
+	SOCKET socket;
+	std::atomic<bool> isConnected;
+	PlayerInfo info;
+	std::atomic<uint8_t> inputflag;
 
-private:
-	SOCKET m_socket;
-	std::atomic<bool> m_isConnected;
-	PlayerInfo m_playerInfo;
-	std::atomic<uint8_t> m_inputFlag;
-
-	HANDLE m_NetworkThread;
-	CRITICAL_SECTION m_csSession;
+	HANDLE thread;
+	CRITICAL_SECTION cs;
 };

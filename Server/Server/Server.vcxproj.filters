@@ -1,15 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Common">
       <UniqueIdentifier>{a18975e6-6be8-48bf-a7c7-81ab5efdcf6b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core">
-      <UniqueIdentifier>{43d4051a-08a3-4563-a8b5-6ad6c5266845}</UniqueIdentifier>
     </Filter>
     <Filter Include="Contents">
       <UniqueIdentifier>{9c262357-a445-4732-9989-96ddae86823e}</UniqueIdentifier>
@@ -20,42 +13,36 @@
     <Filter Include="Util">
       <UniqueIdentifier>{4156a310-8386-4652-a299-504c702b43bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{43d4051a-08a3-4563-a8b5-6ad6c5266845}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Server.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Session.cpp">
-      <Filter>Contents</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Config</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>Util</Filter>
     </ClCompile>
-    <ClCompile Include="SessionManager.cpp">
-      <Filter>Contents</Filter>
+    <ClCompile Include="AcceptLoop.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessClient.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Common.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Server.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Session.h">
-      <Filter>Contents</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerInfo.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Config</Filter>
     </ClInclude>
     <ClInclude Include="Packet.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="ErrCode.h">
+    <ClInclude Include="Common.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Obstacle.h">
@@ -64,11 +51,14 @@
     <ClInclude Include="Timer.h">
       <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="Constant.h">
-      <Filter>Config</Filter>
+    <ClInclude Include="PlayerInfo.h">
+      <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="SessionManager.h">
-      <Filter>Contents</Filter>
+    <ClInclude Include="Thread.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Session.h">
+      <Filter>Thread</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
