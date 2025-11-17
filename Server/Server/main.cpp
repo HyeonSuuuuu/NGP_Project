@@ -5,6 +5,7 @@
 
 int main()
 {
+	InitGlobals();
 	SOCKET listen_sock;
 	int retval;
 	WSADATA wsa;
@@ -32,7 +33,22 @@ int main()
 	// Accept 스레드 생성
 	HANDLE hThread = CreateThread(NULL, 0, AcceptLoop, (LPVOID)listen_sock, 0, NULL);
 
-	while (true) {
 
+	// GameLoop
+	while (true) {
+		g_timer.Tick(30.f);
+		// Sessions 루프돌며 RecvEvent HANDLE 배열 만들어서 집어넣음
+		// WaitForMultipleObjects << 만든 HANDLE 배열로 동기화
+		// KillEvent 비활성화, vector<KillEventPacket> 초기화
+		
+		// 총알 Update
+		// 이동처리
+		// 충돌처리
+		// hp <= 0 이면 Dead = TRUE, KillEvent Set, vector kill패킷 삽입
+		// 스냅샷 복사
+		// SendEvent Set
 	}
+
+
+	ReleaseGlobals();
 }

@@ -4,9 +4,6 @@
     <Filter Include="Common">
       <UniqueIdentifier>{a18975e6-6be8-48bf-a7c7-81ab5efdcf6b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Contents">
-      <UniqueIdentifier>{9c262357-a445-4732-9989-96ddae86823e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Config">
       <UniqueIdentifier>{82efd097-818d-46b8-b459-1765408ea710}</UniqueIdentifier>
     </Filter>
@@ -34,6 +31,9 @@
     <ClCompile Include="Common.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="Globals.cpp">
+      <Filter>Config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -45,20 +45,17 @@
     <ClInclude Include="Common.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Obstacle.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Util</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerInfo.h">
-      <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Thread.h">
       <Filter>Thread</Filter>
     </ClInclude>
     <ClInclude Include="Session.h">
       <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Globals.h">
+      <Filter>Config</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

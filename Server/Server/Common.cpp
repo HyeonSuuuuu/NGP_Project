@@ -1,19 +1,9 @@
 #include "stdafx.h"
 #include "Common.h"
 
-// 전역변수 ===========================================
-GameTimer g_timer;
-std::vector<Session> g_sessions;
-CRITICAL_SECTION g_csSessions;
-std::vector<Obstacle> g_obstacles;
-std::atomic<bool> g_isRunning;
 
 
-void InitGlobals()
-{
-	g_isRunning.store(true);
-	InitializeCriticalSection(&g_csSessions);
-}
+
 
 
 

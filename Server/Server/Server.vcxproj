@@ -131,6 +131,7 @@
   <ItemGroup>
     <ClCompile Include="AcceptLoop.cpp" />
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="Globals.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ProcessClient.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -141,9 +142,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
-    <ClInclude Include="Obstacle.h" />
+    <ClInclude Include="Globals.h" />
     <ClInclude Include="Packet.h" />
-    <ClInclude Include="PlayerInfo.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Thread.h" />

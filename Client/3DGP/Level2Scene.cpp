@@ -53,33 +53,35 @@ void CLevel2Scene::ReleaseObjects()
 
 void CLevel2Scene::Animate(float fElapsedTime)
 {
-	m_spPlayer->Animate(fElapsedTime);
+	// Globals.h 이용해서 Update
 	
-	for (auto& object : m_objects) {
-		object.Animate(fElapsedTime);
-	}
-	for (auto& object : m_barrierObjects) {
-		object.Animate(fElapsedTime);
-	}
+	//m_spPlayer->Animate(fElapsedTime);
+	//
+	//for (auto& object : m_objects) {
+	//	object.Animate(fElapsedTime);
+	//}
+	//for (auto& object : m_barrierObjects) {
+	//	object.Animate(fElapsedTime);
+	//}
 
-	for (auto it = m_enemyObjects.begin(); it != m_enemyObjects.end();) {
-		if (it->m_bBlowingUp == false && it->m_bRemove == true) {
-			m_enemyObjects.erase(it);
-		}
-		else {
-			it->Animate(fElapsedTime);
-			it++;
-		}
-	}
-	CheckObjectByBulletCollisions();
-	CheckPlayerByWallCollision();
-	CheckPlayerByEnemyCollisions();
+	//for (auto it = m_enemyObjects.begin(); it != m_enemyObjects.end();) {
+	//	if (it->m_bBlowingUp == false && it->m_bRemove == true) {
+	//		m_enemyObjects.erase(it);
+	//	}
+	//	else {
+	//		it->Animate(fElapsedTime);
+	//		it++;
+	//	}
+	//}
+	//CheckObjectByBulletCollisions();
+	//CheckPlayerByWallCollision();
+	//CheckPlayerByEnemyCollisions();
 
-	// 승리 판정 체크
-	if (m_enemyObjects.empty()) {
-		m_gameContext.m_bWin = true;
-		m_gameContext.m_sceneManager.ChangeScene(SCENE_TYPE::RESULT);
-	}
+	//// 승리 판정 체크
+	//if (m_enemyObjects.empty()) {
+	//	m_gameContext.m_bWin = true;
+	//	m_gameContext.m_sceneManager.ChangeScene(SCENE_TYPE::RESULT);
+	//}
 }
 
 void CLevel2Scene::Render(HDC hDCFrameBuffer)
@@ -106,15 +108,18 @@ void CLevel2Scene::ProcessInput()
 	static UCHAR pKeyBuffer[256];
 	if (GetKeyboardState(pKeyBuffer))
 	{
-		DWORD dwDirection = 0;
+		DWORD dwDirection = 0; 
 		if (pKeyBuffer['W'] & 0xF0) dwDirection |= DIR_FORWARD;
 		if (pKeyBuffer['S'] & 0xF0) dwDirection |= DIR_BACKWARD;
 		if (pKeyBuffer['A'] & 0xF0) dwDirection |= DIR_LEFT;
 		if (pKeyBuffer['D'] & 0xF0) dwDirection |= DIR_RIGHT;
 
 
-		if (dwDirection)
-			m_spPlayer->Move(dwDirection, 0.15f);
+		/*if (dwDirection)
+			m_spPlayer->Move(dwDirection, 0.15f);*/
+		
+		// dwDirection 전역변수 InputFlag에 Set
+		// event Set
 	}
 
 	if (GetCapture() == m_gameContext.m_hWnd)
@@ -134,7 +139,7 @@ void CLevel2Scene::ProcessInput()
 		}
 	}
 
-	m_spPlayer->Update(m_gameContext.m_gameTimer.GetTimeElapsed());
+	//m_spPlayer->Update(m_gameContext.m_gameTimer.GetTimeElapsed());
 }
 
 void CLevel2Scene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)

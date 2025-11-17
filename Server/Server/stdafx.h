@@ -20,7 +20,6 @@
 
 // User Defined
 #include "Packet.h"
-#include "PlayerInfo.h"
-#include "Obstacle.h"
 #include "Common.h"
 #include "Thread.h"
+#include "Globals.h"
