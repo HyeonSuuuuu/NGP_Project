@@ -501,8 +501,10 @@
   <ItemGroup>
     <ClCompile Include="AircraftGameScene.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="NetworkThread.cpp" />
     <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Globals.cpp" />
     <ClCompile Include="GraphicsPipeline.cpp" />
     <ClCompile Include="3DGP.cpp" />
     <ClCompile Include="Level1Scene.cpp" />
@@ -523,9 +525,11 @@
   <ItemGroup>
     <ClInclude Include="AircraftGameScene.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="NetworkThread.h" />
     <ClInclude Include="GameContext.h" />
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Globals.h" />
     <ClInclude Include="GraphicsPipeline.h" />
     <ClInclude Include="3DGP.h" />
     <ClInclude Include="Level1Scene.h" />

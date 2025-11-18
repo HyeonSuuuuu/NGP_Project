@@ -1,6 +1,4 @@
 #pragma once
-#include "Timer.h"
-#include "Session.h"
 
 
 // PlayerInfo =====================================
@@ -28,9 +26,12 @@ struct Bullet
 	float x, y;
 	float yawAngle; // 0 ~ 360
 	float speed;
-	int owner_id;
+	int ownerId;
 };
 
+// 상수 ===========================================
+#define SERVER_PORT			9000
+#define WORLD_SIZE			100
 // 에러처리 ========================================
 void err_quit(const char* msg);
 void err_display(const char* msg);

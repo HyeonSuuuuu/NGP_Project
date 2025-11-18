@@ -1,5 +1,5 @@
 #pragma once
 
 
-DWORD WINAPI AcceptLoop(void* args);
-DWORD WINAPI ProcessClient(void* args);
+DWORD WINAPI AcceptThread(void* args);
+DWORD WINAPI NetworkThread(void* args);

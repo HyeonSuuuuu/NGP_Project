@@ -22,10 +22,10 @@
     <ClCompile Include="Timer.cpp">
       <Filter>Util</Filter>
     </ClCompile>
-    <ClCompile Include="AcceptLoop.cpp">
+    <ClCompile Include="AcceptThread.cpp">
       <Filter>Thread</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessClient.cpp">
+    <ClCompile Include="NetworkThread.cpp">
       <Filter>Thread</Filter>
     </ClCompile>
     <ClCompile Include="Common.cpp">
@@ -57,5 +57,6 @@
     <ClInclude Include="Globals.h">
       <Filter>Config</Filter>
     </ClInclude>
+    <ClInclude Include="main.h" />
   </ItemGroup>
 </Project>

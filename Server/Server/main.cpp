@@ -1,11 +1,37 @@
 #include "stdafx.h"
-
+#include "main.h"
 
 
 
 int main()
 {
+	// 지역변수 =====================================
+	std::vector<Bullet> bullets;
+	std::vector<Obstacle> obstacles;
+	// =============================================
+	// obstacles 초기화 (위치 랜덤, 개수 10개정도)
 	InitGlobals();
+	SOCKET listen_sock;
+	InitNetwork(listen_sock);
+	HANDLE hThread = CreateThread(NULL, 0, AcceptThread, (LPVOID)listen_sock, 0, NULL);
+	// GameLoop
+	while (g_isRunning.load()) {
+		g_timer.Tick(30.f);
+		// TODO: 모든 Recv Event 대기
+		// TODO: Send Event 초기화, KillEvent Vector 초기화
+		// TODO: 총알 Update
+		// TODO: 모든 Session Update
+		// TODO: 충돌처리
+		// TODO: hp <= 0이라면 KillEventPacket 생성, vector에 Push(전역변수)
+		// TODO: 스냅샷 Update(전역변수)
+		// TODO: SendEvent Set(전역변수)
+	}
+	// TODO: 모든 스레드 Join
+	ReleaseGlobals();
+}
+
+void InitNetwork(SOCKET listen_sock)
+{
 	SOCKET listen_sock;
 	int retval;
 	WSADATA wsa;
@@ -29,26 +55,4 @@ int main()
 	retVal = listen(listen_sock, SOMAXCONN);
 	if (retVal == SOCKET_ERROR)
 		err_quit("listen()");
-
-	// Accept 스레드 생성
-	HANDLE hThread = CreateThread(NULL, 0, AcceptLoop, (LPVOID)listen_sock, 0, NULL);
-
-
-	// GameLoop
-	while (true) {
-		g_timer.Tick(30.f);
-		// Sessions 루프돌며 RecvEvent HANDLE 배열 만들어서 집어넣음
-		// WaitForMultipleObjects << 만든 HANDLE 배열로 동기화
-		// KillEvent 비활성화, vector<KillEventPacket> 초기화
-		
-		// 총알 Update
-		// 이동처리
-		// 충돌처리
-		// hp <= 0 이면 Dead = TRUE, KillEvent Set, vector kill패킷 삽입
-		// 스냅샷 복사
-		// SendEvent Set
-	}
-
-
-	ReleaseGlobals();
 }

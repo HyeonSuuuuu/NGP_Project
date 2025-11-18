@@ -1,5 +1,6 @@
 #pragma once
 #include "Packet.h"
+#include "Timer.h"
 class Session;
 // 전역변수 =======================================
 extern GameTimer g_timer;
@@ -13,5 +14,3 @@ extern HANDLE					g_sendevent;
 
 void InitGlobals();
 void ReleaseGlobals();
-// 상수 ===========================================
-#define SERVER_PORT 9000

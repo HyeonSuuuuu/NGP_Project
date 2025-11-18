@@ -1,19 +1,17 @@
 #pragma once
 
-struct Session {
+class Session {
+public:
+	Session(Session& session)
+	{
+		// TODO: new Session
+	}
+
+private:
 	SOCKET socket;
-	uint32_t session_id;
+	uint32_t sessionId;
 	std::atomic<bool> isConnected;
-
-	float x, y;
-	float yawAngle;
-
-	uint16_t hp;
-	int32_t gold;
-	bool isDead;
-
-	std::atomic<uint8_t> inputflag;
-	HANDLE recv_complete_event;
-	HANDLE respone_event;
-	CRITICAL_SECTION cs;
+	PlayerInfo data;
+	uint16_t inputflag;
+	HANDLE recvEvent;
 };

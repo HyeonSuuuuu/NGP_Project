@@ -20,20 +20,20 @@ struct InputPacket {
 	uint16_t inputFlag;
 	int16_t yawAngle;
 };
-struct EnterPacket{
-	  uint32_t id;
-	  struct Obstacle* obstacles;
-	  uint16_t obstacle_count;
-}
+struct EnterPacket {
+	uint32_t id;
+	uint16_t obstacleCount;
+	struct Obstacle* obstacles;
+};
 struct SnapshotPacket {
-	uint16_t player_count;
+	uint16_t playerCount;
 	struct PlayerInfo* players;
-	uint16_t bullet_count;
+	uint16_t bulletCount;
 	struct Bullet* bullets;
 };
 
 struct KillEventPacket {
-	int32_t killer_id;
-	int32_t killed_id;
+	int32_t killerId;
+	int32_t killedId;
 };
 #pragma pack(pop)

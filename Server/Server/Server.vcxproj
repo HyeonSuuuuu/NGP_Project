@@ -129,11 +129,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AcceptLoop.cpp" />
+    <ClCompile Include="AcceptThread.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ProcessClient.cpp" />
+    <ClCompile Include="NetworkThread.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="Common.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="stdafx.h" />
