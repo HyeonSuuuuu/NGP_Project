@@ -64,12 +64,6 @@ void InitNetwork(SOCKET listen_sock)
 		err_quit("listen()");
 }
 
-
-inline float RandF(float fMin, float fMax)
-{
-	return(fMin + ((float)rand() / (float)RAND_MAX) * (fMax - fMin));
-}
-
 void WaitAllRecvEvent(std::array<HANDLE, MAX_PLAYER>& arr)
 {
 	// recvEvent 배열 생성

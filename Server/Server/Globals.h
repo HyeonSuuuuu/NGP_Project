@@ -15,3 +15,8 @@ constexpr int MAX_PLAYER = 64;
 
 void InitGlobals();
 void ReleaseGlobals();
+
+inline float RandF(float fMin, float fMax)
+{
+	return(fMin + ((float)rand() / (float)RAND_MAX) * (fMax - fMin));
+}

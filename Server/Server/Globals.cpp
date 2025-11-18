@@ -22,3 +22,4 @@ void ReleaseGlobals()
 {
 	DeleteCriticalSection(&g_csSessions);
 }
+
