@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "NetworkThread.h"
 #include "Timer.h"
+#include "../../Server/Server/Common.h"
+#include "../../Server/Server/Packet.h"
 
 DWORD WINAPI NetworkThread(void* args)
 {
@@ -11,6 +13,8 @@ DWORD WINAPI NetworkThread(void* args)
 	CGameTimer timer;
 	while (true) {
 		timer.Tick(30.f);
-		// 
+		// InputPacket »ý¼º
+		// Send (CS_INPUT)
+		// Recv
 	}
 }

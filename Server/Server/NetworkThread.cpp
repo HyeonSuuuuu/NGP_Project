@@ -7,7 +7,7 @@ DWORD WINAPI NetworkThread(void* args)
 	// recv, send 버퍼 필요함	
 	Session& session = *reinterpret_cast<Session*>(args);
 	EnterCriticalSection(&g_csSessions);
-	g_sessions.emplace_back(session);
+	g_sessions.emplace_back(&session);
 	LeaveCriticalSection(&g_csSessions);
 
 	while (true /* Session의 Connected로 변경 */ ) {

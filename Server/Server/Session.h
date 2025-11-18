@@ -1,13 +1,6 @@
 #pragma once
 
-class Session {
-public:
-	Session(Session& session)
-	{
-		// TODO: new Session
-	}
-
-private:
+struct Session {
 	SOCKET socket;
 	uint32_t sessionId;
 	std::atomic<bool> isConnected;

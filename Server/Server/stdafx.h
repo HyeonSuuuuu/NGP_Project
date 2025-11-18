@@ -15,6 +15,7 @@
 #include <iostream>
 #include <atomic>
 #include <vector>
+#include <array>
 #include <mutex>
 #include <thread>
 

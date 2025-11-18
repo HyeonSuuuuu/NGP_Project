@@ -5,6 +5,8 @@ DWORD WINAPI AcceptThread(void* args) {
 	SOCKET listen_sock = reinterpret_cast<SOCKET>(args);
 	uint32_t idCount = 0;
 
+	printf("Create Accept Thread : 성공\n");
+
 	while (g_isRunning.load()) {
 		// Accept 성공하면
 		// Session 생성(동적으로) / vector 추가(Session*)

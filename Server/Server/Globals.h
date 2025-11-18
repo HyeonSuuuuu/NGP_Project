@@ -9,7 +9,8 @@ extern CRITICAL_SECTION			g_csSessions;
 extern SnapshotPacket			g_snapshots;
 extern std::atomic<bool>		g_isRunning;
 extern HANDLE					g_sendevent;
-
+// 전역상수 =======================================
+constexpr int MAX_PLAYER = 64;
 
 
 void InitGlobals();

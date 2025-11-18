@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "main.h"
-
+#include "Session.h"
 
 
 int main()
@@ -8,16 +8,23 @@ int main()
 	// 지역변수 =====================================
 	std::vector<Bullet> bullets;
 	std::vector<Obstacle> obstacles;
+	std::array<HANDLE, MAX_PLAYER> recvEvents;
 	// =============================================
-	// obstacles 초기화 (위치 랜덤, 개수 10개정도)
+	obstacles.reserve(10);
+	for (Obstacle& obstacle : obstacles) {
+		obstacle.size = 4;
+		obstacle.x = RandF(-50.f, 50.f);
+		obstacle.z = RandF(10.f, 90.f);
+	}
 	InitGlobals();
-	SOCKET listen_sock;
+	SOCKET listen_sock = NULL;
 	InitNetwork(listen_sock);
 	HANDLE hThread = CreateThread(NULL, 0, AcceptThread, (LPVOID)listen_sock, 0, NULL);
 	// GameLoop
 	while (g_isRunning.load()) {
 		g_timer.Tick(30.f);
-		// TODO: 모든 Recv Event 대기
+		
+		WaitAllRecvEvent(recvEvents);
 		// TODO: Send Event 초기화, KillEvent Vector 초기화
 		// TODO: 총알 Update
 		// TODO: 모든 Session Update
@@ -28,11 +35,11 @@ int main()
 	}
 	// TODO: 모든 스레드 Join
 	ReleaseGlobals();
+	WSACleanup();
 }
 
 void InitNetwork(SOCKET listen_sock)
 {
-	SOCKET listen_sock;
 	int retval;
 	WSADATA wsa;
 	retval = WSAStartup(MAKEWORD(2, 2), &wsa);
@@ -55,4 +62,23 @@ void InitNetwork(SOCKET listen_sock)
 	retVal = listen(listen_sock, SOMAXCONN);
 	if (retVal == SOCKET_ERROR)
 		err_quit("listen()");
+}
+
+
+inline float RandF(float fMin, float fMax)
+{
+	return(fMin + ((float)rand() / (float)RAND_MAX) * (fMax - fMin));
+}
+
+void WaitAllRecvEvent(std::array<HANDLE, MAX_PLAYER>& arr)
+{
+	// recvEvent 배열 생성
+	EnterCriticalSection(&g_csSessions);
+	const int size = g_sessions.size();
+	for (int i = 0; i < size; ++i) { 
+		arr[i] = g_sessions[i]->recvEvent;
+	}
+	LeaveCriticalSection(&g_csSessions);
+	// 모두 깨어날 때까지 대기
+	WaitForMultipleObjects(size, arr.data(), true, INFINITE); 
 }
