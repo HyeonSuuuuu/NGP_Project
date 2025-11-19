@@ -2,6 +2,7 @@
 
 
 // PlayerInfo =====================================
+#pragma pack(push, 1)
 struct PlayerInfo {
 	uint32_t id;
 	float x, z;
@@ -27,10 +28,12 @@ struct Bullet
 	float speed;
 	int ownerId;
 };
+#pragma pack(pop)
 
 // 상수 ===========================================
 constexpr int SERVER_PORT = 9000;
 constexpr int WORLD_SIZE = 100;
+constexpr int MAX_PLAYERS = 64; // 이벤트 최대가 64
 // 에러처리 ========================================
 void err_quit(const char* msg);
 void err_display(const char* msg);

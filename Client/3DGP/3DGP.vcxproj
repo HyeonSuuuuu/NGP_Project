@@ -499,6 +499,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Server\Server\Common.cpp" />
     <ClCompile Include="AircraftGameScene.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="NetworkThread.cpp" />
@@ -523,6 +524,8 @@
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Server\Server\Common.h" />
+    <ClInclude Include="..\..\Server\Server\Packet.h" />
     <ClInclude Include="AircraftGameScene.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="NetworkThread.h" />

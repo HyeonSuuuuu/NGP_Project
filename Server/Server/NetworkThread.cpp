@@ -10,6 +10,10 @@ DWORD WINAPI NetworkThread(void* args)
 	g_sessions.emplace_back(&session);
 	LeaveCriticalSection(&g_csSessions);
 
+	// Send (SC_ENTER)
+	EnterPacket enterPacket;
+	enterPacket.id = session.sessionId;
+
 	while (true /* Session의 Connected로 변경 */ ) {
 	// Recv (INPUT_PACKET밖에 없음)
 	// recv_event Set
