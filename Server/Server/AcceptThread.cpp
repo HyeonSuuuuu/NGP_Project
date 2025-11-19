@@ -6,11 +6,8 @@
 #include "Common.h"        // g_sessions, g_isRunning, g_csSessions 등 전역 변수 여기 있음
 #include <ws2tcpip.h>
 #include <iostream>
+#include "Globals.h"
 
-extern std::vector<Session*> g_sessions;           // main.cpp나 Globals.cpp에 선언된 전역
-extern std::atomic<bool> g_isRunning;
-extern CRITICAL_SECTION g_csSessions;
-extern std::vector<Obstacle> g_obstacles;          // main에서 만든 장애물 벡터
 
 DWORD WINAPI AcceptThread(void* args)
 {
@@ -76,7 +73,10 @@ DWORD WINAPI AcceptThread(void* args)
         {
             PacketHeader header{};
             header.type = SC_ENTER;
-            header.size = sizeof(PacketHeader) + sizeof(uint32_t) + sizeof(uint16_t) + sizeof(Obstacle) * g_obstacles.size();
+            header.size = sizeof(PacketHeader)
+                + sizeof(uint32_t)
+                + sizeof(uint16_t)
+                + sizeof(Obstacle) * static_cast<uint16_t>(g_obstacles.size());
 
             EnterPacket enterPkt{};
             enterPkt.id = newSession->sessionId;
