@@ -11,6 +11,9 @@ extern std::atomic<bool>		g_isRunning;
 extern HANDLE					g_sendevent;
 // 전역상수 =======================================
 constexpr int MAX_PLAYER = 64;
+// 전역벡터 =======================================
+extern std::vector<Obstacle> g_obstacles;
+
 
 
 void InitGlobals();
