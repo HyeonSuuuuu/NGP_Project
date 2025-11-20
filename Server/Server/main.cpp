@@ -10,15 +10,20 @@ int main()
 	std::vector<Obstacle> obstacles;
 	std::array<HANDLE, MAX_PLAYER> recvEvents;
 	// =============================================
+	obstacles.clear();
 	obstacles.reserve(10);
-	for (Obstacle& obstacle : obstacles) {
-		obstacle.size = 4;
-		obstacle.x = RandF(-50.f, 50.f);
-		obstacle.z = RandF(10.f, 90.f);
+	for (int i = 0; i < 10; ++i)
+	{
+		Obstacle obs{};
+		obs.size = 4.0f;
+		obs.x = RandF(-50.f, 50.f);
+		obs.z = RandF(10.f, 90.f);
+		obstacles.push_back(obs);
 	}
-	InitGlobals();
+	g_obstacles = obstacles;
 	SOCKET listen_sock = NULL;
-	InitNetwork(listen_sock);
+	InitGlobals();
+	InitNetwork(&listen_sock);
 	HANDLE hThread = CreateThread(NULL, 0, AcceptThread, (LPVOID)listen_sock, 0, NULL);
 	// GameLoop
 	while (g_isRunning.load()) {
@@ -38,7 +43,7 @@ int main()
 	WSACleanup();
 }
 
-void InitNetwork(SOCKET listen_sock)
+void InitNetwork(SOCKET *listen_sock)
 {
 	int retval;
 	WSADATA wsa;
@@ -46,8 +51,8 @@ void InitNetwork(SOCKET listen_sock)
 	if (retval != 0)
 		err_display(retval);
 
-	listen_sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (listen_sock == INVALID_SOCKET)
+	*listen_sock = socket(AF_INET, SOCK_STREAM, 0);
+	if (*listen_sock == INVALID_SOCKET)
 		err_quit("listen socket()");
 
 	struct sockaddr_in serveraddr;
@@ -55,11 +60,11 @@ void InitNetwork(SOCKET listen_sock)
 	serveraddr.sin_family = AF_INET;
 	serveraddr.sin_addr.s_addr = INADDR_ANY;
 	serveraddr.sin_port = htons(SERVER_PORT);
-	int retVal = bind(listen_sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
+	int retVal = bind(*listen_sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (retVal == SOCKET_ERROR)
 		err_quit("bind()");
 
-	retVal = listen(listen_sock, SOMAXCONN);
+	retVal = listen(*listen_sock, SOMAXCONN);
 	if (retVal == SOCKET_ERROR)
 		err_quit("listen()");
 }

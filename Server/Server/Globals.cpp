@@ -11,6 +11,8 @@ SnapshotPacket			g_snapshots;
 std::atomic<bool>		g_isRunning;
 HANDLE					g_sendevent;
 
+std::vector<Obstacle> g_obstacles;
+
 
 void InitGlobals()
 {
