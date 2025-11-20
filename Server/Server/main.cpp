@@ -43,7 +43,9 @@ int main()
 	WSACleanup();
 }
 
-void InitNetwork(SOCKET *listen_sock)
+//SOCKET 
+
+void InitNetwork(SOCKET* listen_sock)
 {
 	int retval;
 	WSADATA wsa;
