@@ -23,13 +23,10 @@ struct InputPacket {
 struct EnterPacket {
 	uint32_t id;
 	uint16_t obstacleCount;
-	struct Obstacle* obstacles;
 };
 struct SnapshotPacket {
 	uint16_t playerCount;
-	struct PlayerInfo* players;
 	uint16_t bulletCount;
-	struct Bullet* bullets;
 };
 
 struct KillEventPacket {

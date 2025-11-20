@@ -23,6 +23,9 @@
     <Filter Include="Network">
       <UniqueIdentifier>{51eb6e97-e52b-4ddf-88a3-1557daadc4a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{75d1d290-80ba-425a-b9dc-e7c62274b16a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AircraftGameScene.cpp">
@@ -81,6 +84,9 @@
     </ClCompile>
     <ClCompile Include="NetworkThread.cpp">
       <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Server\Server\Common.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +156,12 @@
     </ClInclude>
     <ClInclude Include="NetworkThread.h">
       <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Server\Server\Common.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Server\Server\Packet.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
