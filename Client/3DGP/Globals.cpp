@@ -11,10 +11,12 @@ std::vector<PlayerInfo>				g_players;
 std::vector<Bullet>					g_bullets;
 std::vector<KillEventPacket>		g_killEvents;
 
+CRITICAL_SECTION					g_csPlayers;
+CRITICAL_SECTION					g_csBullets;
+CRITICAL_SECTION					g_csKillEvents;
 
 void InitGlobals()
 {
-	g_obstacles.reserve(OBSTACLE_COUNT);
 }
 void ReleaseGlobals()
 {
