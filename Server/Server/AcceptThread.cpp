@@ -70,31 +70,29 @@ DWORD WINAPI AcceptThread(void* args)
         }
 
         // 접속 완료 후 바로 SC_ENTER 패킷 전송 (장애물 동기화)
-        //{
-        //    PacketHeader header{};
-        //    header.type = SC_ENTER;
-        //    header.size = sizeof(PacketHeader)
-        //        + sizeof(uint32_t)
-        //        + sizeof(uint16_t)
-        //        + sizeof(Obstacle) * static_cast<uint16_t>(g_obstacles.size());
+        {
+            PacketHeader header{};
+            header.type = SC_ENTER;
+            uint32_t offset = 0;
 
-        //    EnterPacket enterPkt{};
-        //    enterPkt.id = newSession->sessionId;
-        //    enterPkt.obstacleCount = static_cast<uint16_t>(g_obstacles.size());
 
-        //    // 임시 버퍼에 패킷 조립
-        //    char sendBuf[1024]{};
-        //    memcpy(sendBuf, &header, sizeof(header));
-        //    memcpy(sendBuf + sizeof(header), &enterPkt, sizeof(EnterPacket));
-        //    memcpy(sendBuf + sizeof(header) + sizeof(EnterPacket), &g_obstacles.data(), sizeof(uint16_t));
-        //    memcpy(sendBuf + sizeof(header) + sizeof(uint32_t) + sizeof(uint16_t),
-        //        enterPkt.obstacles, sizeof(Obstacle) * g_obstacles.size());
+            EnterPacket enterPkt{};
+            enterPkt.id = newSession->sessionId;
+            enterPkt.obstacleCount = static_cast<uint16_t>(g_obstacles.size());
+            // 임시 버퍼에 패킷 조립
+            char sendBuf[1024]{};
 
-        //    send(clientSock, sendBuf, header.size, 0);
-
-        //    printf("[패킷 전송] SC_ENTER → Player %u (장애물 %zu개 동기화)\n",
-        //        newSession->sessionId, g_obstacles.size());
-        //}
+            offset += sizeof(PacketHeader);
+            memcpy(sendBuf + offset, &enterPkt, sizeof(EnterPacket));
+            offset += sizeof(EnterPacket);
+            memcpy(sendBuf + offset, g_obstacles.data(), enterPkt.obstacleCount * sizeof(Obstacle));
+            offset += enterPkt.obstacleCount * sizeof(Obstacle);
+            header.size = offset;
+            memcpy(sendBuf, &header, sizeof(PacketHeader));
+            send(clientSock, sendBuf, header.size, 0);
+            printf("[패킷 전송] SC_ENTER → Player %u (장애물 %zu개 동기화)\n",
+                newSession->sessionId, g_obstacles.size());
+        }
 
         printf("[성공] Player %u 접속 완료 → 현재 인원: %zu명\n",
             newSession->sessionId, g_sessions.size());

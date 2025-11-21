@@ -9,23 +9,24 @@ DWORD WINAPI NetworkThread(void* args)
 {
 	char buf[65536];
 	int offset = 0;
-	SOCKET sock;
+	SOCKET sock = NULL;
 	ConnectServer(sock);
 	PacketHeader header;
-	recv(sock, reinterpret_cast<char*>(&header), sizeof(header), MSG_WAITALL);
+	recv(sock, reinterpret_cast<char*>(&header), sizeof(PacketHeader), MSG_WAITALL);
 	if (header.type == SC_ENTER) {
 		// recv 받았다고 가정 (테스트 안해봄)
-		recv(sock, buf, header.size, MSG_WAITALL);
+		recv(sock, buf, header.size - sizeof(PacketHeader), MSG_WAITALL);
 		EnterPacket* enterPacket = reinterpret_cast<EnterPacket*>(buf);
 		offset += sizeof(EnterPacket);
+
 		g_myId = enterPacket->id;
 		int obstaclesCount = enterPacket->obstacleCount;
 		g_obstacles.resize(obstaclesCount);
 		for (int i = 0; i < obstaclesCount; ++i) {
 			g_obstacles[i] = *reinterpret_cast<Obstacle*>(buf + offset);
 			offset += sizeof(Obstacle);
+			OutputDebugString(L"%d", offset);
 		}
-		
 	}
 	
 	// Recv (SC_ENTER)
@@ -36,12 +37,12 @@ DWORD WINAPI NetworkThread(void* args)
 		timer.Tick(30.f);
 		// InputPacket 생성
 		// Send (CS_INPUT)
-		// Recv
+		// Recv 
 	}
 }
 
 
-void ConnectServer(SOCKET sock)
+void ConnectServer(SOCKET& sock)
 {
 	int retval;
 	WSADATA wsa;
@@ -51,7 +52,7 @@ void ConnectServer(SOCKET sock)
 		err_display(retval);
 		exit(1);
 	}
-	SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == INVALID_SOCKET) err_quit("socket()");
 	
 	struct sockaddr_in server_addr;

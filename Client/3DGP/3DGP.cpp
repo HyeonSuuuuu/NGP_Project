@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "3DGP.h"
 #include "GameFramework.h"
+#include "NetworkThread.h"
 
 #define MAX_LOADSTRING 100
 
@@ -127,6 +128,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	ShowWindow(hMainWnd, nCmdShow);
 	UpdateWindow(hMainWnd);
+
+	HANDLE network = CreateThread(NULL, NULL, NetworkThread, NULL, NULL, NULL);
 
 	return TRUE;
 }

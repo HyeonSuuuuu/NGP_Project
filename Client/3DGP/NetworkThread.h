@@ -3,4 +3,4 @@
 
 DWORD WINAPI NetworkThread(void* args);
 
-void ConnectServer(SOCKET sock);
+void ConnectServer(SOCKET& sock);
