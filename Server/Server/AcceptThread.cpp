@@ -93,9 +93,10 @@ DWORD WINAPI AcceptThread(void* args)
             printf("[패킷 전송] SC_ENTER → Player %u (장애물 %zu개 동기화)\n",
                 newSession->sessionId, g_obstacles.size());
         }
-
+        EnterCriticalSection(&g_csSessions);
         printf("[성공] Player %u 접속 완료 → 현재 인원: %zu명\n",
             newSession->sessionId, g_sessions.size());
+        LeaveCriticalSection(&g_csSessions);
     }
 
     printf("[AcceptThread] 종료\n");

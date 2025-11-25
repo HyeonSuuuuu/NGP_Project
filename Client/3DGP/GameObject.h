@@ -108,7 +108,29 @@ public:
 
 class CBarrierObject : public CGameObject {
 public:
-	CBarrierObject() {}
+	CBarrierObject(CCubeMesh* pCubeMesh, float x, float y, float z)
+	{
+		this->SetMesh(pCubeMesh);
+		this->SetColor(RGB(0, 255, 0));
+		this->SetPosition(x, y, z);
+	}
+	// 복사 생성자: base 멤버는 CGameObject(other)로 복사되고,
+	// 그 뒤 m_pMesh에 대해 참조를 증가시킨다.
+	CBarrierObject(const CBarrierObject& other) : CGameObject(other)
+	{
+		if (m_pMesh) m_pMesh->AddRef();
+	}
+
+	// 복사 대입: 기존 소유 해제 후 base 할당, 새 소유 참조 증가
+	CBarrierObject& operator=(const CBarrierObject& other)
+	{
+		if (this != &other)
+		{
+			CGameObject::operator=(other);      // base 멤버 복사 (m_pMesh도 복사됨)
+			if (m_pMesh) m_pMesh->AddRef();     // 새 소유에 대해 증가
+		}
+		return *this;
+	}
 	virtual ~CBarrierObject() {}
 
 };

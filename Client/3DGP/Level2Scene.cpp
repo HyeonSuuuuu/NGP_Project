@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "GraphicsPipeline.h"
 #include "GameContext.h"
+#include "Globals.h"
 
 inline float RandF(float fMin, float fMax)
 {
@@ -27,14 +28,12 @@ void CLevel2Scene::BuildObjects()
 	m_objects[0].SetMesh(pGroundMesh);
 	m_objects[0].SetColor(RGB(0, 0, 0));
 	m_objects[0].SetPosition(0.f, 0.f, 40.f);
-
-
-	m_barrierObjects.resize(10);
+	
+	WaitForSingleObject(g_enterEvent, INFINITE);
 	CCubeMesh* pCubeMesh = new CCubeMesh(4.f, 4.f, 4.f);
-	for (int i = 0; i < 10; ++i) {
-		m_barrierObjects[i].SetMesh(pCubeMesh);
-		m_barrierObjects[i].SetColor(RGB(0, 255, 0));
-		m_barrierObjects[i].SetPosition(RandF(-50.f, 50.f), 2.f, RandF(10.f, 90.f));
+	m_barrierObjects.reserve(g_obstacles.size());
+	for (const Obstacle& obstacle : g_obstacles) {
+		m_barrierObjects.emplace_back(pCubeMesh, obstacle.x, 0.f, obstacle.z);
 	}
 
 	CTankMesh* pTankMesh = new CTankMesh(6.f, 3.f, 6.f);
@@ -44,7 +43,6 @@ void CLevel2Scene::BuildObjects()
 		m_enemyObjects[i].SetColor(RGB(255, 0, 0));
 		m_enemyObjects[i].SetPosition(RandF(-50.f, 50.f), 0.f, RandF(10.f, 100.f));
 	}
-
 }
 
 void CLevel2Scene::ReleaseObjects()

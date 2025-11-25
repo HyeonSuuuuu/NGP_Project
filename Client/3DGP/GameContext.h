@@ -7,7 +7,7 @@ class CGameContext {
 public:
 
     CGameContext() {
-        m_sceneManager.Init(*this);
+  
     }
     ~CGameContext() {}
 

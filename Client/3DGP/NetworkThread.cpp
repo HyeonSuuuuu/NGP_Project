@@ -7,30 +7,16 @@
 
 DWORD WINAPI NetworkThread(void* args)
 {
+
 	char buf[65536];
-	int offset = 0;
 	SOCKET sock = NULL;
 	ConnectServer(sock);
 	PacketHeader header;
 	recv(sock, reinterpret_cast<char*>(&header), sizeof(PacketHeader), MSG_WAITALL);
 	if (header.type == SC_ENTER) {
-		// recv 받았다고 가정 (테스트 안해봄)
 		recv(sock, buf, header.size - sizeof(PacketHeader), MSG_WAITALL);
-		EnterPacket* enterPacket = reinterpret_cast<EnterPacket*>(buf);
-		offset += sizeof(EnterPacket);
-
-		g_myId = enterPacket->id;
-		int obstaclesCount = enterPacket->obstacleCount;
-		g_obstacles.resize(obstaclesCount);
-		for (int i = 0; i < obstaclesCount; ++i) {
-			g_obstacles[i] = *reinterpret_cast<Obstacle*>(buf + offset);
-			offset += sizeof(Obstacle);
-			OutputDebugString(L"%d", offset);
-		}
+		ProcessEnterPacket(buf);
 	}
-	
-	// Recv (SC_ENTER)
-	// SC_ENTER 패킷 처리
 
 	CGameTimer timer;
 	while (true) {
@@ -63,4 +49,20 @@ void ConnectServer(SOCKET& sock)
 
 	if (connect(sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) == SOCKET_ERROR)
 		err_quit("connect()");
+}
+
+void ProcessEnterPacket(char* buf)
+{
+	EnterPacket* enterPacket = reinterpret_cast<EnterPacket*>(buf);
+	uint32_t offset = sizeof(EnterPacket);
+
+	g_myId = enterPacket->id;
+	int obstaclesCount = enterPacket->obstacleCount;
+	g_obstacles.resize(obstaclesCount);
+	for (int i = 0; i < obstaclesCount; ++i) {
+		g_obstacles[i] = *reinterpret_cast<Obstacle*>(buf + offset);
+		offset += sizeof(Obstacle);
+		DebugLog(L"%d", offset);
+	}
+	SetEvent(g_enterEvent);
 }

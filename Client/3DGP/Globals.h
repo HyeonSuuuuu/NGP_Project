@@ -13,6 +13,7 @@ extern std::vector<KillEventPacket> g_killEvents;
 extern CRITICAL_SECTION					g_csPlayers;
 extern CRITICAL_SECTION					g_csBullets;
 extern CRITICAL_SECTION					g_csKillEvents;
+extern HANDLE							g_enterEvent;
 
 void InitGlobals();
 void ReleaseGlobals();

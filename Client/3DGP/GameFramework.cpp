@@ -8,9 +8,10 @@
 void CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 {
 	::srand(timeGetTime());
-
 	m_gameContext.m_hInstance = hInstance;
 	m_gameContext.m_hWnd = hMainWnd;
+
+	m_gameContext.m_sceneManager.Init(m_gameContext);
 
 	BuildFrameBuffer(); 
 
@@ -64,10 +65,6 @@ void CGameFramework::PresentFrameBuffer()
 
 void CGameFramework::BuildObjects()
 {
-
-
-	// mesh 자체에 Reference Count가 구현되어있음
-	m_gameContext.m_sceneManager.Init(m_gameContext);
 }
 
 void CGameFramework::ReleaseObjects()
