@@ -7,11 +7,11 @@
 GameTimer g_timer;
 std::vector<Session*>	g_sessions;
 CRITICAL_SECTION		g_csSessions;
-SnapshotPacket			g_snapshots;
 std::atomic<bool>		g_isRunning;
 HANDLE					g_sendevent;
 
-std::vector<Obstacle> g_obstacles;
+std::vector<Obstacle>	g_obstacles;
+std::vector<Bullet>		g_bullets;
 
 
 void InitGlobals()

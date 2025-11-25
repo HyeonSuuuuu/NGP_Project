@@ -7,7 +7,6 @@
 
 DWORD WINAPI NetworkThread(void* args)
 {
-
 	char buf[65536];
 	SOCKET sock = NULL;
 	ConnectServer(sock);
@@ -21,8 +20,7 @@ DWORD WINAPI NetworkThread(void* args)
 	CGameTimer timer;
 	while (true) {
 		timer.Tick(30.f);
-		// InputPacket »ý¼º
-		// Send (CS_INPUT)
+		SendInputPacket(sock);
 		// Recv 
 	}
 }
@@ -65,4 +63,14 @@ void ProcessEnterPacket(char* buf)
 		DebugLog(L"%d", offset);
 	}
 	SetEvent(g_enterEvent);
+}
+
+void SendInputPacket(SOCKET sock)
+{
+	InputPacket inputPkt;
+	inputPkt.id = g_myId;
+	inputPkt.inputFlag = g_inputFlag.load();
+	inputPkt.yawAngle = g_yawAngle.load();
+	
+	send(sock, reinterpret_cast<char*>(&inputPkt), sizeof(InputPacket), 0);
 }

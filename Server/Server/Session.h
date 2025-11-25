@@ -8,3 +8,4 @@ struct Session {
 	uint16_t inputflag;
 	HANDLE recvEvent;
 };
+

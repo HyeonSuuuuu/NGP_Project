@@ -17,7 +17,7 @@ enum PacketType : uint16_t {
 #pragma pack(push, 1)
 struct InputPacket {
 	uint32_t id;
-	uint16_t inputFlag;
+	uint8_t inputFlag;
 	int16_t yawAngle;
 };
 struct EnterPacket {

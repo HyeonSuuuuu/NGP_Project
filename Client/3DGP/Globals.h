@@ -4,7 +4,8 @@
 
 
 extern int							g_myId;
-extern std::atomic<uint16_t>		g_inputFlag;
+extern std::atomic<uint8_t>			g_inputFlag;
+extern std::atomic<uint16_t>		g_yawAngle;
 extern std::vector<Obstacle>		g_obstacles;
 extern std::vector<PlayerInfo>		g_players;
 extern std::vector<Bullet>			g_bullets;

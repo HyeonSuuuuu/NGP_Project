@@ -5,7 +5,9 @@
 
 
 int									g_myId;
-std::atomic<uint16_t>				g_inputFlag;
+std::atomic<uint8_t>				g_inputFlag;
+std::atomic<uint16_t>				g_yawAngle;
+
 std::vector<Obstacle>				g_obstacles;
 std::vector<PlayerInfo>				g_players;
 std::vector<Bullet>					g_bullets;

@@ -11,6 +11,7 @@ DWORD WINAPI NetworkThread(void* args)
 	EnterPacket enterPacket;
 	enterPacket.id = session.sessionId;
 
+
 	while (true /* Session의 Connected로 변경 */ ) {
 	// Recv (INPUT_PACKET밖에 없음)
 	// recv_event Set

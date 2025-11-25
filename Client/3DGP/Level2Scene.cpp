@@ -111,8 +111,12 @@ void CLevel2Scene::ProcessInput()
 		if (pKeyBuffer['S'] & 0xF0) dwDirection |= DIR_BACKWARD;
 		if (pKeyBuffer['A'] & 0xF0) dwDirection |= DIR_LEFT;
 		if (pKeyBuffer['D'] & 0xF0) dwDirection |= DIR_RIGHT;
+		if (pKeyBuffer['1'] & 0xF0) dwDirection |= INP_ONE;
+		if (pKeyBuffer['2'] & 0xF0) dwDirection |= INP_TWO;
+		if (pKeyBuffer['3'] & 0xF0) dwDirection |= INP_THREE;
+		if (pKeyBuffer[VK_SPACE] & 0xF0) dwDirection |= INP_SPACEBAR;
 
-
+		g_inputFlag.store(dwDirection);
 		/*if (dwDirection)
 			m_spPlayer->Move(dwDirection, 0.15f);*/
 		
@@ -131,8 +135,14 @@ void CLevel2Scene::ProcessInput()
 		if (cxMouseDelta || cyMouseDelta)
 		{
 			if (pKeyBuffer[VK_LBUTTON] & 0xF0) {
-				m_spPlayer->Rotate(0.f, cxMouseDelta, 0.f);
+				//m_spPlayer->Rotate(0.f, cxMouseDelta, 0.f);
+				int currentYaw = g_yawAngle.load();
+				int newYaw = currentYaw + cxMouseDelta;
 
+				if (newYaw >= 360.f) newYaw -= 360.f;
+				else if (newYaw < 0.f) newYaw += 360.f;
+				g_yawAngle.store(newYaw);
+				DebugLog(L"%d\n", g_yawAngle.load());
 			}
 		}
 	}
