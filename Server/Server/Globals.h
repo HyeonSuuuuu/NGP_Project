@@ -13,6 +13,7 @@ extern HANDLE					g_sendevent;
 constexpr int MAX_PLAYER = 64;
 // Àü¿ªº¤ÅÍ =======================================
 extern std::vector<Obstacle> g_obstacles;
+extern std::vector<KillEventPacket> g_killEvents;
 
 
 
