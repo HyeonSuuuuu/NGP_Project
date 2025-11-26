@@ -5,7 +5,7 @@
 
 int main()
 {
-	// Áö¿ªº¯¼ö =====================================
+	// ì§€ì—­ë³€ìˆ˜ =====================================
 	std::vector<Bullet> bullets;
 	std::vector<Obstacle> obstacles;
 	std::array<HANDLE, MAX_PLAYER> recvEvents;
@@ -23,27 +23,54 @@ int main()
 	g_obstacles = obstacles;
 	SOCKET listen_sock = NULL;
 	InitGlobals();
-	InitNetwork(&listen_sock);
+	InitNetwork(listen_sock);
 	HANDLE hThread = CreateThread(NULL, 0, AcceptThread, (LPVOID)listen_sock, 0, NULL);
 	// GameLoop
 	while (g_isRunning.load()) {
 		g_timer.Tick(30.f);
 		
 		WaitAllRecvEvent(recvEvents);
-		// TODO: Send Event ÃÊ±âÈ­, KillEvent Vector ÃÊ±âÈ­
-		// TODO: ÃÑ¾Ë Update
-		// TODO: ¸ğµç Session Update
-		// TODO: Ãæµ¹Ã³¸®
-		// TODO: hp <= 0ÀÌ¶ó¸é KillEventPacket »ı¼º, vector¿¡ Push(Àü¿ªº¯¼ö)
-		// TODO: ½º³À¼¦ Update(Àü¿ªº¯¼ö)
-		// TODO: SendEvent Set(Àü¿ªº¯¼ö)
+		// TODO: Send Event ì´ˆê¸°í™”, KillEvent Vector ì´ˆê¸°í™”
+		ResetEvent(g_sendevent);
+		EnterCriticalSection(&g_csSessions);
+		g_killEvents.clear();
+		LeaveCriticalSection(&g_csSessions);
+		// TODO: ì´ì•Œ Update
+		{
+			float fElapsedTime = g_timer.GetTimeElapsed();
+			const float fWorldBound = (float)WORLD_SIZE / 2.0f;
+
+			for (auto it = bullets.begin(); it != bullets.end(); ) {
+				Bullet& bullet = *it;
+
+				float distance = bullet.speed * fElapsedTime;
+
+				float yawRad = bullet.yawAngle * (float)M_PI / 180.0f;
+
+				bullet.x += distance * sin(yawRad); // X-movement
+				bullet.z += distance * cos(yawRad); // Z-movement
+
+				if (bullet.x < -fWorldBound || bullet.x > fWorldBound ||
+					bullet.z < -fWorldBound || bullet.z > fWorldBound)
+				{
+					it = bullets.erase(it);
+				}
+				else {
+					++it;
+				}
+			}
+		}
+		// TODO: ëª¨ë“  Session Update
+		// TODO: ì¶©ëŒì²˜ë¦¬
+		// TODO: hp <= 0ì´ë¼ë©´ KillEventPacket ìƒì„±, vectorì— Push(ì „ì—­ë³€ìˆ˜)
+		// TODO: ìŠ¤ëƒ…ìƒ· Update(ì „ì—­ë³€ìˆ˜)
+		// TODO: SendEvent Set(ì „ì—­ë³€ìˆ˜)
 	}
-	// TODO: ¸ğµç ½º·¹µå Join
+	// TODO: ëª¨ë“  ìŠ¤ë ˆë“œ Join
 	ReleaseGlobals();
 	WSACleanup();
 }
 
-//SOCKET 
 
 void InitNetwork(SOCKET* listen_sock)
 {
@@ -53,8 +80,8 @@ void InitNetwork(SOCKET* listen_sock)
 	if (retval != 0)
 		err_display(retval);
 
-	*listen_sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (*listen_sock == INVALID_SOCKET)
+	listen_sock = socket(AF_INET, SOCK_STREAM, 0);
+	if (listen_sock == INVALID_SOCKET)
 		err_quit("listen socket()");
 
 	struct sockaddr_in serveraddr;
@@ -62,24 +89,25 @@ void InitNetwork(SOCKET* listen_sock)
 	serveraddr.sin_family = AF_INET;
 	serveraddr.sin_addr.s_addr = INADDR_ANY;
 	serveraddr.sin_port = htons(SERVER_PORT);
-	int retVal = bind(*listen_sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
+	int retVal = bind(listen_sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (retVal == SOCKET_ERROR)
 		err_quit("bind()");
 
-	retVal = listen(*listen_sock, SOMAXCONN);
+	retVal = listen(listen_sock, SOMAXCONN);
 	if (retVal == SOCKET_ERROR)
 		err_quit("listen()");
 }
 
 void WaitAllRecvEvent(std::array<HANDLE, MAX_PLAYER>& arr)
 {
-	// recvEvent ¹è¿­ »ı¼º
+	// recvEvent ë°°ì—´ ìƒì„±
 	EnterCriticalSection(&g_csSessions);
 	const int size = g_sessions.size();
 	for (int i = 0; i < size; ++i) { 
 		arr[i] = g_sessions[i]->recvEvent;
 	}
 	LeaveCriticalSection(&g_csSessions);
-	// ¸ğµÎ ±ú¾î³¯ ¶§±îÁö ´ë±â
-	WaitForMultipleObjects(size, arr.data(), true, INFINITE);
+	// ëª¨ë‘ ê¹¨ì–´ë‚  ë•Œê¹Œì§€ ëŒ€ê¸°
+	WaitForMultipleObjects(size, arr.data(), true, INFINITE); 
 }
+

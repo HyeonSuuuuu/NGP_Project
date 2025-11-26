@@ -30,10 +30,14 @@ struct Bullet
 };
 #pragma pack(pop)
 
-// »ó¼ö ===========================================
+// ìƒìˆ˜ ===========================================
 constexpr int SERVER_PORT = 9000;
 constexpr int WORLD_SIZE = 100;
-constexpr int MAX_PLAYERS = 64; // ÀÌº¥Æ® ÃÖ´ë°¡ 64
+// M_PIë¥¼ ìœ„í•œ ì •ì˜ ì¶”ê°€
+#ifndef M_PI
+#define M_PI 3.14159265358979323846f
+#endif
+constexpr int MAX_PLAYERS = 64; // ì´ë²¤íŠ¸ ìµœëŒ€ê°€ 64
 
 #define INP_FORWARD				0x01
 #define INP_BACKWARD			0x02
@@ -44,10 +48,10 @@ constexpr int MAX_PLAYERS = 64; // ÀÌº¥Æ® ÃÖ´ë°¡ 64
 #define INP_THREE				0x40
 #define INP_SPACEBAR			0x80
 
-// Log ÇÔ¼ö
+// Log í•¨ìˆ˜
 void DebugLog(const wchar_t* fmt, ...);
 
-// ¿¡·¯Ã³¸® ========================================
+// ì—ëŸ¬ì²˜ë¦¬ ========================================
 void err_quit(const char* msg);
 void err_display(const char* msg);
 void err_display(int errCode);
