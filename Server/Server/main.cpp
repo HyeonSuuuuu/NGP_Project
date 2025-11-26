@@ -81,3 +81,4 @@ void WaitAllRecvEvent(std::array<HANDLE, MAX_PLAYER>& arr)
 	// 모두 깨어날 때까지 대기
 	WaitForMultipleObjects(size, arr.data(), true, INFINITE); 
 }
+

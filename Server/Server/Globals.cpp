@@ -12,6 +12,7 @@ std::atomic<bool>		g_isRunning;
 HANDLE					g_sendevent;
 
 std::vector<Obstacle> g_obstacles;
+std::vector<KillEventPacket> g_killEvents;
 
 
 void InitGlobals()
