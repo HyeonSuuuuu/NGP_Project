@@ -31,7 +31,35 @@ int main()
 		
 		WaitAllRecvEvent(recvEvents);
 		// TODO: Send Event 초기화, KillEvent Vector 초기화
+		ResetEvent(g_sendevent);
+		EnterCriticalSection(&g_csSessions);
+		g_killEvents.clear();
+		LeaveCriticalSection(&g_csSessions);
 		// TODO: 총알 Update
+		{
+			float fElapsedTime = g_timer.GetTimeElapsed();
+			const float fWorldBound = (float)WORLD_SIZE / 2.0f;
+
+			for (auto it = bullets.begin(); it != bullets.end(); ) {
+				Bullet& bullet = *it;
+
+				float distance = bullet.speed * fElapsedTime;
+
+				float yawRad = bullet.yawAngle * (float)M_PI / 180.0f;
+
+				bullet.x += distance * sin(yawRad); // X-movement
+				bullet.z += distance * cos(yawRad); // Z-movement
+
+				if (bullet.x < -fWorldBound || bullet.x > fWorldBound ||
+					bullet.z < -fWorldBound || bullet.z > fWorldBound)
+				{
+					it = bullets.erase(it);
+				}
+				else {
+					++it;
+				}
+			}
+		}
 		// TODO: 모든 Session Update
 		// TODO: 충돌처리
 		// TODO: hp <= 0이라면 KillEventPacket 생성, vector에 Push(전역변수)

@@ -31,6 +31,10 @@ struct Bullet
 // 상수 ===========================================
 constexpr int SERVER_PORT = 9000;
 constexpr int WORLD_SIZE = 100;
+// M_PI를 위한 정의 추가
+#ifndef M_PI
+#define M_PI 3.14159265358979323846f
+#endif
 // 에러처리 ========================================
 void err_quit(const char* msg);
 void err_display(const char* msg);
