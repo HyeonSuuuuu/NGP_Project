@@ -10,7 +10,7 @@ extern CRITICAL_SECTION g_csSessions;
 extern SnapshotPacket g_snapshots;
 extern HANDLE g_sendevent;
 
-// ∆–≈∂ ºˆΩ≈ √≥∏Æ «‘ºˆ
+// Ìå®ÌÇ∑ ÏàòÏã† Ï≤òÎ¶¨ Ìï®Ïàò
 void ProcessPacket(Session& session, const PacketHeader* header)
 {
     if (header->type == CS_INPUT) {
@@ -22,7 +22,7 @@ void ProcessPacket(Session& session, const PacketHeader* header)
     }
 }
 
-// ≈¨∂Û¿Ãæ∆Æ ø¨∞· «ÿ¡¶ √≥∏Æ
+// ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏ Ïó∞Í≤∞ Ìï¥Ï†ú Ï≤òÎ¶¨
 void DisconnectSession(Session& session)
 {
 
@@ -31,12 +31,12 @@ void DisconnectSession(Session& session)
 
     session.isConnected.store(false);
 
-    printf("[ø¨∞· «ÿ¡¶] Player %u ø¨∞· ¡æ∑·\n", session.sessionId);
+    printf("[Ïó∞Í≤∞ Ìï¥Ï†ú] Player %u Ïó∞Í≤∞ Ï¢ÖÎ£å\n", session.sessionId);
 }
 
 int HandleRecv(Session& session, char* buffer, const int bufferSize)
 {
-    // ∆–≈∂ «Ï¥ıπﬁ±‚
+    // Ìå®ÌÇ∑ Ìó§ÎçîÎ∞õÍ∏∞
     int nRecv = recv(session.socket, buffer, sizeof(PacketHeader), MSG_PEEK);
 
     if (nRecv == 0) return 0;
@@ -49,11 +49,11 @@ int HandleRecv(Session& session, char* buffer, const int bufferSize)
     const PacketHeader* header = reinterpret_cast<const PacketHeader*>(buffer);
 
     if (header->size > bufferSize) {
-        printf("[ERROR] ∆–≈∂ ≈©±‚ √ ∞˙: %u\n", header->size);
+        printf("[ERROR] Ìå®ÌÇ∑ ÌÅ¨Í∏∞ Ï¥àÍ≥º: %u\n", header->size);
         return -1;
     }
 
-    // ∆–≈∂ ¿¸√º πﬁ±‚
+    // Ìå®ÌÇ∑ Ï†ÑÏ≤¥ Î∞õÍ∏∞
     nRecv = recv(session.socket, buffer, header->size, 0);
 
     if (nRecv == header->size) {
@@ -68,7 +68,7 @@ DWORD WINAPI NetworkThread(void* args)
 {
     Session& session = *reinterpret_cast<Session*>(args);
 
-    // Recv, Send πˆ∆€ ¡§¿«
+    // Recv, Send Î≤ÑÌçº Ï†ïÏùò
     constexpr int MAX_BUFFER_SIZE = 1024 * 4;
     char recvBuffer[MAX_BUFFER_SIZE]{};
     char sendBuffer[MAX_BUFFER_SIZE]{};
@@ -87,14 +87,14 @@ DWORD WINAPI NetworkThread(void* args)
             if (netEvents.lNetworkEvents & FD_READ) {
                 int result = HandleRecv(session, recvBuffer, MAX_BUFFER_SIZE);
                 if (result <= 0) {
-                    if (result == 0) printf("[Recv] ≈¨∂Û¿Ãæ∆Æ(%u) ø¨∞· ¡æ∑· ø‰√ª ∞®¡ˆ\n", session.sessionId);
-                    else printf("[Recv] ≈¨∂Û¿Ãæ∆Æ(%u) ºˆΩ≈ ø°∑Ø: %d\n", session.sessionId, netEvents.iErrorCode[FD_READ_BIT]);
+                    if (result == 0) printf("[Recv] ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏(%u) Ïó∞Í≤∞ Ï¢ÖÎ£å ÏöîÏ≤≠ Í∞êÏßÄ\n", session.sessionId);
+                    else printf("[Recv] ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏(%u) ÏàòÏã† ÏóêÎü¨: %d\n", session.sessionId, netEvents.iErrorCode[FD_READ_BIT]);
                     DisconnectSession(session);
                     continue;
                 }
             }
             if (netEvents.lNetworkEvents & FD_CLOSE) {
-                printf("[Close] ≈¨∂Û¿Ãæ∆Æ(%u) ø¨∞· ≤˜±Ë ∞®¡ˆ: %d\n", session.sessionId, netEvents.iErrorCode[FD_CLOSE_BIT]);
+                printf("[Close] ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏(%u) Ïó∞Í≤∞ ÎÅäÍπÄ Í∞êÏßÄ: %d\n", session.sessionId, netEvents.iErrorCode[FD_CLOSE_BIT]);
                 DisconnectSession(session);
                 continue;
             }
@@ -116,7 +116,7 @@ DWORD WINAPI NetworkThread(void* args)
 
                 if (send(session.socket, sendBuffer, killHeader.size, 0) == SOCKET_ERROR) {
                     LeaveCriticalSection(&g_csSessions);
-                    printf("[Send] ≈¨∂Û¿Ãæ∆Æ(%u) KillEvent ¿¸º€ Ω«∆–: %d\n", session.sessionId, WSAGetLastError());
+                    printf("[Send] ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏(%u) KillEvent Ï†ÑÏÜ° Ïã§Ìå®: %d\n", session.sessionId, WSAGetLastError());
                     DisconnectSession(session);
                     continue;
                 }
@@ -150,7 +150,7 @@ DWORD WINAPI NetworkThread(void* args)
             }
 
             if (send(session.socket, sendBuffer, header.size, 0) == SOCKET_ERROR) {
-                printf("[Send] ≈¨∂Û¿Ãæ∆Æ(%u) Ω∫≥¿º¶ ¿¸º€ Ω«∆–: %d\n", session.sessionId, WSAGetLastError());
+                printf("[Send] ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏(%u) Ïä§ÎÉÖÏÉ∑ Ï†ÑÏÜ° Ïã§Ìå®: %d\n", session.sessionId, WSAGetLastError());
                 DisconnectSession(session);
             }
             else {
@@ -159,6 +159,6 @@ DWORD WINAPI NetworkThread(void* args)
         }
     }
 
-    printf("[NetworkThread] Player %u ¡æ∑·\n", session.sessionId);
+    printf("[NetworkThread] Player %u Ï¢ÖÎ£å\n", session.sessionId);
     return 0;
 }

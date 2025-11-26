@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include "3DGP.h"
 #include "GameFramework.h"
+#include "NetworkThread.h"
+#include "Globals.h"
 
 #define MAX_LOADSTRING 100
 
@@ -45,6 +47,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_3DGP));
 
+	
+
 	// 기본 메시지 루프입니다.
 	while (1)
 	{
@@ -63,7 +67,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		}
 	}
 	gGameFramework.OnDestroy();
-
+	ReleaseGlobals();
 	return (int)msg.wParam;
 }
 
@@ -123,10 +127,15 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	HWND hMainWnd = CreateWindow(szWindowClass, szTitle, dwStyle, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, hInstance, NULL);
 	if (!hMainWnd) return(FALSE);
 
-	gGameFramework.OnCreate(hInstance, hMainWnd);
-
 	ShowWindow(hMainWnd, nCmdShow);
 	UpdateWindow(hMainWnd);
+
+	InitGlobals();
+
+	HANDLE network = CreateThread(NULL, NULL, NetworkThread, NULL, 0, NULL);
+	if (network) CloseHandle(network);
+
+	gGameFramework.OnCreate(hInstance, hMainWnd);
 
 	return TRUE;
 }

@@ -5,7 +5,7 @@
 
 int main()
 {
-	// Áö¿ªº¯¼ö =====================================
+	// ì§€ì—­ë³€ìˆ˜ =====================================
 	std::vector<Bullet> bullets;
 	std::vector<Obstacle> obstacles;
 	std::array<HANDLE, MAX_PLAYER> recvEvents;
@@ -30,12 +30,12 @@ int main()
 		g_timer.Tick(30.f);
 		
 		WaitAllRecvEvent(recvEvents);
-		// TODO: Send Event ÃÊ±âÈ­, KillEvent Vector ÃÊ±âÈ­
+		// TODO: Send Event ì´ˆê¸°í™”, KillEvent Vector ì´ˆê¸°í™”
 		ResetEvent(g_sendevent);
 		EnterCriticalSection(&g_csSessions);
 		g_killEvents.clear();
 		LeaveCriticalSection(&g_csSessions);
-		// TODO: ÃÑ¾Ë Update
+		// TODO: ì´ì•Œ Update
 		{
 			float fElapsedTime = g_timer.GetTimeElapsed();
 			const float fWorldBound = (float)WORLD_SIZE / 2.0f;
@@ -60,18 +60,19 @@ int main()
 				}
 			}
 		}
-		// TODO: ¸ğµç Session Update
-		// TODO: Ãæµ¹Ã³¸®
-		// TODO: hp <= 0ÀÌ¶ó¸é KillEventPacket »ı¼º, vector¿¡ Push(Àü¿ªº¯¼ö)
-		// TODO: ½º³À¼¦ Update(Àü¿ªº¯¼ö)
-		// TODO: SendEvent Set(Àü¿ªº¯¼ö)
+		// TODO: ëª¨ë“  Session Update
+		// TODO: ì¶©ëŒì²˜ë¦¬
+		// TODO: hp <= 0ì´ë¼ë©´ KillEventPacket ìƒì„±, vectorì— Push(ì „ì—­ë³€ìˆ˜)
+		// TODO: ìŠ¤ëƒ…ìƒ· Update(ì „ì—­ë³€ìˆ˜)
+		// TODO: SendEvent Set(ì „ì—­ë³€ìˆ˜)
 	}
-	// TODO: ¸ğµç ½º·¹µå Join
+	// TODO: ëª¨ë“  ìŠ¤ë ˆë“œ Join
 	ReleaseGlobals();
 	WSACleanup();
 }
 
-void InitNetwork(SOCKET listen_sock)
+
+void InitNetwork(SOCKET* listen_sock)
 {
 	int retval;
 	WSADATA wsa;
@@ -99,14 +100,14 @@ void InitNetwork(SOCKET listen_sock)
 
 void WaitAllRecvEvent(std::array<HANDLE, MAX_PLAYER>& arr)
 {
-	// recvEvent ¹è¿­ »ı¼º
+	// recvEvent ë°°ì—´ ìƒì„±
 	EnterCriticalSection(&g_csSessions);
 	const int size = g_sessions.size();
 	for (int i = 0; i < size; ++i) { 
 		arr[i] = g_sessions[i]->recvEvent;
 	}
 	LeaveCriticalSection(&g_csSessions);
-	// ¸ğµÎ ±ú¾î³¯ ¶§±îÁö ´ë±â
+	// ëª¨ë‘ ê¹¨ì–´ë‚  ë•Œê¹Œì§€ ëŒ€ê¸°
 	WaitForMultipleObjects(size, arr.data(), true, INFINITE); 
 }
 

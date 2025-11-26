@@ -2,6 +2,7 @@
 
 
 // PlayerInfo =====================================
+#pragma pack(push, 1)
 struct PlayerInfo {
 	uint32_t id;
 	float x, z;
@@ -27,15 +28,30 @@ struct Bullet
 	float speed;
 	int ownerId;
 };
+#pragma pack(pop)
 
-// »ó¼ö ===========================================
+// ìƒìˆ˜ ===========================================
 constexpr int SERVER_PORT = 9000;
 constexpr int WORLD_SIZE = 100;
-// M_PI¸¦ À§ÇÑ Á¤ÀÇ Ãß°¡
+// M_PIë¥¼ ìœ„í•œ ì •ì˜ ì¶”ê°€
 #ifndef M_PI
 #define M_PI 3.14159265358979323846f
 #endif
-// ¿¡·¯Ã³¸® ========================================
+constexpr int MAX_PLAYERS = 64; // ì´ë²¤íŠ¸ ìµœëŒ€ê°€ 64
+
+#define INP_FORWARD				0x01
+#define INP_BACKWARD			0x02
+#define INP_LEFT				0x04
+#define INP_RIGHT				0x08
+#define INP_ONE					0x10
+#define INP_TWO					0x20
+#define INP_THREE				0x40
+#define INP_SPACEBAR			0x80
+
+// Log í•¨ìˆ˜
+void DebugLog(const wchar_t* fmt, ...);
+
+// ì—ëŸ¬ì²˜ë¦¬ ========================================
 void err_quit(const char* msg);
 void err_display(const char* msg);
 void err_display(int errCode);

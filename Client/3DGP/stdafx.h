@@ -8,8 +8,14 @@
 #define WIN32_LEAN_AND_MEAN		// 거의 사용되지 않는 내용은 Windows 헤더에서 제외합니다.
 // Windows 헤더 파일:
 #include <windows.h>
+#include <WinSock2.h>
+#include <ws2tcpip.h>
 
-#include "Globals.h"
+#pragma comment(lib, "ws2_32.lib")
+
+
+
+
 
 // C의 런타임 헤더 파일입니다.
 #include <stdlib.h>
@@ -46,6 +52,7 @@ using namespace DirectX::PackedVector;
 #define DIR_RIGHT				0x08
 #define DIR_UP					0x10
 #define DIR_DOWN				0x20
+
 
 #define EXPLOSION_DEBRISES		240
 

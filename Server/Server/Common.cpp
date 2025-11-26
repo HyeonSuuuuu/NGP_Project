@@ -4,6 +4,19 @@
 
 
 
+// Log 함수
+void DebugLog(const wchar_t* fmt, ...)
+{
+	wchar_t buffer[512];
+
+	va_list args;
+	va_start(args, fmt);
+	vswprintf_s(buffer, fmt, args);
+	va_end(args);
+
+	OutputDebugString(buffer);
+}
+
 // 에러처리 ============================================
 void err_quit(const char* msg)
 {

@@ -73,32 +73,30 @@ DWORD WINAPI AcceptThread(void* args)
         {
             PacketHeader header{};
             header.type = SC_ENTER;
-            header.size = sizeof(PacketHeader)
-                + sizeof(uint32_t)
-                + sizeof(uint16_t)
-                + sizeof(Obstacle) * static_cast<uint16_t>(g_obstacles.size());
+            uint32_t offset = 0;
+
 
             EnterPacket enterPkt{};
             enterPkt.id = newSession->sessionId;
             enterPkt.obstacleCount = static_cast<uint16_t>(g_obstacles.size());
-            enterPkt.obstacles = g_obstacles.data();
-
             // 임시 버퍼에 패킷 조립
             char sendBuf[1024]{};
-            memcpy(sendBuf, &header, sizeof(header));
-            memcpy(sendBuf + sizeof(header), &enterPkt.id, sizeof(uint32_t));
-            memcpy(sendBuf + sizeof(header) + sizeof(uint32_t), &enterPkt.obstacleCount, sizeof(uint16_t));
-            memcpy(sendBuf + sizeof(header) + sizeof(uint32_t) + sizeof(uint16_t),
-                enterPkt.obstacles, sizeof(Obstacle) * g_obstacles.size());
 
+            offset += sizeof(PacketHeader);
+            memcpy(sendBuf + offset, &enterPkt, sizeof(EnterPacket));
+            offset += sizeof(EnterPacket);
+            memcpy(sendBuf + offset, g_obstacles.data(), enterPkt.obstacleCount * sizeof(Obstacle));
+            offset += enterPkt.obstacleCount * sizeof(Obstacle);
+            header.size = offset;
+            memcpy(sendBuf, &header, sizeof(PacketHeader));
             send(clientSock, sendBuf, header.size, 0);
-
             printf("[패킷 전송] SC_ENTER → Player %u (장애물 %zu개 동기화)\n",
                 newSession->sessionId, g_obstacles.size());
         }
-
+        EnterCriticalSection(&g_csSessions);
         printf("[성공] Player %u 접속 완료 → 현재 인원: %zu명\n",
             newSession->sessionId, g_sessions.size());
+        LeaveCriticalSection(&g_csSessions);
     }
 
     printf("[AcceptThread] 종료\n");

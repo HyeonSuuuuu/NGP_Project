@@ -17,19 +17,16 @@ enum PacketType : uint16_t {
 #pragma pack(push, 1)
 struct InputPacket {
 	uint32_t id;
-	uint16_t inputFlag;
+	uint8_t inputFlag;
 	int16_t yawAngle;
 };
 struct EnterPacket {
 	uint32_t id;
 	uint16_t obstacleCount;
-	struct Obstacle* obstacles;
 };
 struct SnapshotPacket {
 	uint16_t playerCount;
-	struct PlayerInfo* players;
 	uint16_t bulletCount;
-	struct Bullet* bullets;
 };
 
 struct KillEventPacket {
