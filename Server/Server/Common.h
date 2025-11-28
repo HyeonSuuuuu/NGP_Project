@@ -3,7 +3,7 @@
 
 // PlayerInfo =====================================
 #pragma pack(push, 1)
-struct PlayerInfo {
+struct PlayerInfo { 
 	uint32_t id;
 	float x, z;
 	float yawAngle;
@@ -49,7 +49,7 @@ constexpr int MAX_PLAYERS = 64; // 이벤트 최대가 64
 #define INP_SPACEBAR			0x80
 
 // Log 함수
-void DebugLog(const wchar_t* fmt, ...);
+void DebugLog(const char* fmt, ...);
 
 // 에러처리 ========================================
 void err_quit(const char* msg);

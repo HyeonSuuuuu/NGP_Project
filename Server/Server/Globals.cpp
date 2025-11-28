@@ -13,6 +13,7 @@ HANDLE					g_sendevent;
 std::vector<KillEventPacket> g_killEvents;
 std::vector<Obstacle>	g_obstacles;
 std::vector<Bullet>		g_bullets;
+std::vector<PlayerInfo> g_players;
 
 
 void InitGlobals()

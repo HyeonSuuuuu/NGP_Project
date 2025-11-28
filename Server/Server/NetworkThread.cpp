@@ -6,159 +6,123 @@
 #include <iostream>
 #include <vector>
 
-extern CRITICAL_SECTION g_csSessions;
-extern SnapshotPacket g_snapshots;
-extern HANDLE g_sendevent;
-
-// Ìå®ÌÇ∑ ÏàòÏã† Ï≤òÎ¶¨ Ìï®Ïàò
-void ProcessPacket(Session& session, const PacketHeader* header)
-{
-    if (header->type == CS_INPUT) {
-        const InputPacket* inputPkt = reinterpret_cast<const InputPacket*>(header + 1);
-
-        session.inputflag = inputPkt->inputFlag;
-        session.data.yawAngle = static_cast<float>(inputPkt->yawAngle);
-        SetEvent(session.recvEvent);
-    }
-}
-
-// ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏ Ïó∞Í≤∞ Ìï¥Ï†ú Ï≤òÎ¶¨
-void DisconnectSession(Session& session)
-{
-
-    WSAEventSelect(session.socket, NULL, 0);
-    closesocket(session.socket);
-
-    session.isConnected.store(false);
-
-    printf("[Ïó∞Í≤∞ Ìï¥Ï†ú] Player %u Ïó∞Í≤∞ Ï¢ÖÎ£å\n", session.sessionId);
-}
-
-int HandleRecv(Session& session, char* buffer, const int bufferSize)
-{
-    // Ìå®ÌÇ∑ Ìó§ÎçîÎ∞õÍ∏∞
-    int nRecv = recv(session.socket, buffer, sizeof(PacketHeader), MSG_PEEK);
-
-    if (nRecv == 0) return 0;
-    if (nRecv == SOCKET_ERROR) {
-        int error = WSAGetLastError();
-        if (error == WSAEWOULDBLOCK) return 1;
-        return -1;
-    }
-
-    const PacketHeader* header = reinterpret_cast<const PacketHeader*>(buffer);
-
-    if (header->size > bufferSize) {
-        printf("[ERROR] Ìå®ÌÇ∑ ÌÅ¨Í∏∞ Ï¥àÍ≥º: %u\n", header->size);
-        return -1;
-    }
-
-    // Ìå®ÌÇ∑ Ï†ÑÏ≤¥ Î∞õÍ∏∞
-    nRecv = recv(session.socket, buffer, header->size, 0);
-
-    if (nRecv == header->size) {
-        ProcessPacket(session, header);
-        return 1;
-    }
-
-    return -1;
-}
+int count;
 
 DWORD WINAPI NetworkThread(void* args)
 {
+    int retval;
     Session& session = *reinterpret_cast<Session*>(args);
+    
+    // buffer «œ≥™∑Œ recv/send
+    char buffer[65536];
 
-    // Recv, Send Î≤ÑÌçº Ï†ïÏùò
-    constexpr int MAX_BUFFER_SIZE = 1024 * 4;
-    char recvBuffer[MAX_BUFFER_SIZE]{};
-    char sendBuffer[MAX_BUFFER_SIZE]{};
+    SendEnterPacket(buffer, session);
 
-    HANDLE waitHandles[2] = { session.recvEvent, g_sendevent };
+    // ¿¸ø™ ººº« ∏ÆΩ∫∆Æø° √ﬂ∞° (Ω∫∑πµÂ ºº¿Ã«¡)
+    EnterCriticalSection(&g_csSessions);
+    g_sessions.push_back(&session);
+    std::cout << "«ˆ¿Á º≠πˆ ¿Œø¯: " << g_sessions.size() << "∏Ì" << std::endl;
+    LeaveCriticalSection(&g_csSessions);
 
+    PacketHeader header;
     while (session.isConnected.load()) {
-
-        DWORD waitResult = WaitForMultipleObjects(2, waitHandles, FALSE, INFINITE);
-
-        if (waitResult == WAIT_OBJECT_0) {
-
-            WSANETWORKEVENTS netEvents;
-            WSAEnumNetworkEvents(session.socket, session.recvEvent, &netEvents);
-
-            if (netEvents.lNetworkEvents & FD_READ) {
-                int result = HandleRecv(session, recvBuffer, MAX_BUFFER_SIZE);
-                if (result <= 0) {
-                    if (result == 0) printf("[Recv] ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏(%u) Ïó∞Í≤∞ Ï¢ÖÎ£å ÏöîÏ≤≠ Í∞êÏßÄ\n", session.sessionId);
-                    else printf("[Recv] ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏(%u) ÏàòÏã† ÏóêÎü¨: %d\n", session.sessionId, netEvents.iErrorCode[FD_READ_BIT]);
-                    DisconnectSession(session);
-                    continue;
-                }
-            }
-            if (netEvents.lNetworkEvents & FD_CLOSE) {
-                printf("[Close] ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏(%u) Ïó∞Í≤∞ ÎÅäÍπÄ Í∞êÏßÄ: %d\n", session.sessionId, netEvents.iErrorCode[FD_CLOSE_BIT]);
-                DisconnectSession(session);
-                continue;
-            }
-
+        count++;
+        retval = recv(session.socket, (char*)&header, sizeof(PacketHeader), MSG_WAITALL);
+        if (retval != sizeof(PacketHeader))
+            break;
+        if (header.type == CS_INPUT) {
+            InputPacket inputPkt;
+            if (sizeof(InputPacket) != header.size)
+                break;
+            retval = recv(session.socket, (char*)&inputPkt, header.size, MSG_WAITALL);
+            if (retval != header.size)
+                break;
+            session.inputflag = inputPkt.inputFlag;
+            session.data.yawAngle = static_cast<float>(inputPkt.yawAngle);
+            if (!(count % 30))
+                DebugLog("[∆–≈∂ Recv] CS_INPUT (Angle: %hd, inputFlag: %d\n", inputPkt.yawAngle, inputPkt.inputFlag);
         }
-        else if (waitResult == (WAIT_OBJECT_0 + 1)) {
-            EnterCriticalSection(&g_csSessions);
-            if (!g_killEvents.empty())
-            {
-                PacketHeader killHeader{};
-                killHeader.type = SC_KILL_EVENT;
-                killHeader.size = sizeof(PacketHeader) +
-                    sizeof(KillEventPacket) * static_cast<uint16_t>(g_killEvents.size());
 
-                memcpy(sendBuffer, &killHeader, sizeof(killHeader));
-                memcpy(sendBuffer + sizeof(PacketHeader),
-                    g_killEvents.data(),
-                    sizeof(KillEventPacket) * g_killEvents.size());
-
-                if (send(session.socket, sendBuffer, killHeader.size, 0) == SOCKET_ERROR) {
-                    LeaveCriticalSection(&g_csSessions);
-                    printf("[Send] ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏(%u) KillEvent Ï†ÑÏÜ° Ïã§Ìå®: %d\n", session.sessionId, WSAGetLastError());
-                    DisconnectSession(session);
-                    continue;
-                }
-            }
-            LeaveCriticalSection(&g_csSessions);
-
-            const SnapshotPacket& snapshot = g_snapshots;
-            PacketHeader header{};
-            header.type = SC_SNAPSHOT;
-            header.size = sizeof(PacketHeader)
-                + sizeof(uint16_t) // playerCount
-                + sizeof(PlayerInfo) * snapshot.playerCount // players
-                + sizeof(uint16_t) // bulletCount
-                + sizeof(Bullet) * snapshot.bulletCount; // bullets
-
-            char* ptr = sendBuffer;
-            memcpy(ptr, &header, sizeof(header));
-            ptr += sizeof(header);
-
-            memcpy(ptr, &snapshot.playerCount, sizeof(uint16_t));
-            ptr += sizeof(uint16_t);
-            if (snapshot.playerCount > 0) {
-                memcpy(ptr, snapshot.players, sizeof(PlayerInfo) * snapshot.playerCount);
-                ptr += sizeof(PlayerInfo) * snapshot.playerCount;
-            }
-
-            memcpy(ptr, &snapshot.bulletCount, sizeof(uint16_t));
-            ptr += sizeof(uint16_t);
-            if (snapshot.bulletCount > 0) {
-                memcpy(ptr, snapshot.bullets, sizeof(Bullet) * snapshot.bulletCount);
-            }
-
-            if (send(session.socket, sendBuffer, header.size, 0) == SOCKET_ERROR) {
-                printf("[Send] ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏(%u) Ïä§ÎÉÖÏÉ∑ Ï†ÑÏÜ° Ïã§Ìå®: %d\n", session.sessionId, WSAGetLastError());
-                DisconnectSession(session);
-            }
-            else {
-
-            }
-        }
+        // recv_event Set
+        SetEvent(session.recvEvent);
+        // send_event ±‚¥Ÿ∏≤
+       
+        // send
+        SendSnapshotPacket(buffer, session);
     }
 
-    printf("[NetworkThread] Player %u Ï¢ÖÎ£å\n", session.sessionId);
+    DisconnectSession(session);
     return 0;
+}
+
+
+void SendEnterPacket(char* buffer, Session& session)
+{
+    PacketHeader header{};
+    header.type = SC_ENTER;
+    uint32_t offset = 0;
+
+    EnterPacket enterPkt{};
+    enterPkt.id = session.sessionId;
+    enterPkt.obstacleCount = static_cast<uint16_t>(g_obstacles.size());
+
+    offset += sizeof(PacketHeader);
+    memcpy(buffer + offset, &enterPkt, sizeof(EnterPacket));
+    offset += sizeof(EnterPacket);
+    memcpy(buffer + offset, g_obstacles.data(), enterPkt.obstacleCount * sizeof(Obstacle));
+    offset += enterPkt.obstacleCount * sizeof(Obstacle);
+    header.size = offset - sizeof(PacketHeader);
+    memcpy(buffer, &header, sizeof(PacketHeader));
+    send(session.socket, buffer, offset, 0);
+    DebugLog("[∆–≈∂ ¿¸º€] SC_ENTER -> Player %u (¿Âæ÷π∞ %llu∞≥ µø±‚»≠)\n", session.sessionId, g_obstacles.size());
+}
+
+// RecvPacket
+void ProcessPacket(Session& session, const PacketHeader packet)
+{
+    
+}
+
+void SendSnapshotPacket(char* buffer, Session& session)
+{
+    PacketHeader header{};
+    header.type = SC_SNAPSHOT;
+    uint32_t offset = 0;
+
+    SnapshotPacket pkt{};
+    pkt.playerCount = g_players.size();
+    pkt.bulletCount = g_bullets.size();
+
+    offset += sizeof(PacketHeader);
+    memcpy(buffer + offset, &pkt, sizeof(SnapshotPacket));
+    offset += sizeof(SnapshotPacket);
+
+    memcpy(buffer + offset, g_players.data(), pkt.playerCount * sizeof(PlayerInfo));
+    offset += pkt.playerCount * sizeof(PlayerInfo);
+
+    memcpy(buffer + offset, g_bullets.data(), pkt.bulletCount * sizeof(Bullet));
+    offset += pkt.bulletCount * sizeof(Bullet);
+
+    header.size = offset - sizeof(PacketHeader);
+    memcpy(buffer, &header, sizeof(PacketHeader));
+    send(session.socket, buffer, offset, 0);
+    if (!(count % 30))
+        DebugLog("[∆–≈∂ ¿¸º€] SC_SNAPSHOT -> Player ()\n", session.sessionId);
+}
+
+
+// ≈¨∂Û¿Ãæ∆Æ ø¨∞· «ÿ¡¶ √≥∏Æ
+void DisconnectSession(Session& session)
+{
+    EnterCriticalSection(&g_csSessions);
+    auto it = std::find_if(g_sessions.begin(), g_sessions.end(), 
+        [&session](const Session* const s) { return s->socket == session.socket; });
+
+    if (it != g_sessions.end())
+        g_sessions.erase(it);
+    LeaveCriticalSection(&g_csSessions);
+
+    closesocket(session.socket);
+
+    printf("[ø¨∞· «ÿ¡¶] Player %u ø¨∞· ¡æ∑·\n", session.sessionId);
 }

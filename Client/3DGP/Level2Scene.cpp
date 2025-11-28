@@ -52,8 +52,14 @@ void CLevel2Scene::ReleaseObjects()
 void CLevel2Scene::Animate(float fElapsedTime)
 {
 	// Globals.h 이용해서 Update
-	
-	//m_spPlayer->Animate(fElapsedTime);
+	EnterCriticalSection(&g_csPlayers);
+	for (PlayerInfo& player : g_players) {
+		if (player.id == g_myId)
+			m_spPlayer->SetPosition(player.x, 0, player.z);
+	}
+	LeaveCriticalSection(&g_csPlayers);
+
+	m_spPlayer->Animate(fElapsedTime);
 	//
 	//for (auto& object : m_objects) {
 	//	object.Animate(fElapsedTime);
@@ -135,19 +141,18 @@ void CLevel2Scene::ProcessInput()
 		if (cxMouseDelta || cyMouseDelta)
 		{
 			if (pKeyBuffer[VK_LBUTTON] & 0xF0) {
-				//m_spPlayer->Rotate(0.f, cxMouseDelta, 0.f);
+				m_spPlayer->Rotate(0.f, cxMouseDelta, 0.f);
 				int currentYaw = g_yawAngle.load();
 				int newYaw = currentYaw + cxMouseDelta;
 
 				if (newYaw >= 360.f) newYaw -= 360.f;
 				else if (newYaw < 0.f) newYaw += 360.f;
 				g_yawAngle.store(newYaw);
-				DebugLog(L"%d\n", g_yawAngle.load());
 			}
 		}
 	}
 
-	//m_spPlayer->Update(m_gameContext.m_gameTimer.GetTimeElapsed());
+	m_spPlayer->Update(m_gameContext.m_gameTimer.GetTimeElapsed());
 }
 
 void CLevel2Scene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)

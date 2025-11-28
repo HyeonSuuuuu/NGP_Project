@@ -5,22 +5,21 @@
 
 int main()
 {
+	std::cout << "hello";
 	// 지역변수 =====================================
-	std::vector<Bullet> bullets;
-	std::vector<Obstacle> obstacles;
 	std::array<HANDLE, MAX_PLAYER> recvEvents;
 	// =============================================
-	obstacles.clear();
-	obstacles.reserve(10);
+
+	g_obstacles.reserve(10);
 	for (int i = 0; i < 10; ++i)
 	{
 		Obstacle obs{};
 		obs.size = 4.0f;
 		obs.x = RandF(-50.f, 50.f);
 		obs.z = RandF(10.f, 90.f);
-		obstacles.push_back(obs);
+		g_obstacles.push_back(obs);
 	}
-	g_obstacles = obstacles;
+
 	SOCKET listen_sock = NULL;
 	InitGlobals();
 	InitNetwork(listen_sock);
@@ -32,11 +31,10 @@ int main()
 		WaitAllRecvEvent(recvEvents);
 		// TODO: Send Event 초기화, KillEvent Vector 초기화
 		ResetEvent(g_sendevent);
-		EnterCriticalSection(&g_csSessions);
 		g_killEvents.clear();
-		LeaveCriticalSection(&g_csSessions);
+		g_players.clear();
 		// TODO: 총알 Update
-		{
+/*		{
 			float fElapsedTime = g_timer.GetTimeElapsed();
 			const float fWorldBound = (float)WORLD_SIZE / 2.0f;
 
@@ -59,11 +57,24 @@ int main()
 					++it;
 				}
 			}
-		}
+		}*/
 		// TODO: 모든 Session Update
+		EnterCriticalSection(&g_csSessions);
+		for (Session* sessions : g_sessions) {
+			if (sessions->inputflag & INP_FORWARD) sessions->data.x += 0.3;
+			if (sessions->inputflag & INP_BACKWARD) sessions->data.x -= 0.3;
+			if (sessions->inputflag & INP_LEFT) sessions->data.z += 0.3;
+			if (sessions->inputflag & INP_RIGHT) sessions->data.z -= 0.3;
+		}
+		LeaveCriticalSection(&g_csSessions);
 		// TODO: 충돌처리
 		// TODO: hp <= 0이라면 KillEventPacket 생성, vector에 Push(전역변수)
 		// TODO: 스냅샷 Update(전역변수)
+		EnterCriticalSection(&g_csSessions);
+		for (Session* sessions : g_sessions) {
+			g_players.push_back(sessions->data);
+		}
+		LeaveCriticalSection(&g_csSessions);
 		// TODO: SendEvent Set(전역변수)
 	}
 	// TODO: 모든 스레드 Join
@@ -72,7 +83,7 @@ int main()
 }
 
 
-void InitNetwork(SOCKET* listen_sock)
+void InitNetwork(SOCKET& listen_sock)
 {
 	int retval;
 	WSADATA wsa;

@@ -98,15 +98,15 @@ void CPlayer::LookAt(XMFLOAT3& xmf3LookAt, XMFLOAT3& xmf3Up)
 
 void CPlayer::Update(float fTimeElapsed)
 {
-	Move(m_xmf3Velocity, false);
+	//Move(m_xmf3Velocity, false);
 	m_spCamera->Update(this, m_xmf3Position, fTimeElapsed);
 	m_spCamera->GenerateViewMatrix();
 
-	XMFLOAT3 xmf3Deceleration = Vector3::Normalize(Vector3::ScalarProduct(m_xmf3Velocity, -1.0f));
+	/*XMFLOAT3 xmf3Deceleration = Vector3::Normalize(Vector3::ScalarProduct(m_xmf3Velocity, -1.0f));
 	float fLength = Vector3::Length(m_xmf3Velocity);
 	float fDeceleration = m_fFriction * fTimeElapsed;
 	if (fDeceleration > fLength) fDeceleration = fLength;
-	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, xmf3Deceleration, fDeceleration);
+	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, xmf3Deceleration, fDeceleration);*/
 }
 
 void CPlayer::Animate(float fElapsedTime)
@@ -350,10 +350,10 @@ void CLevel2Player::Animate(float fElapsedTime)
 {
 	CPlayer::Animate(fElapsedTime);
 
-	for (int i = 0; i < BULLETS; i++)
+/*	for (int i = 0; i < BULLETS; i++)
 	{
 		if (m_ppBullets[i]->m_bActive) m_ppBullets[i]->Animate(fElapsedTime);
-	}
+	}*/
 }
 
 void CLevel2Player::Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera)

@@ -5,6 +5,8 @@
 #include "../../Server/Server/Common.h"
 #include "../../Server/Server/Packet.h"
 
+int count;
+
 DWORD WINAPI NetworkThread(void* args)
 {
 	char buf[65536];
@@ -13,15 +15,21 @@ DWORD WINAPI NetworkThread(void* args)
 	PacketHeader header;
 	recv(sock, reinterpret_cast<char*>(&header), sizeof(PacketHeader), MSG_WAITALL);
 	if (header.type == SC_ENTER) {
-		recv(sock, buf, header.size - sizeof(PacketHeader), MSG_WAITALL);
+		recv(sock, buf, header.size, MSG_WAITALL);
 		ProcessEnterPacket(buf);
 	}
 
 	CGameTimer timer;
 	while (true) {
+		count++;
 		timer.Tick(30.f);
 		SendInputPacket(sock);
-		// Recv 
+
+		recv(sock, reinterpret_cast<char*>(&header), sizeof(PacketHeader), MSG_WAITALL);
+		if (header.type == SC_SNAPSHOT) {
+			recv(sock, buf, header.size, MSG_WAITALL);
+			ProcessSnapshotPacket(buf);
+		}
 	}
 }
 
@@ -60,17 +68,41 @@ void ProcessEnterPacket(char* buf)
 	for (int i = 0; i < obstaclesCount; ++i) {
 		g_obstacles[i] = *reinterpret_cast<Obstacle*>(buf + offset);
 		offset += sizeof(Obstacle);
-		DebugLog(L"%d", offset);
 	}
 	SetEvent(g_enterEvent);
 }
 
 void SendInputPacket(SOCKET sock)
 {
+	PacketHeader header;
+	header.type = CS_INPUT;
+	header.size = sizeof(InputPacket);
 	InputPacket inputPkt;
 	inputPkt.id = g_myId;
 	inputPkt.inputFlag = g_inputFlag.load();
 	inputPkt.yawAngle = g_yawAngle.load();
-	
+	send(sock, reinterpret_cast<char*>(&header), sizeof(PacketHeader), 0);
 	send(sock, reinterpret_cast<char*>(&inputPkt), sizeof(InputPacket), 0);
+}
+
+
+void ProcessSnapshotPacket(char* buf)
+{
+	SnapshotPacket* snapshotPacket = reinterpret_cast<SnapshotPacket*>(buf);
+	uint32_t offset = sizeof(SnapshotPacket);
+
+	if (g_players.size() != snapshotPacket->playerCount) {
+		g_players.resize(snapshotPacket->playerCount);
+	}
+		
+	EnterCriticalSection(&g_csPlayers);
+	for (int i = 0; i < snapshotPacket->playerCount; ++i) {
+		PlayerInfo* playerInfo = reinterpret_cast<PlayerInfo*>(buf + offset);
+		offset += sizeof(PlayerInfo);
+
+		g_players[i] = *playerInfo;
+		if (!(count % 30))
+			DebugLog("(%f, %f)\n", playerInfo->x, playerInfo->z);
+	}
+	LeaveCriticalSection(&g_csPlayers);
 }
