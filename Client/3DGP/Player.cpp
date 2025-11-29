@@ -18,6 +18,24 @@ void CPlayer::SetPosition(float x, float y, float z)
 	CGameObject::SetPosition(x, y, z);
 }
 
+void CPlayer::SetRotation(float x, float y, float z)
+{
+	// TODO: 회전처리
+
+	Rotate(x, y, z);
+}
+
+void CPlayer::SetYawRotation(float yawAngle)
+{
+	float yawRad = XMConvertToRadians(yawAngle);
+	m_xmf3Look.x = sinf(yawRad);
+	m_xmf3Look.y = 0.0f; // Yaw 회전만 있으므로 수직 성분은 0입니다.
+	m_xmf3Look.z = cosf(yawRad);
+
+	m_xmf3Look = Vector3::Normalize(m_xmf3Look);
+	m_xmf3Right = Vector3::Normalize(Vector3::CrossProduct(m_xmf3Up, m_xmf3Look));
+}
+
 void CPlayer::SetCameraOffset(XMFLOAT3& xmf3CameraOffset)
 {
 	m_xmf3CameraOffset = xmf3CameraOffset;

@@ -2,7 +2,6 @@
 #include "main.h"
 #include "Session.h"
 
-
 int main()
 {
 	std::cout << "hello";
@@ -60,11 +59,48 @@ int main()
 		}*/
 		// TODO: 모든 Session Update
 		EnterCriticalSection(&g_csSessions);
-		for (Session* sessions : g_sessions) {
-			if (sessions->inputflag & INP_FORWARD) sessions->data.x += 0.3;
-			if (sessions->inputflag & INP_BACKWARD) sessions->data.x -= 0.3;
-			if (sessions->inputflag & INP_LEFT) sessions->data.z += 0.3;
-			if (sessions->inputflag & INP_RIGHT) sessions->data.z -= 0.3;
+		const float moveStep = 0.2f;
+		for (Session* session : g_sessions) {
+			float yawRad = XMConvertToRadians(session->data.yawAngle);
+
+			float forwardX = sinf(yawRad);
+			float forwardZ = cosf(yawRad);
+
+			float rightX = cosf(yawRad);
+			float rightZ = -sinf(yawRad);
+
+			bool forwardFlag = false;
+			bool rightFlag = false;
+
+			float dx = 0, dz = 0;
+
+			if (session->inputflag & INP_FORWARD) {
+				forwardFlag = true;
+				dx += moveStep * forwardX;
+				dz += moveStep * forwardZ;
+			}
+			if (session->inputflag & INP_BACKWARD) {
+				forwardFlag = true;
+				dx -= moveStep * forwardX;
+				dz -= moveStep * forwardZ;
+			}
+			if (session->inputflag & INP_LEFT) {
+				rightFlag = true;
+				dx -= moveStep * rightX;
+				dz -= moveStep * rightZ;
+			}
+			if (session->inputflag & INP_RIGHT) {
+				rightFlag = true;
+				dx += moveStep * rightX;
+				dz += moveStep * rightZ;
+			}
+			if (forwardFlag && rightFlag) {
+				dx *= DIAG;
+				dz *=  DIAG;
+			}
+			
+			session->data.x += dx;
+			session->data.z += dz;
 		}
 		LeaveCriticalSection(&g_csSessions);
 		// TODO: 충돌처리

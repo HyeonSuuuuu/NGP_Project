@@ -16,5 +16,6 @@ extern CRITICAL_SECTION					g_csBullets;
 extern CRITICAL_SECTION					g_csKillEvents;
 extern HANDLE							g_enterEvent;
 
+extern int								g_enemyCount;
 void InitGlobals();
 void ReleaseGlobals();

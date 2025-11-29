@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene.h"
-
+#include "../../Server/Server/Common.h"
+#include "GameObject.h"
 
 class CGameObject;
 class CLevel2Player;
@@ -37,12 +38,13 @@ public:
 
 
 private:
-	std::shared_ptr<CLevel2Player>		m_spPlayer = nullptr;
-	POINT								m_ptOldCursorPos;
-	std::vector<CGameObject>			m_objects;
-	std::vector<CEnemyObject>			m_enemyObjects;
-	std::vector<CBarrierObject>			m_barrierObjects;
-	CEnemyObject*						m_pLockedObject = nullptr;
-	bool								m_bAutoAttack = false;
-	bool								m_bShield = false;
+	std::shared_ptr<CLevel2Player>						m_spPlayer = nullptr;
+	POINT												m_ptOldCursorPos;
+	std::vector<CGameObject>							m_objects;
+	std::array<CEnemyObject, MAX_PLAYERS-1>				m_enemyObjects;
+	std::vector<CBarrierObject>							m_barrierObjects;
+	CEnemyObject*										m_pLockedObject = nullptr;
+	bool												m_bAutoAttack = false;
+	bool												m_bShield = false;
+
 };

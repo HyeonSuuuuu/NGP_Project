@@ -33,10 +33,9 @@ struct Bullet
 // 상수 ===========================================
 constexpr int SERVER_PORT = 9000;
 constexpr int WORLD_SIZE = 100;
-// M_PI를 위한 정의 추가
-#ifndef M_PI
-#define M_PI 3.14159265358979323846f
-#endif
+
+
+
 constexpr int MAX_PLAYERS = 64; // 이벤트 최대가 64
 
 #define INP_FORWARD				0x01

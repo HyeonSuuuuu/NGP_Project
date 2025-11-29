@@ -18,6 +18,9 @@ CRITICAL_SECTION					g_csBullets;
 CRITICAL_SECTION					g_csKillEvents;
 HANDLE								g_enterEvent;
 
+// 메인로직에서만 접근
+int									g_enemyCount;
+
 void InitGlobals()
 {
 	InitializeCriticalSection(&g_csPlayers);

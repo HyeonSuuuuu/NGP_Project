@@ -37,11 +37,9 @@ void CLevel2Scene::BuildObjects()
 	}
 
 	CTankMesh* pTankMesh = new CTankMesh(6.f, 3.f, 6.f);
-	m_enemyObjects.resize(10);
-	for (int i = 0; i < 10; ++i) {
+	for (int i = 0; i < 63; ++i) {
 		m_enemyObjects[i].SetMesh(pTankMesh);
 		m_enemyObjects[i].SetColor(RGB(255, 0, 0));
-		m_enemyObjects[i].SetPosition(RandF(-50.f, 50.f), 0.f, RandF(10.f, 100.f));
 	}
 }
 
@@ -53,9 +51,14 @@ void CLevel2Scene::Animate(float fElapsedTime)
 {
 	// Globals.h 이용해서 Update
 	EnterCriticalSection(&g_csPlayers);
-	for (PlayerInfo& player : g_players) {
-		if (player.id == g_myId)
-			m_spPlayer->SetPosition(player.x, 0, player.z);
+	g_enemyCount = g_players.size()-1;
+	for (int i = 0; i < g_enemyCount+1; ++i) {
+		if (g_players[i].id == g_myId)
+			m_spPlayer->SetPosition(g_players[i].x, 0, g_players[i].z);
+		else {
+			m_enemyObjects[i].SetPosition(g_players[i].x, 0, g_players[i].z);
+			m_enemyObjects[i].SetYawRotation(g_players[i].yawAngle);
+		}
 	}
 	LeaveCriticalSection(&g_csPlayers);
 
@@ -101,8 +104,8 @@ void CLevel2Scene::Render(HDC hDCFrameBuffer)
 	for (auto& object : m_barrierObjects) {
 		object.Render(hDCFrameBuffer, spCamera);
 	}
-	for (auto& object : m_enemyObjects) {
-		object.Render(hDCFrameBuffer, spCamera);
+	for (int i = 0; i < g_enemyCount; ++i) {
+		m_enemyObjects[i].Render(hDCFrameBuffer, spCamera);
 	}
 	m_spPlayer->Render(hDCFrameBuffer, spCamera);
 }
@@ -141,13 +144,13 @@ void CLevel2Scene::ProcessInput()
 		if (cxMouseDelta || cyMouseDelta)
 		{
 			if (pKeyBuffer[VK_LBUTTON] & 0xF0) {
-				m_spPlayer->Rotate(0.f, cxMouseDelta, 0.f);
-				int currentYaw = g_yawAngle.load();
-				int newYaw = currentYaw + cxMouseDelta;
+
+				int newYaw = g_yawAngle.load() + cxMouseDelta;
 
 				if (newYaw >= 360.f) newYaw -= 360.f;
 				else if (newYaw < 0.f) newYaw += 360.f;
 				g_yawAngle.store(newYaw);
+				m_spPlayer->SetYawRotation(newYaw);
 			}
 		}
 	}

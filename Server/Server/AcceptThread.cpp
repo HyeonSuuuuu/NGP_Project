@@ -29,6 +29,14 @@ DWORD WINAPI AcceptThread(void* args)
             continue;
         }
 
+        EnterCriticalSection(&g_csSessions);
+        if (g_sessions.size() >= MAX_PLAYERS) {
+            std::cout << "클라이언트 접속 거부: 인원 초과" << std::endl;
+            closesocket(clientSock);
+            continue;
+        }
+        LeaveCriticalSection(&g_csSessions);
+
         // 클라이언트 IP 출력
         char ip[INET_ADDRSTRLEN]{};
         inet_ntop(AF_INET, &clientAddr.sin_addr, ip, INET_ADDRSTRLEN);
