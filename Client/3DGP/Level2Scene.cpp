@@ -52,12 +52,15 @@ void CLevel2Scene::Animate(float fElapsedTime)
 	// Globals.h 이용해서 Update
 	EnterCriticalSection(&g_csPlayers);
 	g_enemyCount = g_players.size()-1;
+
+	int j = 0;
 	for (int i = 0; i < g_enemyCount+1; ++i) {
 		if (g_players[i].id == g_myId)
 			m_spPlayer->SetPosition(g_players[i].x, 0, g_players[i].z);
 		else {
-			m_enemyObjects[i].SetPosition(g_players[i].x, 0, g_players[i].z);
-			m_enemyObjects[i].SetYawRotation(g_players[i].yawAngle);
+			m_enemyObjects[j].SetPosition(g_players[i].x, 0, g_players[i].z);
+			m_enemyObjects[j].SetYawRotation(g_players[i].yawAngle);
+			j++;
 		}
 	}
 	LeaveCriticalSection(&g_csPlayers);
