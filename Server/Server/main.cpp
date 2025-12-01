@@ -10,7 +10,7 @@ int main()
 	// =============================================
 
 	g_obstacles.reserve(10);
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < 1; ++i)
 	{
 		Obstacle obs{};
 		obs.size = 4.0f;
@@ -98,12 +98,33 @@ int main()
 				dx *= DIAG;
 				dz *=  DIAG;
 			}
-			
+			session->prevX = session->data.x;
+			session->prevZ = session->data.z;
+
 			session->data.x += dx;
 			session->data.z += dz;
 		}
 		LeaveCriticalSection(&g_csSessions);
 		// TODO: 충돌처리
+
+		// 장애물 충돌 처리
+		EnterCriticalSection(&g_csSessions);
+		for (Session* session : g_sessions) {
+			for (const Obstacle& obs : g_obstacles) {
+				RECT r1 {session->data.x - 2, session->data.z - 2,
+						 session->data.x + 2, session->data.z + 2 };
+				RECT r2{ obs.x - obs.size / 2, obs.z - obs.size / 2,
+					obs.x + obs.size / 2, obs.z + obs.size / 2 };
+				
+				RECT result;
+
+				if (IntersectRect(&result, &r1, &r2)) {
+					session->data.x = session->prevX;
+					session->data.z = session->prevZ;
+				}
+			}
+		}
+		LeaveCriticalSection(&g_csSessions);
 		// TODO: hp <= 0이라면 KillEventPacket 생성, vector에 Push(전역변수)
 		// TODO: 스냅샷 Update(전역변수)
 		EnterCriticalSection(&g_csSessions);
