@@ -52,7 +52,7 @@ DWORD WINAPI AcceptThread(void* args)
         // 플레이어 초기 위치 (맵 범위 맞춰서)
         newSession->data.id = newSession->sessionId;
         newSession->data.x = RandF(-45.0f, 45.0f);
-        newSession->data.z = RandF(-5.0f, 85.0f);
+        newSession->data.z = RandF(15.0f, 85.0f);
         newSession->data.yawAngle = 0;
         newSession->data.hp = 100;
         newSession->data.gold = 0;
