@@ -59,7 +59,7 @@ int main()
 		}*/
 		// TODO: 모든 Session Update
 		EnterCriticalSection(&g_csSessions);
-		const float moveStep = 0.2f;
+		const float moveStep = 0.2f * 30;
 		for (Session* session : g_sessions) {
 			float yawRad = XMConvertToRadians(session->data.yawAngle);
 
@@ -122,6 +122,17 @@ int main()
 					session->data.x = session->prevX;
 					session->data.z = session->prevZ;
 				}
+			}
+		}
+
+		// 범위 처리 (월드 밖)
+		// width 100 depth 100 x 0 z 40 (-50, 50), (-10, 90)
+		for (Session* session : g_sessions) {
+			if (session->data.x < -50.f || session->data.x > 50.f ||
+				session->data.z < -10.f || session->data.z > 90.f)
+			{
+				session->data.x = session->prevX;
+				session->data.z = session->prevZ;
 			}
 		}
 		LeaveCriticalSection(&g_csSessions);
