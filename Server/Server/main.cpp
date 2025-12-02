@@ -286,6 +286,6 @@ void WaitAllRecvEvent(std::array<HANDLE, MAX_PLAYER>& arr)
 	}
 	LeaveCriticalSection(&g_csSessions);
 	// 모두 깨어날 때까지 대기
-	WaitForMultipleObjects(size, arr.data(), true, INFINITE); 
+	WaitForMultipleObjects(size, arr.data(), TRUE, INFINITE); 
 }
 

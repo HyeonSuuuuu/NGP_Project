@@ -39,7 +39,13 @@ DWORD WINAPI NetworkThread(void* args)
 				DebugLog("Player %d killed Player %d\n", killEvent->killerId, killEvent->killedId);
 			}
 			LeaveCriticalSection(&g_csKillEvents);
-			ProcessSnapshotPacket(buf);
+			
+			// 다시 Snapshot 처리 ( 안하면 패킷이 하나씩 밀림)
+			recv(sock, reinterpret_cast<char*>(&header), sizeof(PacketHeader), MSG_WAITALL);
+			if (header.type == SC_SNAPSHOT) {
+				recv(sock, buf, header.size, MSG_WAITALL);
+				ProcessSnapshotPacket(buf);
+			}
 		}
 	}
 }

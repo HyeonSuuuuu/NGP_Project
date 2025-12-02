@@ -48,18 +48,20 @@ DWORD WINAPI NetworkThread(void* args)
         // send_event 기다림
 		WaitForSingleObject(g_sendevent, INFINITE);
         // event Send
-        if (g_killEvents.empty() == false) {
+        if (!g_killEvents.empty()) {
             int offset = 0;
             PacketHeader header{};
             header.type = SC_KILL_EVENT;
-            memcpy(buffer, &header, sizeof(PacketHeader));
+            
             offset += sizeof(PacketHeader);
             for (KillEventPacket& packet : g_killEvents) {
                 memcpy(buffer + offset, &packet, sizeof(KillEventPacket));
                 offset += sizeof(KillEventPacket);
             }
             header.size = offset - sizeof(PacketHeader);
+            memcpy(buffer, &header, sizeof(PacketHeader));
             send(session.socket, buffer, offset, 0);
+            DebugLog("[패킷 전송] SC_KILLEVENT\n");
         }
         SendSnapshotPacket(buffer, session);
     }
