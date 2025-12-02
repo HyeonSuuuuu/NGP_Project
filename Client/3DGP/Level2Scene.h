@@ -42,6 +42,8 @@ private:
 	POINT												m_ptOldCursorPos;
 	std::vector<CGameObject>							m_objects;
 	std::array<CEnemyObject, MAX_PLAYERS-1>				m_enemyObjects;
+	std::array<CBulletObject, 300>						m_bullets;
+	int													m_nBullets = 0;
 	std::vector<CBarrierObject>							m_barrierObjects;
 	CEnemyObject*										m_pLockedObject = nullptr;
 	bool												m_bAutoAttack = false;

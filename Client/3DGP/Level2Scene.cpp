@@ -41,6 +41,16 @@ void CLevel2Scene::BuildObjects()
 		m_enemyObjects[i].SetMesh(pTankMesh);
 		m_enemyObjects[i].SetColor(RGB(255, 0, 0));
 	}
+
+	CCubeMesh* pBulletMesh = new CCubeMesh(1.0f, 1.0f, 1.0f);
+	for (int i = 0; i < 300; ++i) {
+		m_bullets[i].SetMesh(pBulletMesh);
+		m_bullets[i].SetColor(RGB(255, 0, 0));
+		m_bullets[i].SetRotationAxis(XMFLOAT3(0.f, 0.f, 1.f));
+		m_bullets[i].SetRotationSpeed(360.0f);
+		m_bullets[i].SetActive(true);
+	}
+	
 }
 
 void CLevel2Scene::ReleaseObjects()
@@ -55,8 +65,11 @@ void CLevel2Scene::Animate(float fElapsedTime)
 
 	int j = 0;
 	for (int i = 0; i < g_enemyCount+1; ++i) {
-		if (g_players[i].id == g_myId)
+		if (g_players[i].id == g_myId) {
 			m_spPlayer->SetPosition(g_players[i].x, 0, g_players[i].z);
+			m_spPlayer->hp = g_players[i].hp;
+			m_spPlayer->gold = g_players[i].gold;
+		}
 		else {
 			m_enemyObjects[j].SetPosition(g_players[i].x, 0, g_players[i].z);
 			m_enemyObjects[j].SetYawRotation(g_players[i].yawAngle);
@@ -65,7 +78,20 @@ void CLevel2Scene::Animate(float fElapsedTime)
 	}
 	LeaveCriticalSection(&g_csPlayers);
 
+	EnterCriticalSection(&g_csBullets);
+/*	if (m_nBullets > g_bullets.size()) {
+		for (int i = g_bullets.size(); i < m_nBullets; ++i)
+			m_bullets[i].SetActive(false);
+	}*/
+	m_nBullets = g_bullets.size();
+
+	for (int i = 0; i < m_nBullets; ++i) {
+		m_bullets[i].SetPosition(g_bullets[i].x, 0.f, g_bullets[i].z);
+	}
+	LeaveCriticalSection(&g_csBullets);
+
 	m_spPlayer->Animate(fElapsedTime);
+
 	//
 	//for (auto& object : m_objects) {
 	//	object.Animate(fElapsedTime);
@@ -110,7 +136,12 @@ void CLevel2Scene::Render(HDC hDCFrameBuffer)
 	for (int i = 0; i < g_enemyCount; ++i) {
 		m_enemyObjects[i].Render(hDCFrameBuffer, spCamera);
 	}
+	for (int i = 0; i < m_nBullets; ++i) {
+		m_bullets[i].Render(hDCFrameBuffer, spCamera);
+	}
 	m_spPlayer->Render(hDCFrameBuffer, spCamera);
+
+	TextOutEx(hDCFrameBuffer, 0, 0, "HP: %d", m_spPlayer->hp);
 }
 
 void CLevel2Scene::ProcessInput()
@@ -220,8 +251,8 @@ void CLevel2Scene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARA
 		case VK_RETURN:
 			break;
 		case VK_SPACE:
-			m_spPlayer->FireBullet(m_pLockedObject);
-			m_pLockedObject = NULL;
+			/*m_spPlayer->FireBullet(m_pLockedObject);
+			m_pLockedObject = NULL;*/
 			break;
 		default:
 			break;

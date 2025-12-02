@@ -156,6 +156,7 @@ public:
 class CBulletObject : public CGameObject
 {
 public:
+	CBulletObject() = default;
 	CBulletObject(float fEffectiveRange);
 	virtual ~CBulletObject();
 

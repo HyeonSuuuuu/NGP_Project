@@ -28,15 +28,14 @@ DWORD WINAPI NetworkThread(void* args)
 		recv(sock, reinterpret_cast<char*>(&header), sizeof(PacketHeader), MSG_WAITALL);
 		if (header.type == SC_SNAPSHOT) {
 			recv(sock, buf, header.size, MSG_WAITALL);
-
 			SnapshotPacket* snapshotPacket = reinterpret_cast<SnapshotPacket*>(buf);
 			uint32_t offset = sizeof(SnapshotPacket);
 
+			EnterCriticalSection(&g_csPlayers);
 			if (g_players.size() != snapshotPacket->playerCount) {
 				g_players.resize(snapshotPacket->playerCount);
 			}
 
-			EnterCriticalSection(&g_csPlayers);
 			for (int i = 0; i < snapshotPacket->playerCount; ++i) {
 				PlayerInfo* playerInfo = reinterpret_cast<PlayerInfo*>(buf + offset);
 				offset += sizeof(PlayerInfo);
@@ -47,7 +46,19 @@ DWORD WINAPI NetworkThread(void* args)
 			}
 			LeaveCriticalSection(&g_csPlayers);
 
+			EnterCriticalSection(&g_csBullets);
+			if (g_bullets.size() != snapshotPacket->bulletCount) {
+				g_bullets.resize(snapshotPacket->bulletCount);
+			}
+			for (int i = 0; i < snapshotPacket->bulletCount; ++i) {
+				Bullet* bullet = reinterpret_cast<Bullet*>(buf + offset);
+				offset += sizeof(Bullet);
+				g_bullets[i] = *bullet;
+				DebugLog("%d: Fire!!(%f, %f)", i, bullet->x, bullet->z);
+			}
+			LeaveCriticalSection(&g_csBullets);
 			ProcessSnapshotPacket(buf);
+
 		}
 	}
 }
@@ -107,5 +118,6 @@ void SendInputPacket(SOCKET sock)
 
 void ProcessSnapshotPacket(char* buf)
 {
+
 	
 }

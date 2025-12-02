@@ -35,3 +35,15 @@ void ReleaseGlobals()
 	DeleteCriticalSection(&g_csKillEvents);
 	CloseHandle(g_enterEvent);
 }
+
+void TextOutEx(HDC hDC, int x, int y, const char* fmt, ...)
+{
+	char buffer[512];
+
+	va_list args;
+	va_start(args, fmt);
+	vsprintf_s(buffer, fmt, args);
+	va_end(args);
+
+	TextOutA(hDC, x, y, buffer, lstrlenA(buffer));
+}

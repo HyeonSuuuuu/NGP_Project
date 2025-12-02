@@ -10,5 +10,6 @@ struct Session {
 
 	float prevX = 0.f;
 	float prevZ = 0.f;
+	size_t delay = 0;
 };
 

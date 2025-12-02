@@ -7,6 +7,7 @@ int main()
 	std::cout << "hello";
 	// 지역변수 =====================================
 	std::array<HANDLE, MAX_PLAYER> recvEvents;
+	size_t tickCount = 0;
 	// =============================================
 
 	g_obstacles.reserve(10);
@@ -32,35 +33,12 @@ int main()
 		ResetEvent(g_sendevent);
 		g_killEvents.clear();
 		g_players.clear();
-		// TODO: 총알 Update
-/*		{
-			float fElapsedTime = g_timer.GetTimeElapsed();
-			const float fWorldBound = (float)WORLD_SIZE / 2.0f;
 
-			for (auto it = bullets.begin(); it != bullets.end(); ) {
-				Bullet& bullet = *it;
-
-				float distance = bullet.speed * fElapsedTime;
-
-				float yawRad = bullet.yawAngle * (float)M_PI / 180.0f;
-
-				bullet.x += distance * sin(yawRad); // X-movement
-				bullet.z += distance * cos(yawRad); // Z-movement
-
-				if (bullet.x < -fWorldBound || bullet.x > fWorldBound ||
-					bullet.z < -fWorldBound || bullet.z > fWorldBound)
-				{
-					it = bullets.erase(it);
-				}
-				else {
-					++it;
-				}
-			}
-		}*/
 		// TODO: 모든 Session Update
 		EnterCriticalSection(&g_csSessions);
 		const float moveStep = 0.2f * 30;
 		for (Session* session : g_sessions) {
+			// 이동, 회전 처리
 			float yawRad = XMConvertToRadians(session->data.yawAngle);
 
 			float forwardX = sinf(yawRad);
@@ -103,13 +81,53 @@ int main()
 
 			session->data.x += dx;
 			session->data.z += dz;
+
+			// 총알 처리
+			if (session->inputflag & INP_SPACEBAR) {
+				if (tickCount - session->delay > 60) {
+					g_bullets.emplace_back(Bullet{ session->data.x, session->data.z,
+					session->data.yawAngle, 1.0f * 5, (int)session->data.id });
+					session->delay = tickCount;
+				}
+			}
 		}
 		LeaveCriticalSection(&g_csSessions);
-		// TODO: 충돌처리
+		
+		// 총알 Update
+		for (Bullet& bullet : g_bullets) {
+			float yawRad = XMConvertToRadians(bullet.yawAngle);
+			bullet.x += bullet.speed * sinf(yawRad); // X-movement
+			bullet.z += bullet.speed * cosf(yawRad); // Z-movement
+		}
 
-		// 장애물 충돌 처리
+		// 범위 처리 (월드 밖)
+		// width 100 depth 100 x 0 z 40 (-50, 50), (-10, 90)
 		EnterCriticalSection(&g_csSessions);
 		for (Session* session : g_sessions) {
+			if (session->data.x < -50.f || session->data.x > 50.f ||
+				session->data.z < -10.f || session->data.z > 90.f)
+			{
+				session->data.x = session->prevX;
+				session->data.z = session->prevZ;
+			}
+		}
+		LeaveCriticalSection(&g_csSessions);
+		for (auto it = g_bullets.begin(); it != g_bullets.end(); ) {
+			Bullet& bullet = *it;
+			if (bullet.x < -50.f || bullet.x > 50.f ||
+				bullet.z < -10.f || bullet.z > 90.f)
+			{
+				it = g_bullets.erase(it);
+			}
+			else {
+				++it;
+			}
+		}
+
+		// 충돌 처리
+		EnterCriticalSection(&g_csSessions);
+		for (Session* session : g_sessions) {
+			// 플레이어 - 장애물
 			for (const Obstacle& obs : g_obstacles) {
 				RECT r1 {session->data.x - 2, session->data.z - 2,
 						 session->data.x + 2, session->data.z + 2 };
@@ -123,20 +141,45 @@ int main()
 					session->data.z = session->prevZ;
 				}
 			}
-		}
-
-		// 범위 처리 (월드 밖)
-		// width 100 depth 100 x 0 z 40 (-50, 50), (-10, 90)
-		for (Session* session : g_sessions) {
-			if (session->data.x < -50.f || session->data.x > 50.f ||
-				session->data.z < -10.f || session->data.z > 90.f)
-			{
-				session->data.x = session->prevX;
-				session->data.z = session->prevZ;
+			// 플레이어 - 총알
+			for (auto it = g_bullets.begin(); it != g_bullets.end();) {
+				Bullet& bullet = *it;
+				RECT r1{ session->data.x - 2, session->data.z - 2,
+						 session->data.x + 2, session->data.z + 2 };
+				RECT r2{ bullet.x - 0.5f, bullet.z - 0.5f,
+						 bullet.x + 0.5f, bullet.z + 0.5f };
+				RECT result;
+				if (IntersectRect(&result, &r1, &r2)) {
+					session->data.hp -= 10;
+					if (session->data.hp <= 0) {
+						session->data.isDead = true;
+					}
+					g_bullets.erase(it);
+				}
+				else {
+					it++;
+				}
 			}
 		}
 		LeaveCriticalSection(&g_csSessions);
-		// TODO: hp <= 0이라면 KillEventPacket 생성, vector에 Push(전역변수)
+
+		for (const Obstacle& obs : g_obstacles) {
+			for (auto it = g_bullets.begin(); it != g_bullets.end(); ) {
+				Bullet& bullet = *it;
+				RECT r1{ bullet.x - 0.5f, bullet.z - 0.5f,
+						 bullet.x + 0.5f, bullet.z + 0.5f };
+				RECT r2{ obs.x - obs.size / 2, obs.z - obs.size / 2,
+						 obs.x + obs.size / 2, obs.z + obs.size / 2 };
+				RECT result;
+				if (IntersectRect(&result, &r1, &r2)) {
+					it = g_bullets.erase(it);
+				}
+				else {
+					++it;
+				}
+			}
+		}
+
 		// TODO: 스냅샷 Update(전역변수)
 		EnterCriticalSection(&g_csSessions);
 		for (Session* sessions : g_sessions) {
@@ -144,6 +187,8 @@ int main()
 		}
 		LeaveCriticalSection(&g_csSessions);
 		// TODO: SendEvent Set(전역변수)
+
+		tickCount++;
 	}
 	// TODO: 모든 스레드 Join
 	ReleaseGlobals();

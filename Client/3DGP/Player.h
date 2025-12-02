@@ -111,4 +111,8 @@ public:
 	virtual void OnUpdateTransform();
 	virtual void Animate(float fElapsedTime);
 	virtual void Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera);
+
+
+	int hp = 0;
+	int gold = 0;
 };

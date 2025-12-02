@@ -19,3 +19,5 @@ extern HANDLE							g_enterEvent;
 extern int								g_enemyCount;
 void InitGlobals();
 void ReleaseGlobals();
+
+void TextOutEx(HDC hDC, int x, int y, const char* fmt, ...);
