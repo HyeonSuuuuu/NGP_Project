@@ -53,6 +53,7 @@ DWORD WINAPI AcceptThread(void* args)
         newSession->data.id = newSession->sessionId;
         newSession->data.x = RandF(-45.0f, 45.0f);
         newSession->data.z = RandF(-5.0f, 85.0f);
+        newSession->data.atk = 100;
         newSession->data.yawAngle = 0;
         newSession->data.hp = 100;
         newSession->data.gold = 0;

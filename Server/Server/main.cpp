@@ -38,6 +38,17 @@ int main()
 		EnterCriticalSection(&g_csSessions);
 		const float moveStep = 0.2f * 30;
 		for (Session* session : g_sessions) {
+			if (session->data.isDead) {
+				// 리스폰 처리 30 = 1초,180 = 6초
+				if (tickCount - session->delay > 30) {
+					session->data.isDead = false;
+					session->data.hp = 100;
+					session->data.x = RandF(-50.f, 50.f);
+					session->data.z = RandF(-10.f, 90.f);
+				}
+				continue;
+			}
+
 			// 이동, 회전 처리
 			float yawRad = XMConvertToRadians(session->data.yawAngle);
 
@@ -112,6 +123,7 @@ int main()
 			}
 		}
 		LeaveCriticalSection(&g_csSessions);
+
 		for (auto it = g_bullets.begin(); it != g_bullets.end(); ) {
 			Bullet& bullet = *it;
 			if (bullet.x < -50.f || bullet.x > 50.f ||
@@ -127,10 +139,12 @@ int main()
 		// 충돌 처리
 		EnterCriticalSection(&g_csSessions);
 		for (Session* session : g_sessions) {
+			if (session->data.isDead)
+				continue;
 			// 플레이어 - 장애물
 			for (const Obstacle& obs : g_obstacles) {
-				RECT r1 {session->data.x - 2, session->data.z - 2,
-						 session->data.x + 2, session->data.z + 2 };
+				RECT r1 {session->data.x - 3, session->data.z - 3,
+						 session->data.x + 3, session->data.z + 3 };
 				RECT r2{ obs.x - obs.size / 2, obs.z - obs.size / 2,
 					obs.x + obs.size / 2, obs.z + obs.size / 2 };
 				
@@ -144,17 +158,33 @@ int main()
 			// 플레이어 - 총알
 			for (auto it = g_bullets.begin(); it != g_bullets.end();) {
 				Bullet& bullet = *it;
-				RECT r1{ session->data.x - 2, session->data.z - 2,
-						 session->data.x + 2, session->data.z + 2 };
+				RECT r1{ session->data.x - 3, session->data.z - 3,
+						 session->data.x + 3, session->data.z + 3 };
 				RECT r2{ bullet.x - 0.5f, bullet.z - 0.5f,
 						 bullet.x + 0.5f, bullet.z + 0.5f };
 				RECT result;
 				if (IntersectRect(&result, &r1, &r2)) {
-					session->data.hp -= 10;
+					// 맞춘 플레이어 찾기
+					PlayerInfo* atker = nullptr;
+					for (Session* s : g_sessions) {
+						if (s->sessionId == bullet.ownerId) {
+							atker = &s->data;
+							break;
+						}
+					}
+					
+					// 데미지 처리
+					session->data.hp -= atker->atk;
+					// 사망처리
 					if (session->data.hp <= 0) {
 						session->data.isDead = true;
+						session->data.deathCount += 1;
+						session->delay = tickCount;
+						atker->killCount += 1;
+						atker->gold += 100;
+						// KillEvent 추가
 					}
-					g_bullets.erase(it);
+					it = g_bullets.erase(it);
 				}
 				else {
 					it++;

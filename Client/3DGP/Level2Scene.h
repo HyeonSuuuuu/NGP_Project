@@ -36,7 +36,6 @@ public:
 	void SetPlayer(std::shared_ptr<CLevel2Player> player) { m_spPlayer = player; }
 	CEnemyObject* PickObjectPointedByCursor(int xClient, int yClient, std::shared_ptr<CCamera> spCamera);
 
-
 private:
 	std::shared_ptr<CLevel2Player>						m_spPlayer = nullptr;
 	POINT												m_ptOldCursorPos;
@@ -48,5 +47,4 @@ private:
 	CEnemyObject*										m_pLockedObject = nullptr;
 	bool												m_bAutoAttack = false;
 	bool												m_bShield = false;
-
 };

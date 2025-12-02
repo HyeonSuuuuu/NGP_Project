@@ -7,7 +7,8 @@ struct PlayerInfo {
 	uint32_t id;
 	float x, z;
 	float yawAngle;
-	uint16_t hp;
+	int16_t hp;
+	uint16_t atk;
 	int32_t gold;
 	bool isDead;
 	uint16_t killCount;

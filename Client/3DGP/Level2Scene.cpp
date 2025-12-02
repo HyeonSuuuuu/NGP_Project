@@ -66,6 +66,9 @@ void CLevel2Scene::Animate(float fElapsedTime)
 	int j = 0;
 	for (int i = 0; i < g_enemyCount+1; ++i) {
 		if (g_players[i].id == g_myId) {
+			m_spPlayer->isDead = g_players[i].isDead;
+			if (m_spPlayer->isDead)
+				continue;
 			m_spPlayer->SetPosition(g_players[i].x, 0, g_players[i].z);
 			m_spPlayer->hp = g_players[i].hp;
 			m_spPlayer->gold = g_players[i].gold;
@@ -73,6 +76,7 @@ void CLevel2Scene::Animate(float fElapsedTime)
 		else {
 			m_enemyObjects[j].SetPosition(g_players[i].x, 0, g_players[i].z);
 			m_enemyObjects[j].SetYawRotation(g_players[i].yawAngle);
+			m_enemyObjects[j].m_isDead = g_players[i].isDead;
 			j++;
 		}
 	}
@@ -134,12 +138,16 @@ void CLevel2Scene::Render(HDC hDCFrameBuffer)
 		object.Render(hDCFrameBuffer, spCamera);
 	}
 	for (int i = 0; i < g_enemyCount; ++i) {
+		if (m_enemyObjects[i].m_isDead)
+			continue;
 		m_enemyObjects[i].Render(hDCFrameBuffer, spCamera);
 	}
 	for (int i = 0; i < m_nBullets; ++i) {
 		m_bullets[i].Render(hDCFrameBuffer, spCamera);
 	}
-	m_spPlayer->Render(hDCFrameBuffer, spCamera);
+
+	if (!m_spPlayer->isDead)
+		m_spPlayer->Render(hDCFrameBuffer, spCamera);
 
 	TextOutEx(hDCFrameBuffer, 0, 0, "HP: %d", m_spPlayer->hp);
 }
@@ -288,7 +296,7 @@ void CLevel2Scene::Exit()
 
 void CLevel2Scene::CheckObjectByBulletCollisions()
 {
-	CBulletObject** ppBullets = m_spPlayer->m_ppBullets;
+	/*CBulletObject** ppBullets = m_spPlayer->m_ppBullets;
 	for (auto& object : m_enemyObjects) {
 		for (int i = 0; i < BULLETS; ++i) {
 			if (ppBullets[i]->m_bActive && object.m_xmOOBB.Intersects(ppBullets[i]->m_xmOOBB))
@@ -307,7 +315,7 @@ void CLevel2Scene::CheckObjectByBulletCollisions()
 				ppBullets[i]->Reset();
 			}
 		}
-	}
+	}*/
 
 }
 void CLevel2Scene::CheckPlayerByWallCollision()

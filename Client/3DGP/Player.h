@@ -115,4 +115,5 @@ public:
 
 	int hp = 0;
 	int gold = 0;
+	bool isDead = false;
 };
