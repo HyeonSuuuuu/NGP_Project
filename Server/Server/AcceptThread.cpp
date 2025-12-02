@@ -55,8 +55,11 @@ DWORD WINAPI AcceptThread(void* args)
         newSession->data.z = RandF(-5.0f, 85.0f);
         newSession->data.atk = 100;
         newSession->data.yawAngle = 0;
-        newSession->data.hp = 100;
+        newSession->data.maxHp = 100;
+        newSession->data.hp = newSession->data.maxHp;
         newSession->data.gold = 0;
+        newSession->data.killCount = 0;
+        newSession->data.deathCount = 0;
         newSession->data.isDead = false;
 
         // NetworkThread 생성 (각 클라이언트마다 하나씩)

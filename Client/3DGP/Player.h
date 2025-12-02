@@ -113,7 +113,12 @@ public:
 	virtual void Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera);
 
 
+	int maxHp = 0;
 	int hp = 0;
+	int atk = 0;
 	int gold = 0;
+
 	bool isDead = false;
+	uint16_t killCount = 0;
+	uint16_t deathCount = 0;
 };

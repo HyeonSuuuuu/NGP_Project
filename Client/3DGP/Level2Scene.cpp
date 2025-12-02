@@ -72,6 +72,10 @@ void CLevel2Scene::Animate(float fElapsedTime)
 			m_spPlayer->SetPosition(g_players[i].x, 0, g_players[i].z);
 			m_spPlayer->hp = g_players[i].hp;
 			m_spPlayer->gold = g_players[i].gold;
+			m_spPlayer->maxHp = g_players[i].maxHp;
+			m_spPlayer->atk = g_players[i].atk;
+			m_spPlayer->killCount = g_players[i].killCount;
+			m_spPlayer->deathCount = g_players[i].deathCount;
 		}
 		else {
 			m_enemyObjects[j].SetPosition(g_players[i].x, 0, g_players[i].z);
@@ -149,7 +153,15 @@ void CLevel2Scene::Render(HDC hDCFrameBuffer)
 	if (!m_spPlayer->isDead)
 		m_spPlayer->Render(hDCFrameBuffer, spCamera);
 
-	TextOutEx(hDCFrameBuffer, 0, 0, "HP: %d", m_spPlayer->hp);
+	// 좌상단 (현재 HP, K/DA, gold)
+	TextOutEx(hDCFrameBuffer, 0, 0, "HP: %d  K/DA (%d / %d)  gold: %d", m_spPlayer->hp,
+		m_spPlayer->killCount, m_spPlayer->deathCount, m_spPlayer->gold);
+	// 좌하단 (MaxHP, atk)
+	TextOutEx(hDCFrameBuffer, 0, m_gameContext.m_rcClient.bottom - 20,
+		"MaxHP: %d  atk: %d", m_spPlayer->maxHp, m_spPlayer->atk);
+	// 우하단 상점
+	TextOutEx(hDCFrameBuffer, m_gameContext.m_rcClient.right-310, m_gameContext.m_rcClient.bottom - 20,
+		"1: 최대체력 증가 2: 공격력 증가 3: 체력회복");
 }
 
 void CLevel2Scene::ProcessInput()

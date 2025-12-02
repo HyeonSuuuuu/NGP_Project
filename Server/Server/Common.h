@@ -7,6 +7,7 @@ struct PlayerInfo {
 	uint32_t id;
 	float x, z;
 	float yawAngle;
+	int16_t maxHp;
 	int16_t hp;
 	uint16_t atk;
 	int32_t gold;

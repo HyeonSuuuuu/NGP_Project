@@ -42,11 +42,32 @@ int main()
 				// 리스폰 처리 30 = 1초,180 = 6초
 				if (tickCount - session->delay > 30) {
 					session->data.isDead = false;
-					session->data.hp = 100;
+					session->data.hp = session->data.maxHp;
 					session->data.x = RandF(-50.f, 50.f);
 					session->data.z = RandF(-10.f, 90.f);
 				}
 				continue;
+			}
+			
+			// 상점 1: 공격력 증가, 2: 최대체력 증가, 3: 체력회복
+			if (session->inputflag & INP_ONE) {
+				if (session->data.gold >= 200) {
+					session->data.atk += 10;
+					session->data.gold -= 200;
+				}
+			}
+			if (session->inputflag & INP_TWO) {
+				if (session->data.gold >= 300) {
+					session->data.maxHp += 20;
+					session->data.hp += 20;
+					session->data.gold -= 300;
+				}
+			}
+			if (session->inputflag & INP_THREE) {
+				if (session->data.gold >= 100) {
+					session->data.hp += session->data.maxHp;
+					session->data.gold -= 100;
+				}
 			}
 
 			// 이동, 회전 처리
