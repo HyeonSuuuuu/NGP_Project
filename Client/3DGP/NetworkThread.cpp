@@ -35,7 +35,8 @@ DWORD WINAPI NetworkThread(void* args)
 			EnterCriticalSection(&g_csKillEvents);
 			for (int i = 0; i < killeventCount; ++i) {
 				KillEventPacket* killEvent = reinterpret_cast<KillEventPacket*>(buf + i * sizeof(KillEventPacket));
-				g_killEvents.push_back(*killEvent);
+				KillEvent event = { killEvent->killerId, killEvent->killedId, 300 };
+				g_killEvents.emplace_back(event);
 				DebugLog("Player %d killed Player %d\n", killEvent->killerId, killEvent->killedId);
 			}
 			LeaveCriticalSection(&g_csKillEvents);

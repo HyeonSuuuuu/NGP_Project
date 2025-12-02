@@ -162,6 +162,20 @@ void CLevel2Scene::Render(HDC hDCFrameBuffer)
 	// 우하단 상점
 	TextOutEx(hDCFrameBuffer, m_gameContext.m_rcClient.right-310, m_gameContext.m_rcClient.bottom - 20,
 		"1: 공격력 증가 2: 최대체력 증가 3: 체력회복");
+	// 좌중단 킬이벤트
+	int offset = 0;
+	EnterCriticalSection(&g_csKillEvents);
+	int j = 0;
+	for (auto it = g_killEvents.begin(); it != g_killEvents.end();) {
+		it->displayTime -= 1;
+		if (it->displayTime <= 0)
+			it = g_killEvents.erase(it);
+		else {
+			TextOutEx(hDCFrameBuffer, m_gameContext.m_rcClient.right / 2, 0 + j++ * 20, "킬: %d -> %d", it->killerId, it->killedId);
+			++it;
+		}
+	}
+	LeaveCriticalSection(&g_csKillEvents);
 }	
 
 void CLevel2Scene::ProcessInput()

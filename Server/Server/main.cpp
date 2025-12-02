@@ -11,7 +11,7 @@ int main()
 	// =============================================
 
 	g_obstacles.reserve(10);
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
 		Obstacle obs{};
 		obs.size = 4.0f;
@@ -26,9 +26,7 @@ int main()
 	HANDLE hThread = CreateThread(NULL, 0, AcceptThread, (LPVOID)listen_sock, 0, NULL);
 	// GameLoop
 	while (g_isRunning.load()) {
-		g_timer.Tick(60.f);
-		if (!(tickCount % 60))
-			std::cout << g_timer.GetFrameRate();
+		g_timer.Tick(30.f);
 		WaitAllRecvEvent(recvEvents);
 		// TODO: Send Event 초기화, KillEvent Vector 초기화
 		ResetEvent(g_sendevent);

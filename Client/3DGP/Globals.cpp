@@ -11,7 +11,7 @@ std::atomic<uint16_t>				g_yawAngle;
 std::vector<Obstacle>				g_obstacles;
 std::vector<PlayerInfo>				g_players;
 std::vector<Bullet>					g_bullets;
-std::vector<KillEventPacket>		g_killEvents;
+std::vector<KillEvent>				g_killEvents;
 
 CRITICAL_SECTION					g_csPlayers;
 CRITICAL_SECTION					g_csBullets;
