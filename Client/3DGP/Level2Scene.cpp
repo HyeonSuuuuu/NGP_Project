@@ -161,8 +161,8 @@ void CLevel2Scene::Render(HDC hDCFrameBuffer)
 		"MaxHP: %d  atk: %d", m_spPlayer->maxHp, m_spPlayer->atk);
 	// 우하단 상점
 	TextOutEx(hDCFrameBuffer, m_gameContext.m_rcClient.right-310, m_gameContext.m_rcClient.bottom - 20,
-		"1: 최대체력 증가 2: 공격력 증가 3: 체력회복");
-}
+		"1: 공격력 증가 2: 최대체력 증가 3: 체력회복");
+}	
 
 void CLevel2Scene::ProcessInput()
 {
@@ -183,8 +183,6 @@ void CLevel2Scene::ProcessInput()
 		/*if (dwDirection)
 			m_spPlayer->Move(dwDirection, 0.15f);*/
 		
-		// dwDirection 전역변수 InputFlag에 Set
-		// event Set
 	}
 
 	if (GetCapture() == m_gameContext.m_hWnd)

@@ -24,41 +24,22 @@ DWORD WINAPI NetworkThread(void* args)
 		count++;
 		timer.Tick(30.f);
 		SendInputPacket(sock);
-
 		recv(sock, reinterpret_cast<char*>(&header), sizeof(PacketHeader), MSG_WAITALL);
 		if (header.type == SC_SNAPSHOT) {
 			recv(sock, buf, header.size, MSG_WAITALL);
-			SnapshotPacket* snapshotPacket = reinterpret_cast<SnapshotPacket*>(buf);
-			uint32_t offset = sizeof(SnapshotPacket);
-
-			EnterCriticalSection(&g_csPlayers);
-			if (g_players.size() != snapshotPacket->playerCount) {
-				g_players.resize(snapshotPacket->playerCount);
-			}
-
-			for (int i = 0; i < snapshotPacket->playerCount; ++i) {
-				PlayerInfo* playerInfo = reinterpret_cast<PlayerInfo*>(buf + offset);
-				offset += sizeof(PlayerInfo);
-
-				g_players[i] = *playerInfo;
-				if (!(count % 30))
-					DebugLog("(%f, %f)\n", playerInfo->x, playerInfo->z);
-			}
-			LeaveCriticalSection(&g_csPlayers);
-
-			EnterCriticalSection(&g_csBullets);
-			if (g_bullets.size() != snapshotPacket->bulletCount) {
-				g_bullets.resize(snapshotPacket->bulletCount);
-			}
-			for (int i = 0; i < snapshotPacket->bulletCount; ++i) {
-				Bullet* bullet = reinterpret_cast<Bullet*>(buf + offset);
-				offset += sizeof(Bullet);
-				g_bullets[i] = *bullet;
-				DebugLog("%d: Fire!!(%f, %f)", i, bullet->x, bullet->z);
-			}
-			LeaveCriticalSection(&g_csBullets);
 			ProcessSnapshotPacket(buf);
-
+		}
+		if (header.type == SC_KILL_EVENT) {
+			recv(sock, buf, header.size, MSG_WAITALL);
+			int killeventCount = header.size / sizeof(KillEventPacket);
+			EnterCriticalSection(&g_csKillEvents);
+			for (int i = 0; i < killeventCount; ++i) {
+				KillEventPacket* killEvent = reinterpret_cast<KillEventPacket*>(buf + i * sizeof(KillEventPacket));
+				g_killEvents.push_back(*killEvent);
+				DebugLog("Player %d killed Player %d\n", killEvent->killerId, killEvent->killedId);
+			}
+			LeaveCriticalSection(&g_csKillEvents);
+			ProcessSnapshotPacket(buf);
 		}
 	}
 }
@@ -118,6 +99,32 @@ void SendInputPacket(SOCKET sock)
 
 void ProcessSnapshotPacket(char* buf)
 {
+	SnapshotPacket* snapshotPacket = reinterpret_cast<SnapshotPacket*>(buf);
+	uint32_t offset = sizeof(SnapshotPacket);
 
-	
+	EnterCriticalSection(&g_csPlayers);
+	if (g_players.size() != snapshotPacket->playerCount) {
+		g_players.resize(snapshotPacket->playerCount);
+	}
+
+	for (int i = 0; i < snapshotPacket->playerCount; ++i) {
+		PlayerInfo* playerInfo = reinterpret_cast<PlayerInfo*>(buf + offset);
+		offset += sizeof(PlayerInfo);
+
+		g_players[i] = *playerInfo;
+		if (!(count % 30))
+			DebugLog("(%f, %f)\n", playerInfo->x, playerInfo->z);
+	}
+	LeaveCriticalSection(&g_csPlayers);
+
+	EnterCriticalSection(&g_csBullets);
+	if (g_bullets.size() != snapshotPacket->bulletCount) {
+		g_bullets.resize(snapshotPacket->bulletCount);
+	}
+	for (int i = 0; i < snapshotPacket->bulletCount; ++i) {
+		Bullet* bullet = reinterpret_cast<Bullet*>(buf + offset);
+		offset += sizeof(Bullet);
+		g_bullets[i] = *bullet;
+	}
+	LeaveCriticalSection(&g_csBullets);
 }

@@ -20,10 +20,12 @@ void InitGlobals()
 {
 	g_isRunning.store(true);
 	InitializeCriticalSection(&g_csSessions);
+	g_sendevent = CreateEvent(NULL, TRUE, FALSE, NULL);
 }
 
 void ReleaseGlobals()
 {
 	DeleteCriticalSection(&g_csSessions);
+	CloseHandle(g_sendevent);
 }
 

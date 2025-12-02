@@ -46,8 +46,21 @@ DWORD WINAPI NetworkThread(void* args)
         // recv_event Set
         SetEvent(session.recvEvent);
         // send_event 기다림
-       
-        // send
+		WaitForSingleObject(g_sendevent, INFINITE);
+        // event Send
+        if (g_killEvents.empty() == false) {
+            int offset = 0;
+            PacketHeader header{};
+            header.type = SC_KILL_EVENT;
+            memcpy(buffer, &header, sizeof(PacketHeader));
+            offset += sizeof(PacketHeader);
+            for (KillEventPacket& packet : g_killEvents) {
+                memcpy(buffer + offset, &packet, sizeof(KillEventPacket));
+                offset += sizeof(KillEventPacket);
+            }
+            header.size = offset - sizeof(PacketHeader);
+            send(session.socket, buffer, offset, 0);
+        }
         SendSnapshotPacket(buffer, session);
     }
 
@@ -80,7 +93,6 @@ void SendEnterPacket(char* buffer, Session& session)
 // RecvPacket
 void ProcessPacket(Session& session, const PacketHeader packet)
 {
-    
 }
 
 void SendSnapshotPacket(char* buffer, Session& session)
@@ -122,7 +134,9 @@ void DisconnectSession(Session& session)
         g_sessions.erase(it);
     LeaveCriticalSection(&g_csSessions);
 
+    SetEvent(session.recvEvent); // 데드락 방지
     closesocket(session.socket);
-
+    CloseHandle(session.recvEvent);
+    delete &session;
     printf("[연결 해제] Player %u 연결 종료\n", session.sessionId);
 }

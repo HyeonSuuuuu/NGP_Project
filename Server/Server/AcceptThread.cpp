@@ -48,6 +48,7 @@ DWORD WINAPI AcceptThread(void* args)
         newSession->sessionId = idCount++;
         newSession->isConnected.store(true);
         newSession->inputflag = 0;
+		newSession->recvEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 
         // 플레이어 초기 위치 (맵 범위 맞춰서)
         newSession->data.id = newSession->sessionId;
@@ -68,6 +69,7 @@ DWORD WINAPI AcceptThread(void* args)
         {
             std::cout << "[ERROR] NetworkThread 생성 실패" << std::endl;
             closesocket(clientSock);
+            CloseHandle(newSession->recvEvent);
             delete newSession;
             continue;
         }

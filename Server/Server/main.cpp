@@ -26,8 +26,9 @@ int main()
 	HANDLE hThread = CreateThread(NULL, 0, AcceptThread, (LPVOID)listen_sock, 0, NULL);
 	// GameLoop
 	while (g_isRunning.load()) {
-		g_timer.Tick(30.f);
-		
+		g_timer.Tick(60.f);
+		if (!(tickCount % 60))
+			std::cout << g_timer.GetFrameRate();
 		WaitAllRecvEvent(recvEvents);
 		// TODO: Send Event 초기화, KillEvent Vector 초기화
 		ResetEvent(g_sendevent);
@@ -36,7 +37,7 @@ int main()
 
 		// TODO: 모든 Session Update
 		EnterCriticalSection(&g_csSessions);
-		const float moveStep = 0.2f * 30;
+		const float moveStep = 0.2f;
 		for (Session* session : g_sessions) {
 			if (session->data.isDead) {
 				// 리스폰 처리 30 = 1초,180 = 6초
@@ -204,6 +205,8 @@ int main()
 						atker->killCount += 1;
 						atker->gold += 100;
 						// KillEvent 추가
+						KillEventPacket packet{ atker->id, session->data.id };
+						g_killEvents.emplace_back(packet);
 					}
 					it = g_bullets.erase(it);
 				}
@@ -238,7 +241,7 @@ int main()
 		}
 		LeaveCriticalSection(&g_csSessions);
 		// TODO: SendEvent Set(전역변수)
-
+		SetEvent(g_sendevent);
 		tickCount++;
 	}
 	// TODO: 모든 스레드 Join
