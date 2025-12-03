@@ -5,6 +5,8 @@
 #include "GraphicsPipeline.h"
 #include "GameContext.h"
 #include "Globals.h"
+#include <vector>
+#include <algorithm>
 
 inline float RandF(float fMin, float fMax)
 {
@@ -59,7 +61,7 @@ void CLevel2Scene::ReleaseObjects()
 
 void CLevel2Scene::Animate(float fElapsedTime)
 {
-	// Globals.h ÀÌ¿ëÇØ¼­ Update
+	// Globals.h Ì¿Ø¼ Update
 	EnterCriticalSection(&g_csPlayers);
 	g_enemyCount = g_players.size()-1;
 
@@ -70,7 +72,7 @@ void CLevel2Scene::Animate(float fElapsedTime)
 			if (m_spPlayer->isDead)
 				continue;
 			/*m_spPlayer->SetPosition(g_players[i].x, 0, g_players[i].z);*/
-			// Target position º¸°£
+			// Target position 
 			m_spPlayer->m_targetX = g_players[i].x;
 			m_spPlayer->m_targetZ = g_players[i].z;
 			m_spPlayer->hp = g_players[i].hp;
@@ -124,7 +126,6 @@ void CLevel2Scene::Animate(float fElapsedTime)
 	//CheckPlayerByWallCollision();
 	//CheckPlayerByEnemyCollisions();
 
-	//// ½Â¸® ÆÇÁ¤ Ã¼Å©
 	//if (m_enemyObjects.empty()) {
 	//	m_gameContext.m_bWin = true;
 	//	m_gameContext.m_sceneManager.ChangeScene(SCENE_TYPE::RESULT);
@@ -156,25 +157,42 @@ void CLevel2Scene::Render(HDC hDCFrameBuffer)
 	if (!m_spPlayer->isDead)
 		m_spPlayer->Render(hDCFrameBuffer, spCamera);
 
-	// ÁÂ»ó´Ü (ÇöÀç HP, K/DA, gold)
+	EnterCriticalSection(&g_csPlayers);
+	std::vector<PlayerInfo> sortedPlayers = g_players;
+	LeaveCriticalSection(&g_csPlayers);
+
+	std::sort(sortedPlayers.begin(), sortedPlayers.end(), [](const PlayerInfo& a, const PlayerInfo& b) {
+		return a.killCount > b.killCount;
+		});
+
+	TextOutEx(hDCFrameBuffer, m_gameContext.m_rcClient.right - 150, 0, "Leaderboard");
+	int yPos = 20;
+	for (const auto& player : sortedPlayers) {
+		TextOutEx(hDCFrameBuffer, m_gameContext.m_rcClient.right - 150, yPos, "Player %d: %dK / %dD", player.id, player.killCount, player.deathCount);
+		yPos += 20;
+	}
+
+	// Â» ( HP, K/DA, gold)
 	TextOutEx(hDCFrameBuffer, 0, 0, "HP: %d  K/DA (%d / %d)  gold: %d", m_spPlayer->hp,
 		m_spPlayer->killCount, m_spPlayer->deathCount, m_spPlayer->gold);
-	// ÁÂÇÏ´Ü (MaxHP, atk)
+	// ìŠ¤íƒ¯ (MaxHP, atk)
 	TextOutEx(hDCFrameBuffer, 0, m_gameContext.m_rcClient.bottom - 20,
 		"MaxHP: %d  atk: %d", m_spPlayer->maxHp, m_spPlayer->atk);
-	// ¿ìÇÏ´Ü »óÁ¡
-	TextOutEx(hDCFrameBuffer, m_gameContext.m_rcClient.right-310, m_gameContext.m_rcClient.bottom - 20,
-		"1: °ø°Ý·Â Áõ°¡ 2: ÃÖ´ëÃ¼·Â Áõ°¡ 3: Ã¼·ÂÈ¸º¹");
-	// ÁÂÁß´Ü Å³ÀÌº¥Æ®
+	// ì—…ê·¸ë ˆì´ë“œ ì˜µì…˜
+	TextOutW(hDCFrameBuffer, m_gameContext.m_rcClient.right-310, m_gameContext.m_rcClient.bottom - 20,
+		L"1: ê³µê²©ë ¥  2: ìµœëŒ€ì²´ë ¥  3: ì²´ë ¥íšŒë³µ", 24);
+	// ì¤‘ì•™ í‚¬ë³´ë“œ
 	int offset = 0;
 	EnterCriticalSection(&g_csKillEvents);
 	int j = 0;
+	wchar_t killFeedBuffer[100];
 	for (auto it = g_killEvents.begin(); it != g_killEvents.end();) {
 		it->displayTime -= 1;
 		if (it->displayTime <= 0)
 			it = g_killEvents.erase(it);
 		else {
-			TextOutEx(hDCFrameBuffer, m_gameContext.m_rcClient.right / 2, 0 + j++ * 20, "Å³: %d -> %d", it->killerId, it->killedId);
+			wsprintfW(killFeedBuffer, L"í‚¬: %d -> %d", it->killerId, it->killedId);
+			TextOutW(hDCFrameBuffer, m_gameContext.m_rcClient.right / 2, 0 + j++ * 20, killFeedBuffer, wcslen(killFeedBuffer));
 			++it;
 		}
 	}
@@ -198,7 +216,7 @@ void CLevel2Scene::ProcessInput()
 
 		g_inputFlag.store(dwDirection);
 		if (dwDirection)
-			m_spPlayer->Move(dwDirection, 0.1f); // ¼­¹ö°¡ 30FPS¿¡ 0.2´Ï±î Å¬¶ó´Â Àý¹ÝÀÎ 0.1
+			m_spPlayer->Move(dwDirection, 0.1f); //  30FPS 0.2Ï± Å¬  0.1
 		
 	}
 
@@ -303,7 +321,7 @@ void CLevel2Scene::Enter()
 {
 	m_spPlayer->SetPosition(0, 0, 0);
 
-	// °´Ã¼ »èÁ¦ ¿À·ùÀÖÀ½
+	// Ã¼  
 	//CTankMesh* pTankMesh = new CTankMesh(6.f, 3.f, 6.f);
 	//int i = m_enemyObjects.size();
 
@@ -402,6 +420,3 @@ CEnemyObject* CLevel2Scene::PickObjectPointedByCursor(int xClient, int yClient, 
 	}
 	return(pNearestObject);
 }
-
-
-

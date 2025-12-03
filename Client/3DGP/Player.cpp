@@ -56,7 +56,7 @@ void CPlayer::Move(DWORD dwDirection, float fDistance)
 		if (dwDirection & DIR_UP) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, fDistance);
 		if (dwDirection & DIR_DOWN) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, -fDistance);
 
-		Move(xmf3Shift, true);
+		Move(xmf3Shift, false);
 	}
 }
 // 두번째 인자: 속도를 더할지 / 위치에 더할지 (전자는 키입력 후자는 Update)
