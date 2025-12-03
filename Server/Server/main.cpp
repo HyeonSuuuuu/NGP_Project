@@ -61,22 +61,25 @@ int main()
 			// TODO: 모든 Session Update
 			// 상점 1: 공격력 증가, 2: 최대체력 증가, 3: 체력회복
 			if (session->inputflag & INP_ONE) {
-				if (session->data.gold >= 200) {
+				if (session->data.gold >= 200 && (tickCount - session->one_count) > 10) {
 					session->data.atk += 10;
 					session->data.gold -= 200;
+					session->one_count = tickCount;
 				}
 			}
 			if (session->inputflag & INP_TWO) {
-				if (session->data.gold >= 300) {
+				if (session->data.gold >= 300 && (tickCount - session->two_count) > 10) {
 					session->data.maxHp += 20;
 					session->data.hp += 20;
 					session->data.gold -= 300;
+					session->two_count = tickCount;
 				}
 			}
-			if (session->inputflag & INP_THREE) {
+			if (session->inputflag & INP_THREE && (tickCount - session->three_count) > 10) {
 				if (session->data.gold >= 100) {
 					session->data.hp += session->data.maxHp;
 					session->data.gold -= 100;
+					session->three_count = tickCount;
 				}
 			}
 
