@@ -368,6 +368,25 @@ void CLevel2Player::Animate(float fElapsedTime)
 {
 	CPlayer::Animate(fElapsedTime);
 
+	// 선형 보간
+	float fSmoothingFactor = 0.1f; // 0.05 ~ 0.2 정도의 값 사용 (값이 작을수록 느리게 따라감)
+
+	// 현재 위치
+	float currentX = m_xmf3Position.x;
+	float currentZ = m_xmf3Position.z;
+
+	// 목표 위치 (서버가 알려준 정확한 위치)
+	float targetX = m_targetX;
+	float targetZ = m_targetZ;
+
+	// 선형 보간(Lerp) 적용: 현재 위치에서 목표 위치로 일정 비율(fSmoothingFactor)만큼 이동
+	float newX = currentX + (targetX - currentX) * fSmoothingFactor;
+	float newZ = currentZ + (targetZ - currentZ) * fSmoothingFactor;
+
+	SetPosition(newX, 0, newZ);
+
+
+
 /*	for (int i = 0; i < BULLETS; i++)
 	{
 		if (m_ppBullets[i]->m_bActive) m_ppBullets[i]->Animate(fElapsedTime);

@@ -69,7 +69,10 @@ void CLevel2Scene::Animate(float fElapsedTime)
 			m_spPlayer->isDead = g_players[i].isDead;
 			if (m_spPlayer->isDead)
 				continue;
-			m_spPlayer->SetPosition(g_players[i].x, 0, g_players[i].z);
+			/*m_spPlayer->SetPosition(g_players[i].x, 0, g_players[i].z);*/
+			// Target position 보간
+			m_spPlayer->m_targetX = g_players[i].x;
+			m_spPlayer->m_targetZ = g_players[i].z;
 			m_spPlayer->hp = g_players[i].hp;
 			m_spPlayer->gold = g_players[i].gold;
 			m_spPlayer->maxHp = g_players[i].maxHp;
@@ -194,8 +197,8 @@ void CLevel2Scene::ProcessInput()
 		if (pKeyBuffer[VK_SPACE] & 0xF0) dwDirection |= INP_SPACEBAR;
 
 		g_inputFlag.store(dwDirection);
-		/*if (dwDirection)
-			m_spPlayer->Move(dwDirection, 0.15f);*/
+		if (dwDirection)
+			m_spPlayer->Move(dwDirection, 0.1f); // 서버가 30FPS에 0.2니까 클라는 절반인 0.1
 		
 	}
 

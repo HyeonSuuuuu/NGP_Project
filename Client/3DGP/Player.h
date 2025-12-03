@@ -118,6 +118,8 @@ public:
 	int atk = 0;
 	int gold = 0;
 
+	float m_targetX = 0.f;
+	float m_targetZ = 0.f;
 	bool isDead = false;
 	uint16_t killCount = 0;
 	uint16_t deathCount = 0;
