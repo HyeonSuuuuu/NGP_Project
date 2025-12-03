@@ -18,6 +18,24 @@ void CPlayer::SetPosition(float x, float y, float z)
 	CGameObject::SetPosition(x, y, z);
 }
 
+void CPlayer::SetRotation(float x, float y, float z)
+{
+	// TODO: 회전처리
+
+	Rotate(x, y, z);
+}
+
+void CPlayer::SetYawRotation(float yawAngle)
+{
+	float yawRad = XMConvertToRadians(yawAngle);
+	m_xmf3Look.x = sinf(yawRad);
+	m_xmf3Look.y = 0.0f; // Yaw 회전만 있으므로 수직 성분은 0입니다.
+	m_xmf3Look.z = cosf(yawRad);
+
+	m_xmf3Look = Vector3::Normalize(m_xmf3Look);
+	m_xmf3Right = Vector3::Normalize(Vector3::CrossProduct(m_xmf3Up, m_xmf3Look));
+}
+
 void CPlayer::SetCameraOffset(XMFLOAT3& xmf3CameraOffset)
 {
 	m_xmf3CameraOffset = xmf3CameraOffset;
@@ -98,15 +116,15 @@ void CPlayer::LookAt(XMFLOAT3& xmf3LookAt, XMFLOAT3& xmf3Up)
 
 void CPlayer::Update(float fTimeElapsed)
 {
-	Move(m_xmf3Velocity, false);
+	//Move(m_xmf3Velocity, false);
 	m_spCamera->Update(this, m_xmf3Position, fTimeElapsed);
 	m_spCamera->GenerateViewMatrix();
 
-	XMFLOAT3 xmf3Deceleration = Vector3::Normalize(Vector3::ScalarProduct(m_xmf3Velocity, -1.0f));
+	/*XMFLOAT3 xmf3Deceleration = Vector3::Normalize(Vector3::ScalarProduct(m_xmf3Velocity, -1.0f));
 	float fLength = Vector3::Length(m_xmf3Velocity);
 	float fDeceleration = m_fFriction * fTimeElapsed;
 	if (fDeceleration > fLength) fDeceleration = fLength;
-	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, xmf3Deceleration, fDeceleration);
+	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, xmf3Deceleration, fDeceleration);*/
 }
 
 void CPlayer::Animate(float fElapsedTime)
@@ -350,10 +368,29 @@ void CLevel2Player::Animate(float fElapsedTime)
 {
 	CPlayer::Animate(fElapsedTime);
 
-	for (int i = 0; i < BULLETS; i++)
+	// 선형 보간
+	float fSmoothingFactor = 0.1f; // 0.05 ~ 0.2 정도의 값 사용 (값이 작을수록 느리게 따라감)
+
+	// 현재 위치
+	float currentX = m_xmf3Position.x;
+	float currentZ = m_xmf3Position.z;
+
+	// 목표 위치 (서버가 알려준 정확한 위치)
+	float targetX = m_targetX;
+	float targetZ = m_targetZ;
+
+	// 선형 보간(Lerp) 적용: 현재 위치에서 목표 위치로 일정 비율(fSmoothingFactor)만큼 이동
+	float newX = currentX + (targetX - currentX) * fSmoothingFactor;
+	float newZ = currentZ + (targetZ - currentZ) * fSmoothingFactor;
+
+	SetPosition(newX, 0, newZ);
+
+
+
+/*	for (int i = 0; i < BULLETS; i++)
 	{
 		if (m_ppBullets[i]->m_bActive) m_ppBullets[i]->Animate(fElapsedTime);
-	}
+	}*/
 }
 
 void CLevel2Player::Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera)

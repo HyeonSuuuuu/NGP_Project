@@ -14,7 +14,7 @@ DWORD WINAPI AcceptThread(void* args)
     SOCKET listen_sock = reinterpret_cast<SOCKET>(args);
     uint32_t idCount = 1000;   // 플레이어 ID 시작 번호
 
-    printf("[AcceptThread] 생성 성공 - 클라이언트 접속 대기 중...\n");
+    std::cout << "[AcceptThread] 생성 성공 - 클라이언트 접속 대기 중..." << std::endl;
 
     while (g_isRunning.load())
     {
@@ -25,14 +25,22 @@ DWORD WINAPI AcceptThread(void* args)
         if (clientSock == INVALID_SOCKET)
         {
             if (g_isRunning.load())
-                printf("[Accept] accept() 실패: %d\n", WSAGetLastError());
+                std::cout << "[Accept] accept() 실패: " << WSAGetLastError() << std::endl;
             continue;
         }
+
+        EnterCriticalSection(&g_csSessions);
+        if (g_sessions.size() >= MAX_PLAYERS) {
+            std::cout << "클라이언트 접속 거부: 인원 초과" << std::endl;
+            closesocket(clientSock);
+            continue;
+        }
+        LeaveCriticalSection(&g_csSessions);
 
         // 클라이언트 IP 출력
         char ip[INET_ADDRSTRLEN]{};
         inet_ntop(AF_INET, &clientAddr.sin_addr, ip, INET_ADDRSTRLEN);
-        printf("[접속] 클라이언트 접속 → %s:%d\n", ip, ntohs(clientAddr.sin_port));
+        std::cout << "[접속] 클라이언트 접속 → " << ip << ":" << ntohs(clientAddr.sin_port) << std::endl;
 
         // Session 동적 생성
         Session* newSession = new Session();
@@ -40,65 +48,33 @@ DWORD WINAPI AcceptThread(void* args)
         newSession->sessionId = idCount++;
         newSession->isConnected.store(true);
         newSession->inputflag = 0;
-
-        // WSAEvent 생성 (비동기 Recv용)
-        newSession->recvEvent = WSACreateEvent();
-        WSAEventSelect(clientSock, newSession->recvEvent, FD_READ | FD_CLOSE);
+		newSession->recvEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 
         // 플레이어 초기 위치 (맵 범위 맞춰서)
         newSession->data.id = newSession->sessionId;
         newSession->data.x = RandF(-45.0f, 45.0f);
-        newSession->data.z = RandF(15.0f, 85.0f);
+        newSession->data.z = RandF(-5.0f, 85.0f);
+        newSession->data.atk = 100;
         newSession->data.yawAngle = 0;
-        newSession->data.hp = 100;
-        newSession->data.gold = 500;
+        newSession->data.maxHp = 100;
+        newSession->data.hp = newSession->data.maxHp;
+        newSession->data.gold = 0;
+        newSession->data.killCount = 0;
+        newSession->data.deathCount = 0;
         newSession->data.isDead = false;
-
-        // 전역 세션 리스트에 추가 (스레드 세이프)
-        EnterCriticalSection(&g_csSessions);
-        g_sessions.push_back(newSession);
-        LeaveCriticalSection(&g_csSessions);
 
         // NetworkThread 생성 (각 클라이언트마다 하나씩)
         HANDLE hThread = CreateThread(nullptr, 0, NetworkThread, newSession, 0, nullptr);
         if (hThread == nullptr)
         {
-            printf("[ERROR] NetworkThread 생성 실패\n");
+            std::cout << "[ERROR] NetworkThread 생성 실패" << std::endl;
             closesocket(clientSock);
+            CloseHandle(newSession->recvEvent);
             delete newSession;
             continue;
         }
-
-        // 접속 완료 후 바로 SC_ENTER 패킷 전송 (장애물 동기화)
-        {
-            PacketHeader header{};
-            header.type = SC_ENTER;
-            uint32_t offset = 0;
-
-
-            EnterPacket enterPkt{};
-            enterPkt.id = newSession->sessionId;
-            enterPkt.obstacleCount = static_cast<uint16_t>(g_obstacles.size());
-            // 임시 버퍼에 패킷 조립
-            char sendBuf[1024]{};
-
-            offset += sizeof(PacketHeader);
-            memcpy(sendBuf + offset, &enterPkt, sizeof(EnterPacket));
-            offset += sizeof(EnterPacket);
-            memcpy(sendBuf + offset, g_obstacles.data(), enterPkt.obstacleCount * sizeof(Obstacle));
-            offset += enterPkt.obstacleCount * sizeof(Obstacle);
-            header.size = offset;
-            memcpy(sendBuf, &header, sizeof(PacketHeader));
-            send(clientSock, sendBuf, header.size, 0);
-            printf("[패킷 전송] SC_ENTER → Player %u (장애물 %zu개 동기화)\n",
-                newSession->sessionId, g_obstacles.size());
-        }
-        EnterCriticalSection(&g_csSessions);
-        printf("[성공] Player %u 접속 완료 → 현재 인원: %zu명\n",
-            newSession->sessionId, g_sessions.size());
-        LeaveCriticalSection(&g_csSessions);
     }
-
-    printf("[AcceptThread] 종료\n");
+    
+    std::cout << "[AcceptThread] 종료" << std::endl;
     return 0;
 }

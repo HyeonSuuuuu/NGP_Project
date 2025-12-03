@@ -5,6 +5,8 @@
 #include "../../Server/Server/Common.h"
 #include "../../Server/Server/Packet.h"
 
+int count;
+
 DWORD WINAPI NetworkThread(void* args)
 {
 	char buf[65536];
@@ -13,15 +15,39 @@ DWORD WINAPI NetworkThread(void* args)
 	PacketHeader header;
 	recv(sock, reinterpret_cast<char*>(&header), sizeof(PacketHeader), MSG_WAITALL);
 	if (header.type == SC_ENTER) {
-		recv(sock, buf, header.size - sizeof(PacketHeader), MSG_WAITALL);
+		recv(sock, buf, header.size, MSG_WAITALL);
 		ProcessEnterPacket(buf);
 	}
 
 	CGameTimer timer;
 	while (true) {
+		count++;
 		timer.Tick(30.f);
 		SendInputPacket(sock);
-		// Recv 
+		recv(sock, reinterpret_cast<char*>(&header), sizeof(PacketHeader), MSG_WAITALL);
+		if (header.type == SC_SNAPSHOT) {
+			recv(sock, buf, header.size, MSG_WAITALL);
+			ProcessSnapshotPacket(buf);
+		}
+		if (header.type == SC_KILL_EVENT) {
+			recv(sock, buf, header.size, MSG_WAITALL);
+			int killeventCount = header.size / sizeof(KillEventPacket);
+			EnterCriticalSection(&g_csKillEvents);
+			for (int i = 0; i < killeventCount; ++i) {
+				KillEventPacket* killEvent = reinterpret_cast<KillEventPacket*>(buf + i * sizeof(KillEventPacket));
+				KillEvent event = { killEvent->killerId, killEvent->killedId, 300 };
+				g_killEvents.emplace_back(event);
+				DebugLog("Player %d killed Player %d\n", killEvent->killerId, killEvent->killedId);
+			}
+			LeaveCriticalSection(&g_csKillEvents);
+			
+			// 다시 Snapshot 처리 ( 안하면 패킷이 하나씩 밀림)
+			recv(sock, reinterpret_cast<char*>(&header), sizeof(PacketHeader), MSG_WAITALL);
+			if (header.type == SC_SNAPSHOT) {
+				recv(sock, buf, header.size, MSG_WAITALL);
+				ProcessSnapshotPacket(buf);
+			}
+		}
 	}
 }
 
@@ -60,17 +86,52 @@ void ProcessEnterPacket(char* buf)
 	for (int i = 0; i < obstaclesCount; ++i) {
 		g_obstacles[i] = *reinterpret_cast<Obstacle*>(buf + offset);
 		offset += sizeof(Obstacle);
-		DebugLog(L"%d", offset);
 	}
 	SetEvent(g_enterEvent);
 }
 
 void SendInputPacket(SOCKET sock)
 {
+	PacketHeader header;
+	header.type = CS_INPUT;
+	header.size = sizeof(InputPacket);
 	InputPacket inputPkt;
 	inputPkt.id = g_myId;
 	inputPkt.inputFlag = g_inputFlag.load();
 	inputPkt.yawAngle = g_yawAngle.load();
-	
+	send(sock, reinterpret_cast<char*>(&header), sizeof(PacketHeader), 0);
 	send(sock, reinterpret_cast<char*>(&inputPkt), sizeof(InputPacket), 0);
+}
+
+
+void ProcessSnapshotPacket(char* buf)
+{
+	SnapshotPacket* snapshotPacket = reinterpret_cast<SnapshotPacket*>(buf);
+	uint32_t offset = sizeof(SnapshotPacket);
+
+	EnterCriticalSection(&g_csPlayers);
+	if (g_players.size() != snapshotPacket->playerCount) {
+		g_players.resize(snapshotPacket->playerCount);
+	}
+
+	for (int i = 0; i < snapshotPacket->playerCount; ++i) {
+		PlayerInfo* playerInfo = reinterpret_cast<PlayerInfo*>(buf + offset);
+		offset += sizeof(PlayerInfo);
+
+		g_players[i] = *playerInfo;
+		if (!(count % 30))
+			DebugLog("(%f, %f)\n", playerInfo->x, playerInfo->z);
+	}
+	LeaveCriticalSection(&g_csPlayers);
+
+	EnterCriticalSection(&g_csBullets);
+	if (g_bullets.size() != snapshotPacket->bulletCount) {
+		g_bullets.resize(snapshotPacket->bulletCount);
+	}
+	for (int i = 0; i < snapshotPacket->bulletCount; ++i) {
+		Bullet* bullet = reinterpret_cast<Bullet*>(buf + offset);
+		offset += sizeof(Bullet);
+		g_bullets[i] = *bullet;
+	}
+	LeaveCriticalSection(&g_csBullets);
 }

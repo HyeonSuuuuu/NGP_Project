@@ -37,12 +37,20 @@ void CLevel2Scene::BuildObjects()
 	}
 
 	CTankMesh* pTankMesh = new CTankMesh(6.f, 3.f, 6.f);
-	m_enemyObjects.resize(10);
-	for (int i = 0; i < 10; ++i) {
+	for (int i = 0; i < 63; ++i) {
 		m_enemyObjects[i].SetMesh(pTankMesh);
 		m_enemyObjects[i].SetColor(RGB(255, 0, 0));
-		m_enemyObjects[i].SetPosition(RandF(-50.f, 50.f), 0.f, RandF(10.f, 100.f));
 	}
+
+	CCubeMesh* pBulletMesh = new CCubeMesh(1.0f, 1.0f, 1.0f);
+	for (int i = 0; i < 300; ++i) {
+		m_bullets[i].SetMesh(pBulletMesh);
+		m_bullets[i].SetColor(RGB(255, 0, 0));
+		m_bullets[i].SetRotationAxis(XMFLOAT3(0.f, 0.f, 1.f));
+		m_bullets[i].SetRotationSpeed(360.0f);
+		m_bullets[i].SetActive(true);
+	}
+	
 }
 
 void CLevel2Scene::ReleaseObjects()
@@ -52,8 +60,49 @@ void CLevel2Scene::ReleaseObjects()
 void CLevel2Scene::Animate(float fElapsedTime)
 {
 	// Globals.h 이용해서 Update
-	
-	//m_spPlayer->Animate(fElapsedTime);
+	EnterCriticalSection(&g_csPlayers);
+	g_enemyCount = g_players.size()-1;
+
+	int j = 0;
+	for (int i = 0; i < g_enemyCount+1; ++i) {
+		if (g_players[i].id == g_myId) {
+			m_spPlayer->isDead = g_players[i].isDead;
+			if (m_spPlayer->isDead)
+				continue;
+			/*m_spPlayer->SetPosition(g_players[i].x, 0, g_players[i].z);*/
+			// Target position 보간
+			m_spPlayer->m_targetX = g_players[i].x;
+			m_spPlayer->m_targetZ = g_players[i].z;
+			m_spPlayer->hp = g_players[i].hp;
+			m_spPlayer->gold = g_players[i].gold;
+			m_spPlayer->maxHp = g_players[i].maxHp;
+			m_spPlayer->atk = g_players[i].atk;
+			m_spPlayer->killCount = g_players[i].killCount;
+			m_spPlayer->deathCount = g_players[i].deathCount;
+		}
+		else {
+			m_enemyObjects[j].SetPosition(g_players[i].x, 0, g_players[i].z);
+			m_enemyObjects[j].SetYawRotation(g_players[i].yawAngle);
+			m_enemyObjects[j].m_isDead = g_players[i].isDead;
+			j++;
+		}
+	}
+	LeaveCriticalSection(&g_csPlayers);
+
+	EnterCriticalSection(&g_csBullets);
+/*	if (m_nBullets > g_bullets.size()) {
+		for (int i = g_bullets.size(); i < m_nBullets; ++i)
+			m_bullets[i].SetActive(false);
+	}*/
+	m_nBullets = g_bullets.size();
+
+	for (int i = 0; i < m_nBullets; ++i) {
+		m_bullets[i].SetPosition(g_bullets[i].x, 0.f, g_bullets[i].z);
+	}
+	LeaveCriticalSection(&g_csBullets);
+
+	m_spPlayer->Animate(fElapsedTime);
+
 	//
 	//for (auto& object : m_objects) {
 	//	object.Animate(fElapsedTime);
@@ -95,11 +144,42 @@ void CLevel2Scene::Render(HDC hDCFrameBuffer)
 	for (auto& object : m_barrierObjects) {
 		object.Render(hDCFrameBuffer, spCamera);
 	}
-	for (auto& object : m_enemyObjects) {
-		object.Render(hDCFrameBuffer, spCamera);
+	for (int i = 0; i < g_enemyCount; ++i) {
+		if (m_enemyObjects[i].m_isDead)
+			continue;
+		m_enemyObjects[i].Render(hDCFrameBuffer, spCamera);
 	}
-	m_spPlayer->Render(hDCFrameBuffer, spCamera);
-}
+	for (int i = 0; i < m_nBullets; ++i) {
+		m_bullets[i].Render(hDCFrameBuffer, spCamera);
+	}
+
+	if (!m_spPlayer->isDead)
+		m_spPlayer->Render(hDCFrameBuffer, spCamera);
+
+	// 좌상단 (현재 HP, K/DA, gold)
+	TextOutEx(hDCFrameBuffer, 0, 0, "HP: %d  K/DA (%d / %d)  gold: %d", m_spPlayer->hp,
+		m_spPlayer->killCount, m_spPlayer->deathCount, m_spPlayer->gold);
+	// 좌하단 (MaxHP, atk)
+	TextOutEx(hDCFrameBuffer, 0, m_gameContext.m_rcClient.bottom - 20,
+		"MaxHP: %d  atk: %d", m_spPlayer->maxHp, m_spPlayer->atk);
+	// 우하단 상점
+	TextOutEx(hDCFrameBuffer, m_gameContext.m_rcClient.right-310, m_gameContext.m_rcClient.bottom - 20,
+		"1: 공격력 증가 2: 최대체력 증가 3: 체력회복");
+	// 좌중단 킬이벤트
+	int offset = 0;
+	EnterCriticalSection(&g_csKillEvents);
+	int j = 0;
+	for (auto it = g_killEvents.begin(); it != g_killEvents.end();) {
+		it->displayTime -= 1;
+		if (it->displayTime <= 0)
+			it = g_killEvents.erase(it);
+		else {
+			TextOutEx(hDCFrameBuffer, m_gameContext.m_rcClient.right / 2, 0 + j++ * 20, "킬: %d -> %d", it->killerId, it->killedId);
+			++it;
+		}
+	}
+	LeaveCriticalSection(&g_csKillEvents);
+}	
 
 void CLevel2Scene::ProcessInput()
 {
@@ -117,11 +197,9 @@ void CLevel2Scene::ProcessInput()
 		if (pKeyBuffer[VK_SPACE] & 0xF0) dwDirection |= INP_SPACEBAR;
 
 		g_inputFlag.store(dwDirection);
-		/*if (dwDirection)
-			m_spPlayer->Move(dwDirection, 0.15f);*/
+		if (dwDirection)
+			m_spPlayer->Move(dwDirection, 0.1f); // 서버가 30FPS에 0.2니까 클라는 절반인 0.1
 		
-		// dwDirection 전역변수 InputFlag에 Set
-		// event Set
 	}
 
 	if (GetCapture() == m_gameContext.m_hWnd)
@@ -135,19 +213,18 @@ void CLevel2Scene::ProcessInput()
 		if (cxMouseDelta || cyMouseDelta)
 		{
 			if (pKeyBuffer[VK_LBUTTON] & 0xF0) {
-				//m_spPlayer->Rotate(0.f, cxMouseDelta, 0.f);
-				int currentYaw = g_yawAngle.load();
-				int newYaw = currentYaw + cxMouseDelta;
+
+				int newYaw = g_yawAngle.load() + cxMouseDelta;
 
 				if (newYaw >= 360.f) newYaw -= 360.f;
 				else if (newYaw < 0.f) newYaw += 360.f;
 				g_yawAngle.store(newYaw);
-				DebugLog(L"%d\n", g_yawAngle.load());
+				m_spPlayer->SetYawRotation(newYaw);
 			}
 		}
 	}
 
-	//m_spPlayer->Update(m_gameContext.m_gameTimer.GetTimeElapsed());
+	m_spPlayer->Update(m_gameContext.m_gameTimer.GetTimeElapsed());
 }
 
 void CLevel2Scene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -209,8 +286,8 @@ void CLevel2Scene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARA
 		case VK_RETURN:
 			break;
 		case VK_SPACE:
-			m_spPlayer->FireBullet(m_pLockedObject);
-			m_pLockedObject = NULL;
+			/*m_spPlayer->FireBullet(m_pLockedObject);
+			m_pLockedObject = NULL;*/
 			break;
 		default:
 			break;
@@ -246,7 +323,7 @@ void CLevel2Scene::Exit()
 
 void CLevel2Scene::CheckObjectByBulletCollisions()
 {
-	CBulletObject** ppBullets = m_spPlayer->m_ppBullets;
+	/*CBulletObject** ppBullets = m_spPlayer->m_ppBullets;
 	for (auto& object : m_enemyObjects) {
 		for (int i = 0; i < BULLETS; ++i) {
 			if (ppBullets[i]->m_bActive && object.m_xmOOBB.Intersects(ppBullets[i]->m_xmOOBB))
@@ -265,7 +342,7 @@ void CLevel2Scene::CheckObjectByBulletCollisions()
 				ppBullets[i]->Reset();
 			}
 		}
-	}
+	}*/
 
 }
 void CLevel2Scene::CheckPlayerByWallCollision()

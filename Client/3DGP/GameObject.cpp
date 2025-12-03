@@ -168,7 +168,8 @@ void CGameObject::Render(HDC hDCFrameBuffer, XMFLOAT4X4* pxmf4x4World, CMesh* pM
 
 void CGameObject::Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera)
 {
-	if (spCamera->IsInFrustum(m_xmOOBB)) CGameObject::Render(hDCFrameBuffer, &m_xmf4x4World, m_pMesh);
+	// if (spCamera->IsInFrustum(m_xmOOBB))
+	CGameObject::Render(hDCFrameBuffer, &m_xmf4x4World, m_pMesh);
 }
 
 void CGameObject::GenerateRayForPicking(XMVECTOR& xmvPickPosition, XMMATRIX& xmmtxView, XMVECTOR& xmvPickRayOrigin, XMVECTOR& xmvPickRayDirection)
@@ -210,6 +211,24 @@ void CWallsObject::Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+void CEnemyObject::SetYawRotation(float yawAngle)
+{
+
+	float yawRad = XMConvertToRadians(yawAngle);
+	m_xmf3Look.x = sinf(yawRad);
+	m_xmf3Look.y = 0.0f; // Yaw 회전만 있으므로 수직 성분은 0입니다.
+	m_xmf3Look.z = cosf(yawRad);
+
+	m_xmf3Look = Vector3::Normalize(m_xmf3Look);
+	m_xmf3Right = Vector3::Normalize(Vector3::CrossProduct(m_xmf3Up, m_xmf3Look));
+
+	m_xmf4x4World._11 = m_xmf3Right.x; m_xmf4x4World._12 = m_xmf3Right.y; m_xmf4x4World._13 = m_xmf3Right.z;
+	m_xmf4x4World._21 = m_xmf3Up.x; m_xmf4x4World._22 = m_xmf3Up.y; m_xmf4x4World._23 = m_xmf3Up.z;
+	m_xmf4x4World._31 = m_xmf3Look.x; m_xmf4x4World._32 = m_xmf3Look.y; m_xmf4x4World._33 = m_xmf3Look.z;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+
 XMFLOAT3 CExplosiveObject::m_pxmf3SphereVectors[EXPLOSION_DEBRISES];
 CMesh* CExplosiveObject::m_pExplosionMesh = NULL;
 

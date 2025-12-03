@@ -102,8 +102,13 @@ class CEnemyObject : public CExplosiveObject {
 public:
 	CEnemyObject() {}
 	virtual ~CEnemyObject() {}
+	void SetYawRotation(float yawAngle);
 
-	bool m_bRemove = false;
+	XMFLOAT3					m_xmf3Right = XMFLOAT3(1.0f, 0.0f, 0.0f);
+	XMFLOAT3					m_xmf3Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	XMFLOAT3					m_xmf3Look = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	bool m_isDead = false;
+
 };
 
 class CBarrierObject : public CGameObject {
@@ -152,6 +157,7 @@ public:
 class CBulletObject : public CGameObject
 {
 public:
+	CBulletObject() = default;
 	CBulletObject(float fEffectiveRange);
 	virtual ~CBulletObject();
 

@@ -5,16 +5,16 @@
 
 
 // Log 함수
-void DebugLog(const wchar_t* fmt, ...)
+void DebugLog(const char* fmt, ...)
 {
-	wchar_t buffer[512];
+	char buffer[512];
 
 	va_list args;
 	va_start(args, fmt);
-	vswprintf_s(buffer, fmt, args);
+	vsprintf_s(buffer, fmt, args);
 	va_end(args);
 
-	OutputDebugString(buffer);
+	OutputDebugStringA(buffer);
 }
 
 // 에러처리 ============================================

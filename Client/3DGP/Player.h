@@ -29,6 +29,7 @@ public:
 public:
 	void SetPosition(float x, float y, float z);
 	void SetRotation(float x, float y, float z);
+	void SetYawRotation(float yawAngle);
 
 	void LookAt(XMFLOAT3& xmf3LookAt, XMFLOAT3& xmf3Up);
 
@@ -110,4 +111,16 @@ public:
 	virtual void OnUpdateTransform();
 	virtual void Animate(float fElapsedTime);
 	virtual void Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera);
+
+
+	int maxHp = 0;
+	int hp = 0;
+	int atk = 0;
+	int gold = 0;
+
+	float m_targetX = 0.f;
+	float m_targetZ = 0.f;
+	bool isDead = false;
+	uint16_t killCount = 0;
+	uint16_t deathCount = 0;
 };
