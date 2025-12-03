@@ -28,6 +28,7 @@ int main()
 	while (g_isRunning.load()) {
 		g_timer.Tick(30.f);
 		WaitAllRecvEvent(recvEvents);
+
 		// TODO: Send Event 초기화, KillEvent Vector 초기화
 		ResetEvent(g_sendevent);
 		g_killEvents.clear();
@@ -276,7 +277,7 @@ void InitNetwork(SOCKET& listen_sock)
 
 void WaitAllRecvEvent(std::array<HANDLE, MAX_PLAYER>& arr)
 {
-	// recvEvent 배열 생성
+	// recvEvent 배열 갱신
 	EnterCriticalSection(&g_csSessions);
 	const int size = g_sessions.size();
 	for (int i = 0; i < size; ++i) { 
@@ -286,4 +287,3 @@ void WaitAllRecvEvent(std::array<HANDLE, MAX_PLAYER>& arr)
 	// 모두 깨어날 때까지 대기
 	WaitForMultipleObjects(size, arr.data(), TRUE, INFINITE); 
 }
-
