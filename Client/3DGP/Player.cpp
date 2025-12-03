@@ -20,7 +20,7 @@ void CPlayer::SetPosition(float x, float y, float z)
 
 void CPlayer::SetRotation(float x, float y, float z)
 {
-	// TODO: È¸ÀüÃ³¸®
+	// TODO: íšŒì „ì²˜ë¦¬
 
 	Rotate(x, y, z);
 }
@@ -29,7 +29,7 @@ void CPlayer::SetYawRotation(float yawAngle)
 {
 	float yawRad = XMConvertToRadians(yawAngle);
 	m_xmf3Look.x = sinf(yawRad);
-	m_xmf3Look.y = 0.0f; // Yaw È¸Àü¸¸ ÀÖÀ¸¹Ç·Î ¼öÁ÷ ¼ººĞÀº 0ÀÔ´Ï´Ù.
+	m_xmf3Look.y = 0.0f; // Yaw íšŒì „ë§Œ ìˆìœ¼ë¯€ë¡œ ìˆ˜ì§ ì„±ë¶„ì€ 0ì…ë‹ˆë‹¤.
 	m_xmf3Look.z = cosf(yawRad);
 
 	m_xmf3Look = Vector3::Normalize(m_xmf3Look);
@@ -47,7 +47,7 @@ void CPlayer::SetCameraOffset(XMFLOAT3& xmf3CameraOffset)
 void CPlayer::Move(DWORD dwDirection, float fDistance)
 {
 	if (dwDirection)
-	{ // Look = ÇÃ·¹ÀÌ¾î°¡ ¹Ù¶óº¸´Â ¹æÇâ, zÃàÀÌ ¾Æ´Ñ ÇÃ·¹ÀÌ¾î È¸ÀüÀ» ¹İ¿µÇÑ °ª
+	{ // Look = í”Œë ˆì´ì–´ê°€ ë°”ë¼ë³´ëŠ” ë°©í–¥, zì¶•ì´ ì•„ë‹Œ í”Œë ˆì´ì–´ íšŒì „ì„ ë°˜ì˜í•œ ê°’
 		XMFLOAT3 xmf3Shift = XMFLOAT3(0, 0, 0);
 		if (dwDirection & DIR_FORWARD) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Look, fDistance);
 		if (dwDirection & DIR_BACKWARD) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Look, -fDistance);
@@ -59,7 +59,7 @@ void CPlayer::Move(DWORD dwDirection, float fDistance)
 		Move(xmf3Shift, false);
 	}
 }
-// µÎ¹øÂ° ÀÎÀÚ: ¼Óµµ¸¦ ´õÇÒÁö / À§Ä¡¿¡ ´õÇÒÁö (ÀüÀÚ´Â Å°ÀÔ·Â ÈÄÀÚ´Â Update)
+// ë‘ë²ˆì§¸ ì¸ì: ì†ë„ë¥¼ ë”í• ì§€ / ìœ„ì¹˜ì— ë”í• ì§€ (ì „ìëŠ” í‚¤ì…ë ¥ í›„ìëŠ” Update)
 void CPlayer::Move(XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 {
 	if (bUpdateVelocity)
@@ -105,7 +105,7 @@ void CPlayer::Rotate(float fPitch, float fYaw, float fRoll)
 	m_xmf3Right = Vector3::Normalize(Vector3::CrossProduct(m_xmf3Up, m_xmf3Look));
 	m_xmf3Up = Vector3::Normalize(Vector3::CrossProduct(m_xmf3Look, m_xmf3Right));
 }
-// ¹Ù¶óº¸´Â ¹æÇâÀ» ÀÎÀÚ·Î ¹Ş¾Æ ÇÃ·¹ÀÌ¾îÀÇ ¹æÇâÀ» ¹Ù²Ş
+// ë°”ë¼ë³´ëŠ” ë°©í–¥ì„ ì¸ìë¡œ ë°›ì•„ í”Œë ˆì´ì–´ì˜ ë°©í–¥ì„ ë°”ê¿ˆ
 void CPlayer::LookAt(XMFLOAT3& xmf3LookAt, XMFLOAT3& xmf3Up)
 {
 	XMFLOAT4X4 xmf4x4View = Matrix4x4::LookAtLH(m_xmf3Position, xmf3LookAt, xmf3Up);
@@ -245,16 +245,16 @@ void CLevel1Player::Animate(float fElapsedTime)
 {
 	m_fPathPosition += m_fPathSpeed * fElapsedTime;
 
-	// t°¡ 1.0À» ³ÑÁö ¾Ê°Ô Á¦ÇÑ
+	// tê°€ 1.0ì„ ë„˜ì§€ ì•Šê²Œ ì œí•œ
 	if (m_fPathPosition > 1.0f)
 		m_fPathPosition = 1.0f;
 
-	// À§Ä¡¿Í ¹æÇâ °»½Å
+	// ìœ„ì¹˜ì™€ ë°©í–¥ ê°±ì‹ 
 	XMFLOAT3 position = GetPosition(m_fPathPosition);
 	SetPosition(position.x, position.y, position.z);
 
 	XMFLOAT3 tangent = GetTangent(m_fPathPosition);
-	XMFLOAT3 up = XMFLOAT3(0, 1, 0); // ±âº» ¾÷ º¤ÅÍ
+	XMFLOAT3 up = XMFLOAT3(0, 1, 0); // ê¸°ë³¸ ì—… ë²¡í„°
 
 	LookTo(tangent, up);
 
@@ -366,22 +366,15 @@ void CLevel2Player::OnUpdateTransform()
 
 void CLevel2Player::Animate(float fElapsedTime)
 {
-	CPlayer::Animate(fElapsedTime);
+	CPlayer::Animate(fElapsedTime); // ì¼ë‹¨ í´ë¼ì´ì–¸íŠ¸ê°€ ì…ë ¥ê°’ëŒ€ë¡œ ì›€ì§ì„
 
-	// ¼±Çü º¸°£
-	float fSmoothingFactor = 0.1f; // 0.05 ~ 0.2 Á¤µµÀÇ °ª »ç¿ë (°ªÀÌ ÀÛÀ»¼ö·Ï ´À¸®°Ô µû¶ó°¨)
+	// ì„œë²„ ë°ì´í„° ê°„ê²©ë§Œí¼ ì„ í˜• ë³´ê°„
+	float fSmoothingFactor = 0.5f; // Tick ì°¨ì´ê°€ ì„œë²„ë‘ 2ë°°ë‚˜ë‹ˆê¹Œ 0.5ë¡œ ì„¤ì •
 
-	// ÇöÀç À§Ä¡
-	float currentX = m_xmf3Position.x;
-	float currentZ = m_xmf3Position.z;
 
-	// ¸ñÇ¥ À§Ä¡ (¼­¹ö°¡ ¾Ë·ÁÁØ Á¤È®ÇÑ À§Ä¡)
-	float targetX = m_targetX;
-	float targetZ = m_targetZ;
-
-	// ¼±Çü º¸°£(Lerp) Àû¿ë: ÇöÀç À§Ä¡¿¡¼­ ¸ñÇ¥ À§Ä¡·Î ÀÏÁ¤ ºñÀ²(fSmoothingFactor)¸¸Å­ ÀÌµ¿
-	float newX = currentX + (targetX - currentX) * fSmoothingFactor;
-	float newZ = currentZ + (targetZ - currentZ) * fSmoothingFactor;
+	// ì„ í˜• ë³´ê°„(Lerp) ì ìš©: í˜„ì¬ ìœ„ì¹˜ì—ì„œ ëª©í‘œ ìœ„ì¹˜ë¡œ ì¼ì • ë¹„ìœ¨(fSmoothingFactor)ë§Œí¼ ì´ë™
+	float newX = m_xmf3Position.x + (m_targetX - m_xmf3Position.x) * fSmoothingFactor;
+	float newZ = m_xmf3Position.z + (m_targetZ - m_xmf3Position.z) * fSmoothingFactor;
 
 	SetPosition(newX, 0, newZ);
 

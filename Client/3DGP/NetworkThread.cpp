@@ -41,7 +41,7 @@ DWORD WINAPI NetworkThread(void* args)
 			}
 			LeaveCriticalSection(&g_csKillEvents);
 			
-			// ´Ù½Ã Snapshot Ã³¸® ( ¾ÈÇÏ¸é ÆĞÅ¶ÀÌ ÇÏ³ª¾¿ ¹Ğ¸²)
+			// ë‹¤ì‹œ Snapshot ì²˜ë¦¬ ( ì•ˆí•˜ë©´ íŒ¨í‚·ì´ í•˜ë‚˜ì”© ë°€ë¦¼)
 			recv(sock, reinterpret_cast<char*>(&header), sizeof(PacketHeader), MSG_WAITALL);
 			if (header.type == SC_SNAPSHOT) {
 				recv(sock, buf, header.size, MSG_WAITALL);

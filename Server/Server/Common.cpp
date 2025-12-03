@@ -4,7 +4,7 @@
 
 
 
-// Log «‘ºˆ
+// Log Ìï®Ïàò
 void DebugLog(const char* fmt, ...)
 {
 	char buffer[512];
@@ -17,7 +17,7 @@ void DebugLog(const char* fmt, ...)
 	OutputDebugStringA(buffer);
 }
 
-// ø°∑Ø√≥∏Æ ============================================
+// ÏóêÎü¨Ï≤òÎ¶¨ ============================================
 void err_quit(const char* msg)
 {
 	LPVOID lpMsgBuf;
@@ -54,6 +54,6 @@ void err_display(int errCode)
 		NULL, errCode,
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(LPSTR)&lpMsgBuf, 0, NULL);
-	MessageBoxA(NULL, (const char*)lpMsgBuf, "ø¿∑˘", MB_ICONERROR);
+	MessageBoxA(NULL, (const char*)lpMsgBuf, "Ïò§Î•ò", MB_ICONERROR);
 	LocalFree(lpMsgBuf);
 }

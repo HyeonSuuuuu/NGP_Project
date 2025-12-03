@@ -119,20 +119,20 @@ public:
 		this->SetColor(RGB(0, 255, 0));
 		this->SetPosition(x, y, z);
 	}
-	// º¹»ç »ı¼ºÀÚ: base ¸â¹ö´Â CGameObject(other)·Î º¹»çµÇ°í,
-	// ±× µÚ m_pMesh¿¡ ´ëÇØ ÂüÁ¶¸¦ Áõ°¡½ÃÅ²´Ù.
+	// ë³µì‚¬ ìƒì„±ì: base ë©¤ë²„ëŠ” CGameObject(other)ë¡œ ë³µì‚¬ë˜ê³ ,
+	// ê·¸ ë’¤ m_pMeshì— ëŒ€í•´ ì°¸ì¡°ë¥¼ ì¦ê°€ì‹œí‚¨ë‹¤.
 	CBarrierObject(const CBarrierObject& other) : CGameObject(other)
 	{
 		if (m_pMesh) m_pMesh->AddRef();
 	}
 
-	// º¹»ç ´ëÀÔ: ±âÁ¸ ¼ÒÀ¯ ÇØÁ¦ ÈÄ base ÇÒ´ç, »õ ¼ÒÀ¯ ÂüÁ¶ Áõ°¡
+	// ë³µì‚¬ ëŒ€ì…: ê¸°ì¡´ ì†Œìœ  í•´ì œ í›„ base í• ë‹¹, ìƒˆ ì†Œìœ  ì°¸ì¡° ì¦ê°€
 	CBarrierObject& operator=(const CBarrierObject& other)
 	{
 		if (this != &other)
 		{
-			CGameObject::operator=(other);      // base ¸â¹ö º¹»ç (m_pMeshµµ º¹»çµÊ)
-			if (m_pMesh) m_pMesh->AddRef();     // »õ ¼ÒÀ¯¿¡ ´ëÇØ Áõ°¡
+			CGameObject::operator=(other);      // base ë©¤ë²„ ë³µì‚¬ (m_pMeshë„ ë³µì‚¬ë¨)
+			if (m_pMesh) m_pMesh->AddRef();     // ìƒˆ ì†Œìœ ì— ëŒ€í•´ ì¦ê°€
 		}
 		return *this;
 	}

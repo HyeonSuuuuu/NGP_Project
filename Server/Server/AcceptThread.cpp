@@ -3,7 +3,7 @@
 #include "Thread.h"
 #include "Session.h"
 #include "Packet.h"
-#include "Common.h"        // g_sessions, g_isRunning, g_csSessions µî Àü¿ª º¯¼ö ¿©±â ÀÖÀ½
+#include "Common.h"        // g_sessions, g_isRunning, g_csSessions ë“± ì „ì—­ ë³€ìˆ˜ ì—¬ê¸° ìˆìŒ
 #include <ws2tcpip.h>
 #include <iostream>
 #include "Globals.h"
@@ -12,9 +12,9 @@
 DWORD WINAPI AcceptThread(void* args)
 {
     SOCKET listen_sock = reinterpret_cast<SOCKET>(args);
-    uint32_t idCount = 1000;   // ÇÃ·¹ÀÌ¾î ID ½ÃÀÛ ¹øÈ£
+    uint32_t idCount = 1000;   // í”Œë ˆì´ì–´ ID ì‹œì‘ ë²ˆí˜¸
 
-    std::cout << "[AcceptThread] »ı¼º ¼º°ø - Å¬¶óÀÌ¾ğÆ® Á¢¼Ó ´ë±â Áß..." << std::endl;
+    std::cout << "[AcceptThread] ìƒì„± ì„±ê³µ - í´ë¼ì´ì–¸íŠ¸ ì ‘ì† ëŒ€ê¸° ì¤‘..." << std::endl;
 
     while (g_isRunning.load())
     {
@@ -25,24 +25,24 @@ DWORD WINAPI AcceptThread(void* args)
         if (clientSock == INVALID_SOCKET)
         {
             if (g_isRunning.load())
-                std::cout << "[Accept] accept() ½ÇÆĞ: " << WSAGetLastError() << std::endl;
+                std::cout << "[Accept] accept() ì‹¤íŒ¨: " << WSAGetLastError() << std::endl;
             continue;
         }
 
         EnterCriticalSection(&g_csSessions);
         if (g_sessions.size() >= MAX_PLAYERS) {
-            std::cout << "Å¬¶óÀÌ¾ğÆ® Á¢¼Ó °ÅºÎ: ÀÎ¿ø ÃÊ°ú" << std::endl;
+            std::cout << "í´ë¼ì´ì–¸íŠ¸ ì ‘ì† ê±°ë¶€: ì¸ì› ì´ˆê³¼" << std::endl;
             closesocket(clientSock);
             continue;
         }
         LeaveCriticalSection(&g_csSessions);
 
-        // Å¬¶óÀÌ¾ğÆ® IP Ãâ·Â
+        // í´ë¼ì´ì–¸íŠ¸ IP ì¶œë ¥
         char ip[INET_ADDRSTRLEN]{};
         inet_ntop(AF_INET, &clientAddr.sin_addr, ip, INET_ADDRSTRLEN);
-        std::cout << "[Á¢¼Ó] Å¬¶óÀÌ¾ğÆ® Á¢¼Ó ¡æ " << ip << ":" << ntohs(clientAddr.sin_port) << std::endl;
+        std::cout << "[ì ‘ì†] í´ë¼ì´ì–¸íŠ¸ ì ‘ì† â†’ " << ip << ":" << ntohs(clientAddr.sin_port) << std::endl;
 
-        // Session µ¿Àû »ı¼º
+        // Session ë™ì  ìƒì„±
         Session* newSession = new Session();
         newSession->socket = clientSock;
         newSession->sessionId = idCount++;
@@ -50,7 +50,7 @@ DWORD WINAPI AcceptThread(void* args)
         newSession->inputflag = 0;
 		newSession->recvEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 
-        // ÇÃ·¹ÀÌ¾î ÃÊ±â À§Ä¡ (¸Ê ¹üÀ§ ¸ÂÃç¼­)
+        // í”Œë ˆì´ì–´ ì´ˆê¸° ìœ„ì¹˜ (ë§µ ë²”ìœ„ ë§ì¶°ì„œ)
         newSession->data.id = newSession->sessionId;
         newSession->data.x = RandF(-45.0f, 45.0f);
         newSession->data.z = RandF(-5.0f, 85.0f);
@@ -63,11 +63,11 @@ DWORD WINAPI AcceptThread(void* args)
         newSession->data.deathCount = 0;
         newSession->data.isDead = false;
 
-        // NetworkThread »ı¼º (°¢ Å¬¶óÀÌ¾ğÆ®¸¶´Ù ÇÏ³ª¾¿)
+        // NetworkThread ìƒì„± (ê° í´ë¼ì´ì–¸íŠ¸ë§ˆë‹¤ í•˜ë‚˜ì”©)
         HANDLE hThread = CreateThread(nullptr, 0, NetworkThread, newSession, 0, nullptr);
         if (hThread == nullptr)
         {
-            std::cout << "[ERROR] NetworkThread »ı¼º ½ÇÆĞ" << std::endl;
+            std::cout << "[ERROR] NetworkThread ìƒì„± ì‹¤íŒ¨" << std::endl;
             closesocket(clientSock);
             CloseHandle(newSession->recvEvent);
             delete newSession;
@@ -75,6 +75,6 @@ DWORD WINAPI AcceptThread(void* args)
         }
     }
     
-    std::cout << "[AcceptThread] Á¾·á" << std::endl;
+    std::cout << "[AcceptThread] ì¢…ë£Œ" << std::endl;
     return 0;
 }

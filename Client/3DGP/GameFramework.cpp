@@ -141,7 +141,7 @@ void CGameFramework::FrameAdvance()
 
     ClearFrameBuffer(RGB(255, 255, 255));
 
-	// д╚╦ч╤С╦╕ ╬Н╣П╢ы ╣н╬Н╬ъ гр╠Н
+	// Л╧╢К╘■К²╪К╔╪ Л√╢К■■К▀╓ К▒░Л√╢Л∙╪ М∙═Й╧▄
 	Render();
 
 	PresentFrameBuffer();

@@ -13,15 +13,15 @@ DWORD WINAPI NetworkThread(void* args)
     int retval;
     Session& session = *reinterpret_cast<Session*>(args);
     
-    // buffer ÇÏ³ª·Î recv/send
+    // buffer í•˜ë‚˜ë¡œ recv/send
     char buffer[65536];
 
     SendEnterPacket(buffer, session);
 
-    // Àü¿ª ¼¼¼Ç ¸®½ºÆ®¿¡ Ãß°¡ (½º·¹µå ¼¼ÀÌÇÁ)
+    // ì „ì—­ ì„¸ì…˜ ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€ (ìŠ¤ë ˆë“œ ì„¸ì´í”„)
     EnterCriticalSection(&g_csSessions);
     g_sessions.push_back(&session);
-    std::cout << "ÇöÀç ¼­¹ö ÀÎ¿ø: " << g_sessions.size() << "¸í" << std::endl;
+    std::cout << "í˜„ì¬ ì„œë²„ ì¸ì›: " << g_sessions.size() << "ëª…" << std::endl;
     LeaveCriticalSection(&g_csSessions);
 
     PacketHeader header;
@@ -40,12 +40,12 @@ DWORD WINAPI NetworkThread(void* args)
             session.inputflag = inputPkt.inputFlag;
             session.data.yawAngle = static_cast<float>(inputPkt.yawAngle);
             if (!(count % 30))
-                DebugLog("[ÆĞÅ¶ Recv] CS_INPUT (Angle: %hd, inputFlag: %d\n", inputPkt.yawAngle, inputPkt.inputFlag);
+                DebugLog("[íŒ¨í‚· Recv] CS_INPUT (Angle: %hd, inputFlag: %d\n", inputPkt.yawAngle, inputPkt.inputFlag);
         }
 
         // recv_event Set
         SetEvent(session.recvEvent);
-        // send_event ±â´Ù¸²
+        // send_event ê¸°ë‹¤ë¦¼
 		WaitForSingleObject(g_sendevent, INFINITE);
         // event Send
         if (!g_killEvents.empty()) {
@@ -61,7 +61,7 @@ DWORD WINAPI NetworkThread(void* args)
             header.size = offset - sizeof(PacketHeader);
             memcpy(buffer, &header, sizeof(PacketHeader));
             send(session.socket, buffer, offset, 0);
-            DebugLog("[ÆĞÅ¶ Àü¼Û] SC_KILLEVENT\n");
+            DebugLog("[íŒ¨í‚· ì „ì†¡] SC_KILLEVENT\n");
         }
         SendSnapshotPacket(buffer, session);
     }
@@ -89,7 +89,7 @@ void SendEnterPacket(char* buffer, Session& session)
     header.size = offset - sizeof(PacketHeader);
     memcpy(buffer, &header, sizeof(PacketHeader));
     send(session.socket, buffer, offset, 0);
-    DebugLog("[ÆĞÅ¶ Àü¼Û] SC_ENTER -> Player %u (Àå¾Ö¹° %llu°³ µ¿±âÈ­)\n", session.sessionId, g_obstacles.size());
+    DebugLog("[íŒ¨í‚· ì „ì†¡] SC_ENTER -> Player %u (ì¥ì• ë¬¼ %lluê°œ ë™ê¸°í™”)\n", session.sessionId, g_obstacles.size());
 }
 
 // RecvPacket
@@ -121,11 +121,11 @@ void SendSnapshotPacket(char* buffer, Session& session)
     memcpy(buffer, &header, sizeof(PacketHeader));
     send(session.socket, buffer, offset, 0);
     if (!(count % 30))
-        DebugLog("[ÆĞÅ¶ Àü¼Û] SC_SNAPSHOT -> Player ()\n", session.sessionId);
+        DebugLog("[íŒ¨í‚· ì „ì†¡] SC_SNAPSHOT -> Player ()\n", session.sessionId);
 }
 
 
-// Å¬¶óÀÌ¾ğÆ® ¿¬°á ÇØÁ¦ Ã³¸®
+// í´ë¼ì´ì–¸íŠ¸ ì—°ê²° í•´ì œ ì²˜ë¦¬
 void DisconnectSession(Session& session)
 {
     EnterCriticalSection(&g_csSessions);
@@ -136,9 +136,9 @@ void DisconnectSession(Session& session)
         g_sessions.erase(it);
     LeaveCriticalSection(&g_csSessions);
 
-    SetEvent(session.recvEvent); // µ¥µå¶ô ¹æÁö
+    SetEvent(session.recvEvent); // ë°ë“œë½ ë°©ì§€
     closesocket(session.socket);
     CloseHandle(session.recvEvent);
     delete &session;
-    printf("[¿¬°á ÇØÁ¦] Player %u ¿¬°á Á¾·á\n", session.sessionId);
+    printf("[ì—°ê²° í•´ì œ] Player %u ì—°ê²° ì¢…ë£Œ\n", session.sessionId);
 }

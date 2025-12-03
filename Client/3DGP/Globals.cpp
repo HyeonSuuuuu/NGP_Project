@@ -18,7 +18,7 @@ CRITICAL_SECTION					g_csBullets;
 CRITICAL_SECTION					g_csKillEvents;
 HANDLE								g_enterEvent;
 
-// ¸ŞÀÎ·ÎÁ÷¿¡¼­¸¸ Á¢±Ù
+// ë©”ì¸ë¡œì§ì—ì„œë§Œ ì ‘ê·¼
 int									g_enemyCount;
 
 void InitGlobals()

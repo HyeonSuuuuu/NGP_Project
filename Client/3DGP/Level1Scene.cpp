@@ -9,7 +9,6 @@ CLevel1Scene::CLevel1Scene(CGameContext& gameContext)
 	: CScene(gameContext)
 {
 }
-
 CLevel1Scene::~CLevel1Scene()
 {
 }
@@ -50,26 +49,26 @@ void CLevel1Scene::Render(HDC hDCFrameBuffer)
 
 void CLevel1Scene::GenerateRollerCoaster()
 {
-	float meshLength = 3.0f; // Å¥ºê ÇÏ³ªÀÇ ±æÀÌ
+	float meshLength = 3.0f; // íë¸Œ í•˜ë‚˜ì˜ ê¸¸ì´
 	CCubeMesh* pMesh = new CCubeMesh(1.0f, 1.0f, meshLength); // Width, Height, Depth
 
 	m_spPlayer->AddPoint(XMFLOAT3(0, 0, 0));
 	m_spPlayer->AddPoint(XMFLOAT3(5, 5, 30));
 	m_spPlayer->AddPoint(XMFLOAT3(10, 10, 70));
-	m_spPlayer->AddPoint(XMFLOAT3(30, 15, 110)); // ÃÖ°íÁ¡
+	m_spPlayer->AddPoint(XMFLOAT3(30, 15, 110)); // ìµœê³ ì 
 	m_spPlayer->AddPoint(XMFLOAT3(50, 5, 150));
-	m_spPlayer->AddPoint(XMFLOAT3(80, -10, 200)); // ±ŞÇÏ°­
+	m_spPlayer->AddPoint(XMFLOAT3(80, -10, 200)); // ê¸‰í•˜ê°•
 	m_spPlayer->AddPoint(XMFLOAT3(110, 0, 250));
 	m_spPlayer->AddPoint(XMFLOAT3(140, 5, 300));
-	m_spPlayer->AddPoint(XMFLOAT3(160, 15, 320)); // ´Ù½Ã »ó½Â
+	m_spPlayer->AddPoint(XMFLOAT3(160, 15, 320)); // ë‹¤ì‹œ ìƒìŠ¹
 	m_spPlayer->AddPoint(XMFLOAT3(180, 10, 350));
 	m_spPlayer->AddPoint(XMFLOAT3(200, 0, 380));
 	m_spPlayer->AddPoint(XMFLOAT3(230, -10, 410));
 	m_spPlayer->AddPoint(XMFLOAT3(260, -5, 440));
-	m_spPlayer->AddPoint(XMFLOAT3(300, 0, 500)); // ¸¶Áö¸· ¿Ï¸¸ÇÑ ÇÏ°­
+	m_spPlayer->AddPoint(XMFLOAT3(300, 0, 500)); // ë§ˆì§€ë§‰ ì™„ë§Œí•œ í•˜ê°•
 
 	float estimatedPathLength = 500.0f;
-	int objCount = static_cast<int>(estimatedPathLength / meshLength); // ¾à 166°³
+	int objCount = static_cast<int>(estimatedPathLength / meshLength); // ì•½ 166ê°œ
 	m_objects.resize(objCount);
 
 	for (int i = 0; i < objCount; ++i)
@@ -78,15 +77,15 @@ void CLevel1Scene::GenerateRollerCoaster()
 
 		m_objects[i].SetMesh(pMesh);
 
-		// À§Ä¡ ¹× ¹æÇâ °è»ê
+		// ìœ„ì¹˜ ë° ë°©í–¥ ê³„ì‚°
 		XMFLOAT3 position = m_spPlayer->GetPosition(t);
 		m_objects[i].SetPosition(position);
 		XMFLOAT3 tangent = m_spPlayer->GetTangent(t);
-		// ÇÃ·¹ÀÌ¾î ¹æÇâ
+		// í”Œë ˆì´ì–´ ë°©í–¥
 		m_spPlayer->LookAt(tangent,XMFLOAT3(0.f, 1.f, 0.f));
 
-		// ¾÷ º¤ÅÍ¿¡ ¾à°£ÀÇ Æ®À§½ºÆ®¸¦ Áà¼­ È¸Àü ´À³¦ Ãß°¡
-		float angle = XM_PI * 2.0f * t; // 0 ~ 2pi È¸Àü
+		// ì—… ë²¡í„°ì— ì•½ê°„ì˜ íŠ¸ìœ„ìŠ¤íŠ¸ë¥¼ ì¤˜ì„œ íšŒì „ ëŠë‚Œ ì¶”ê°€
+		float angle = XM_PI * 2.0f * t; // 0 ~ 2pi íšŒì „
 		XMFLOAT3 up = Vector3::Normalize(XMFLOAT3(sinf(angle) * 0.5f, 1.0f, cosf(angle) * 0.5f));
 
 		m_objects[i].LookTo(tangent, up);

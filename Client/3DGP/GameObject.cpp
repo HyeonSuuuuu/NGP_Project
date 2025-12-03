@@ -216,7 +216,7 @@ void CEnemyObject::SetYawRotation(float yawAngle)
 
 	float yawRad = XMConvertToRadians(yawAngle);
 	m_xmf3Look.x = sinf(yawRad);
-	m_xmf3Look.y = 0.0f; // Yaw È¸Àü¸¸ ÀÖÀ¸¹Ç·Î ¼öÁ÷ ¼ººĞÀº 0ÀÔ´Ï´Ù.
+	m_xmf3Look.y = 0.0f; // Yaw íšŒì „ë§Œ ìˆìœ¼ë¯€ë¡œ ìˆ˜ì§ ì„±ë¶„ì€ 0ì…ë‹ˆë‹¤.
 	m_xmf3Look.z = cosf(yawRad);
 
 	m_xmf3Look = Vector3::Normalize(m_xmf3Look);

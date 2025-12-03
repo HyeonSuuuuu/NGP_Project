@@ -140,7 +140,7 @@ void CCamera::Update(CPlayer* pPlayer, XMFLOAT3& xmf3LookAt, float fTimeElapsed)
 	float fLength = Vector3::Length(xmf3Direction);
 	xmf3Direction = Vector3::Normalize(xmf3Direction);
 
-	// Ä«¸Þ¶ó Áö¿¬ (ºÎµå·¯¿î ÀÌµ¿ º¸Á¤) ±âÁ¸ (1.0f / 0.25f)
+	// ì¹´ë©”ë¼ ì§€ì—° (ë¶€ë“œëŸ¬ìš´ ì´ë™ ë³´ì •) ê¸°ì¡´ (1.0f / 0.25f)
 	float fTimeLagScale = fTimeElapsed * (1.0f / 0.1f);
 	float fDistance = fLength * fTimeLagScale;
 	if (fDistance > fLength) fDistance = fLength;

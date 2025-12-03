@@ -1,6 +1,6 @@
 #pragma once
 #include "stdafx.h"
-// object setÇÒ°Ô ¸¹¾Æ¼­ ³ªÁß¿¡
+// object setí• ê²Œ ë§Žì•„ì„œ ë‚˜ì¤‘ì—
 //enum class GROUP_TYPE {
 //	DEFAULT,
 //	PLAYER,
@@ -8,7 +8,7 @@
 //	END = 32,
 //};
 
-// SceneManager > ChangeScene SCENE_ID¸¦ º¸°í ¾Ë¸ÂÀº SCENEÀ» »ý¼º (¸¸¾à »óÅÂ¸¦ º¸°üÇÑ´Ù¸é delete¸¦ ¾ÈÇÏ¸é µÉ°Í) ¾À¸Þ´ÏÀú±îÁö ÇÊ¿ä ¾ø´Ù.
+// SceneManager > ChangeScene SCENE_IDë¥¼ ë³´ê³  ì•Œë§žì€ SCENEì„ ìƒì„± (ë§Œì•½ ìƒíƒœë¥¼ ë³´ê´€í•œë‹¤ë©´ deleteë¥¼ ì•ˆí•˜ë©´ ë ê²ƒ) ì”¬ë©”ë‹ˆì €ê¹Œì§€ í•„ìš” ì—†ë‹¤.
 
 class CGameContext;
 
@@ -44,7 +44,7 @@ protected:
 
 
 private:
-	// µð¹ö±ë¿ë
+	// ë””ë²„ê¹…ìš©
 	std::wstring m_strName;
 };
 

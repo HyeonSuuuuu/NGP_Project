@@ -67,8 +67,8 @@ void CMenuScene::Render(HDC hDCFrameBuffer)
 	RECT rTitle = { centerX - 200, centerY - 100 - 100, centerX + 200, centerY + 100 - 100 };
 	m_rName = { centerX - 90 , centerY - 100 + 100, centerX + 50, centerY + 50 + 100 };
 
-	const char* pszTitle = "3D °ÔÀÓÇÁ·Î±×·¡¹Ö 1";
-	const char* pszName = "ÀÌÇö¼ö";
+	const char* pszTitle = "3D ê²Œì„í”„ë¡œê·¸ë˜ë° 1";
+	const char* pszName = "ì´í˜„ìˆ˜";
 	DrawTextA(hDCFrameBuffer, pszTitle, -1, &rTitle, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 	SelectObject(hDCFrameBuffer, hRotateFont);
 

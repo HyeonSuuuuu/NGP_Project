@@ -2,23 +2,23 @@
 #include "Packet.h"
 #include "Timer.h"
 class Session;
-// Àü¿ªº¯¼ö =======================================
+// ì „ì—­ë³€ìˆ˜ =======================================
 extern GameTimer g_timer;
 extern std::vector<Session*>	g_sessions;
 extern CRITICAL_SECTION			g_csSessions;
 extern std::atomic<bool>		g_isRunning;
 extern HANDLE					g_sendevent;
 
-// Àü¿ª»ó¼ö =======================================
+// ì „ì—­ìƒìˆ˜ =======================================
 constexpr int MAX_PLAYER = 64;
 constexpr float DIAG = 0.7071f;
-// Àü¿ªº¤ÅÍ =======================================
+// ì „ì—­ë²¡í„° =======================================
 extern std::vector<Obstacle> g_obstacles;
 extern std::vector<KillEventPacket> g_killEvents;
 extern std::vector<Bullet> g_bullets;
 extern std::vector<PlayerInfo> g_players;
 
-// ´Ù·ºÇÔ¼ö (ÇÊ¿äÇÑ ºÎºĞ¸¸ °¡Á®¿È) =================
+// ë‹¤ë ‰í•¨ìˆ˜ (í•„ìš”í•œ ë¶€ë¶„ë§Œ ê°€ì ¸ì˜´) =================
 constexpr float XM_PI = 3.141592654f;
 constexpr float XMConvertToRadians(float fDegrees) noexcept { return fDegrees * (XM_PI / 180.0f); }
 constexpr float XMConvertToDegrees(float fRadians) noexcept { return fRadians * (180.0f / XM_PI); }

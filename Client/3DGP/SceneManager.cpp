@@ -11,7 +11,7 @@
 
 void CSceneManager::Init(CGameContext& context)
 {
-	// ¸ğµç SceneÀ» Load ÇØ³õ´Â´Ù.
+	// ëª¨ë“  Sceneì„ Load í•´ë†“ëŠ”ë‹¤.
 	/*if (!m_arrScene[(UINT)SCENE_TYPE::AIRPLANE]) {
 		std::shared_ptr<CCamera> spCamera = std::make_shared<CCamera>();
 		spCamera->SetViewport(0, 0, FRAMEBUFFER_WIDTH, FRAMEBUFFER_HEIGHT);

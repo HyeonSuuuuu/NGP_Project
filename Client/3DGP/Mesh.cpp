@@ -476,24 +476,24 @@ void CAxisMesh::Render(HDC hDCFrameBuffer)
 
 CTankMesh::CTankMesh(float fWidth, float fHeight, float fDepth) : CMesh(18)
 {
-	// 1. ¸öÅë ÆÄ¶ó¹ÌÅÍ (Æø, ³ôÀÌ, ±íÀÌ)
+	// 1. ëª¸í†µ íŒŒë¼ë¯¸í„° (í­, ë†’ì´, ê¹Šì´)
 	float fBodyHalfW = fWidth * 0.5f;
-	float fBodyHalfH = fHeight / 3.f * 2.f; // ³ôÀÌ Àı¹İ
-	float fBodyHalfD = fDepth * 0.5f;  // ±íÀÌ fDepthÀÇ Àı¹İ
+	float fBodyHalfH = fHeight / 3.f * 2.f; // ë†’ì´ ì ˆë°˜
+	float fBodyHalfD = fDepth * 0.5f;  // ê¹Šì´ fDepthì˜ ì ˆë°˜
 
-	// 2. ÅÍ·¿ ÆÄ¶ó¹ÌÅÍ (¸öÅë À§¿¡ À§Ä¡)
-	float fTurretHalfW = fWidth * 0.3f;  // Æø 60%
-	float fTurretHalfH = fHeight / 3.f; // ³ôÀÌ Àı¹İ
-	float fTurretHalfD = fDepth * 0.4f;  // ±íÀÌ 80%ÀÇ Àı¹İ
-	float fTurretY = fBodyHalfH;         // ÅÍ·¿ ¹Ù´Ú Y (¸öÅë À­¸é°ú µ¿ÀÏ)
+	// 2. í„°ë › íŒŒë¼ë¯¸í„° (ëª¸í†µ ìœ„ì— ìœ„ì¹˜)
+	float fTurretHalfW = fWidth * 0.3f;  // í­ 60%
+	float fTurretHalfH = fHeight / 3.f; // ë†’ì´ ì ˆë°˜
+	float fTurretHalfD = fDepth * 0.4f;  // ê¹Šì´ 80%ì˜ ì ˆë°˜
+	float fTurretY = fBodyHalfH;         // í„°ë › ë°”ë‹¥ Y (ëª¸í†µ ìœ—ë©´ê³¼ ë™ì¼)
 
-	// 3. Æ÷±¸ ÆÄ¶ó¹ÌÅÍ
+	// 3. í¬êµ¬ íŒŒë¼ë¯¸í„°
 	float fBarrelHalfW = 0.15f;
 	float fBarrelHalfH = 0.15f;
 	float fBarrelLength = 3.0f;
-	float fBarrelZ = fTurretHalfD + fBarrelLength; // Æ÷±¸ ³¡ Z ÁÂÇ¥
+	float fBarrelZ = fTurretHalfD + fBarrelLength; // í¬êµ¬ ë Z ì¢Œí‘œ
 
-	// ¢º¢º¢º 1. ¸öÅë 6¸é (Á¤À°¸éÃ¼)
+	// â–¶â–¶â–¶ 1. ëª¸í†µ 6ë©´ (ì •ìœ¡ë©´ì²´)
 	// Front (-Z)
 	CPolygon* pFace = new CPolygon(4);
 	pFace->SetVertex(0, CVertex(-fBodyHalfW, +fBodyHalfH, -fBodyHalfD));
@@ -542,36 +542,36 @@ CTankMesh::CTankMesh(float fWidth, float fHeight, float fDepth) : CMesh(18)
 	pFace->SetVertex(3, CVertex(-fBodyHalfW, -fBodyHalfH, +fBodyHalfD));
 	SetPolygon(5, pFace);
 
-	// ¢º¢º¢º 2. ÅÍ·¿ 6¸é (¸öÅë À§¿¡ µü ºÙÀ½)
+	// â–¶â–¶â–¶ 2. í„°ë › 6ë©´ (ëª¸í†µ ìœ„ì— ë”± ë¶™ìŒ)
 	// Front (-Z)
 	pFace = new CPolygon(4);
-	pFace->SetVertex(0, CVertex(-fTurretHalfW, fTurretY + fTurretHalfH, -fTurretHalfD)); // »ó´Ü
+	pFace->SetVertex(0, CVertex(-fTurretHalfW, fTurretY + fTurretHalfH, -fTurretHalfD)); // ìƒë‹¨
 	pFace->SetVertex(1, CVertex(+fTurretHalfW, fTurretY + fTurretHalfH, -fTurretHalfD));
-	pFace->SetVertex(2, CVertex(+fTurretHalfW, fTurretY - fTurretHalfH, -fTurretHalfD)); // ÇÏ´Ü
+	pFace->SetVertex(2, CVertex(+fTurretHalfW, fTurretY - fTurretHalfH, -fTurretHalfD)); // í•˜ë‹¨
 	pFace->SetVertex(3, CVertex(-fTurretHalfW, fTurretY - fTurretHalfH, -fTurretHalfD));
 	SetPolygon(6, pFace);
 
 	// Back (+Z)
 	pFace = new CPolygon(4);
-	pFace->SetVertex(0, CVertex(-fTurretHalfW, fTurretY - fTurretHalfH, +fTurretHalfD)); // ÇÏ´Ü
+	pFace->SetVertex(0, CVertex(-fTurretHalfW, fTurretY - fTurretHalfH, +fTurretHalfD)); // í•˜ë‹¨
 	pFace->SetVertex(1, CVertex(+fTurretHalfW, fTurretY - fTurretHalfH, +fTurretHalfD));
-	pFace->SetVertex(2, CVertex(+fTurretHalfW, fTurretY + fTurretHalfH, +fTurretHalfD)); // »ó´Ü
+	pFace->SetVertex(2, CVertex(+fTurretHalfW, fTurretY + fTurretHalfH, +fTurretHalfD)); // ìƒë‹¨
 	pFace->SetVertex(3, CVertex(-fTurretHalfW, fTurretY + fTurretHalfH, +fTurretHalfD));
 	SetPolygon(7, pFace);
 
 	// Left (-X)
 	pFace = new CPolygon(4);
-	pFace->SetVertex(0, CVertex(-fTurretHalfW, fTurretY + fTurretHalfH, +fTurretHalfD)); // »ó´Ü
+	pFace->SetVertex(0, CVertex(-fTurretHalfW, fTurretY + fTurretHalfH, +fTurretHalfD)); // ìƒë‹¨
 	pFace->SetVertex(1, CVertex(-fTurretHalfW, fTurretY + fTurretHalfH, -fTurretHalfD));
-	pFace->SetVertex(2, CVertex(-fTurretHalfW, fTurretY - fTurretHalfH, -fTurretHalfD)); // ÇÏ´Ü
+	pFace->SetVertex(2, CVertex(-fTurretHalfW, fTurretY - fTurretHalfH, -fTurretHalfD)); // í•˜ë‹¨
 	pFace->SetVertex(3, CVertex(-fTurretHalfW, fTurretY - fTurretHalfH, +fTurretHalfD));
 	SetPolygon(8, pFace);
 
 	// Right (+X)
 	pFace = new CPolygon(4);
-	pFace->SetVertex(0, CVertex(+fTurretHalfW, fTurretY + fTurretHalfH, -fTurretHalfD)); // »ó´Ü
+	pFace->SetVertex(0, CVertex(+fTurretHalfW, fTurretY + fTurretHalfH, -fTurretHalfD)); // ìƒë‹¨
 	pFace->SetVertex(1, CVertex(+fTurretHalfW, fTurretY + fTurretHalfH, +fTurretHalfD));
-	pFace->SetVertex(2, CVertex(+fTurretHalfW, fTurretY - fTurretHalfH, +fTurretHalfD)); // ÇÏ´Ü
+	pFace->SetVertex(2, CVertex(+fTurretHalfW, fTurretY - fTurretHalfH, +fTurretHalfD)); // í•˜ë‹¨
 	pFace->SetVertex(3, CVertex(+fTurretHalfW, fTurretY - fTurretHalfH, -fTurretHalfD));
 	SetPolygon(9, pFace);
 
@@ -591,7 +591,7 @@ CTankMesh::CTankMesh(float fWidth, float fHeight, float fDepth) : CMesh(18)
 	pFace->SetVertex(3, CVertex(-fTurretHalfW, fTurretY - fTurretHalfH, +fTurretHalfD));
 	SetPolygon(11, pFace);
 
-	// ¢º¢º¢º 3. Æ÷±¸ 6¸é (+Z ¹æÇâ)
+	// â–¶â–¶â–¶ 3. í¬êµ¬ 6ë©´ (+Z ë°©í–¥)
 	// Front (+Z)
 	pFace = new CPolygon(4);
 	pFace->SetVertex(0, CVertex(-fBarrelHalfW, fTurretY + fBarrelHalfH, fBarrelZ));
@@ -640,10 +640,10 @@ CTankMesh::CTankMesh(float fWidth, float fHeight, float fDepth) : CMesh(18)
 	pFace->SetVertex(3, CVertex(-fBarrelHalfW, fTurretY - fBarrelHalfH, +fTurretHalfD));
 	SetPolygon(17, pFace);
 
-	// ¢º¢º¢º OBB ¼³Á¤ (¸öÅë + ÅÍ·¿)
+	// â–¶â–¶â–¶ OBB ì„¤ì • (ëª¸í†µ + í„°ë ›)
 	m_xmOOBB = BoundingOrientedBox(
-		XMFLOAT3(0.0f, fBodyHalfH + fTurretHalfH, 0.0f), // Áß½É Y: ¸öÅë Áß°£ + ÅÍ·¿ ³ôÀÌ Àı¹İ
-		XMFLOAT3(fBodyHalfW, fBodyHalfH + fTurretHalfH, fBodyHalfD), // ¹üÀ§
+		XMFLOAT3(0.0f, fBodyHalfH + fTurretHalfH, 0.0f), // ì¤‘ì‹¬ Y: ëª¸í†µ ì¤‘ê°„ + í„°ë › ë†’ì´ ì ˆë°˜
+		XMFLOAT3(fBodyHalfW, fBodyHalfH + fTurretHalfH, fBodyHalfD), // ë²”ìœ„
 		XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)
 	);
 }
