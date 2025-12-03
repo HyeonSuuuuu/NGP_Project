@@ -1,17 +1,17 @@
 @echo off
-title ¼­¹ö ¹× Å¬¶óÀÌ¾ðÆ® ½ÇÇà±â
+title ì„œë²„ ë° í´ë¼ì´ì–¸íŠ¸ ì‹¤í–‰ê¸°
 
 :MENU
 cls
 echo ============================
-echo   ¼­¹ö / Å¬¶óÀÌ¾ðÆ® ½ÇÇà±â
+echo   ì„œë²„ / í´ë¼ì´ì–¸íŠ¸ ì‹¤í–‰ê¸°
 echo ============================
 echo.
-echo   1. ¼­¹ö ½ÇÇà
-echo   2. Å¬¶óÀÌ¾ðÆ® ½ÇÇà
-echo   0. Á¾·á
+echo   1. ì„œë²„ ì‹¤í–‰
+echo   2. í´ë¼ì´ì–¸íŠ¸ ì‹¤í–‰
+echo   0. ì¢…ë£Œ
 echo.
-set /p choice=¿øÇÏ´Â ¹øÈ£¸¦ ÀÔ·ÂÇÏ¼¼¿ä: 
+set /p choice=ì›í•˜ëŠ” ë²ˆí˜¸ë¥¼ ìž…ë ¥í•˜ì„¸ìš”: 
 
 if "%choice%"=="1" goto RUN_SERVER
 if "%choice%"=="2" goto RUN_CLIENT
@@ -20,17 +20,17 @@ goto MENU
 
 
 :RUN_SERVER
-echo ¼­¹ö¸¦ ½ÃÀÛÇÕ´Ï´Ù...
+echo ì„œë²„ë¥¼ ì‹œìž‘í•©ë‹ˆë‹¤...
 start "ServerWindow" "Server\x64\Release\Server.exe"
-echo ¼­¹ö ½ÇÇà ¿Ï·á.
+echo ì„œë²„ ì‹¤í–‰ ì™„ë£Œ.
 pause
 goto MENU
 
 
 :RUN_CLIENT
 
-echo Å¬¶óÀÌ¾ðÆ® 1°³¸¦ ½ÃÀÛÇÕ´Ï´Ù...
+echo í´ë¼ì´ì–¸íŠ¸ 1ê°œë¥¼ ì‹œìž‘í•©ë‹ˆë‹¤...
 start "Homework4Client_2" "Client\x64\Release\3DGP.exe"
-echo Å¬¶óÀÌ¾ðÆ®°¡ ½ÃÀÛµÇ¾ú½À´Ï´Ù.
+echo í´ë¼ì´ì–¸íŠ¸ê°€ ì‹œìž‘ë˜ì—ˆìŠµë‹ˆë‹¤.
 pause
 goto MENU

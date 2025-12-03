@@ -10,6 +10,7 @@ int count;
 
 DWORD WINAPI NetworkThread(void* args)
 {
+    // 인자를 session*로 변경
     int retval;
     Session& session = *reinterpret_cast<Session*>(args);
     
@@ -18,7 +19,7 @@ DWORD WINAPI NetworkThread(void* args)
 
     SendEnterPacket(buffer, session);
 
-    // 전역 세션 리스트에 추가 (스레드 세이프)
+    // 세션 포인터 벡터에 추가
     EnterCriticalSection(&g_csSessions);
     g_sessions.push_back(&session);
     std::cout << "현재 서버 인원: " << g_sessions.size() << "명" << std::endl;
@@ -27,6 +28,7 @@ DWORD WINAPI NetworkThread(void* args)
     PacketHeader header;
     while (session.isConnected.load()) {
         count++;
+        // Recv 처리
         retval = recv(session.socket, (char*)&header, sizeof(PacketHeader), MSG_WAITALL);
         if (retval != sizeof(PacketHeader))
             break;
@@ -45,9 +47,12 @@ DWORD WINAPI NetworkThread(void* args)
 
         // recv_event Set
         SetEvent(session.recvEvent);
+
         // send_event 기다림
 		WaitForSingleObject(g_sendevent, INFINITE);
-        // event Send
+
+        // send 처리
+        // 킬이벤트 벡터가 비어있지 않으면 전송
         if (!g_killEvents.empty()) {
             int offset = 0;
             PacketHeader header{};
@@ -63,6 +68,7 @@ DWORD WINAPI NetworkThread(void* args)
             send(session.socket, buffer, offset, 0);
             DebugLog("[패킷 전송] SC_KILLEVENT\n");
         }
+        // 스냅샷 Send
         SendSnapshotPacket(buffer, session);
     }
 

@@ -165,10 +165,10 @@ void CLevel2Scene::Render(HDC hDCFrameBuffer)
 		return a.killCount > b.killCount;
 		});
 
-	TextOutEx(hDCFrameBuffer, m_gameContext.m_rcClient.right - 150, 0, "Leaderboard");
+	TextOutEx(hDCFrameBuffer, m_gameContext.m_rcClient.right - 150, 0, "Leaderboard (K/DA)");
 	int yPos = 20;
 	for (const auto& player : sortedPlayers) {
-		TextOutEx(hDCFrameBuffer, m_gameContext.m_rcClient.right - 150, yPos, "Player %d: %dK / %dD", player.id, player.killCount, player.deathCount);
+		TextOutEx(hDCFrameBuffer, m_gameContext.m_rcClient.right - 150, yPos, "%d: (%d / %d)", player.id, player.killCount, player.deathCount);
 		yPos += 20;
 	}
 

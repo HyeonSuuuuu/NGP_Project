@@ -27,6 +27,8 @@ int main()
 	// GameLoop
 	while (g_isRunning.load()) {
 		g_timer.Tick(30.f);
+		
+		// TODO: 모든 RecvEvent 대기
 		WaitAllRecvEvent(recvEvents);
 
 		// TODO: Send Event 초기화, KillEvent Vector 초기화
@@ -34,7 +36,14 @@ int main()
 		g_killEvents.clear();
 		g_players.clear();
 
-		// TODO: 모든 Session Update
+		// TODO: 총알 Update
+		for (Bullet& bullet : g_bullets) {
+			float yawRad = XMConvertToRadians(bullet.yawAngle);
+			bullet.x += bullet.speed * sinf(yawRad); // X-movement
+			bullet.z += bullet.speed * cosf(yawRad); // Z-movement
+		}
+
+		// TODO: Session Loop
 		EnterCriticalSection(&g_csSessions);
 		const float moveStep = 0.2f;
 		for (Session* session : g_sessions) {
@@ -49,6 +58,7 @@ int main()
 				continue;
 			}
 			
+			// TODO: 모든 Session Update
 			// 상점 1: 공격력 증가, 2: 최대체력 증가, 3: 체력회복
 			if (session->inputflag & INP_ONE) {
 				if (session->data.gold >= 200) {
@@ -114,7 +124,7 @@ int main()
 			session->data.x += dx;
 			session->data.z += dz;
 
-			// 총알 처리
+			// 총알 생성 처리
 			if (session->inputflag & INP_SPACEBAR) {
 				if (tickCount - session->delay > 60) {
 					g_bullets.emplace_back(Bullet{ session->data.x, session->data.z,
@@ -124,13 +134,6 @@ int main()
 			}
 		}
 		LeaveCriticalSection(&g_csSessions);
-		
-		// 총알 Update
-		for (Bullet& bullet : g_bullets) {
-			float yawRad = XMConvertToRadians(bullet.yawAngle);
-			bullet.x += bullet.speed * sinf(yawRad); // X-movement
-			bullet.z += bullet.speed * cosf(yawRad); // Z-movement
-		}
 
 		// 범위 처리 (월드 밖)
 		// width 100 depth 100 x 0 z 40 (-50, 50), (-10, 90)
@@ -185,6 +188,12 @@ int main()
 						 bullet.x + 0.5f, bullet.z + 0.5f };
 				RECT result;
 				if (IntersectRect(&result, &r1, &r2)) {
+					// 자기자신이면 return
+					if (session->data.id == bullet.ownerId) {
+						it++;
+						continue;
+					}
+
 					// 맞춘 플레이어 찾기
 					PlayerInfo* atker = nullptr;
 					for (Session* s : g_sessions) {
@@ -216,6 +225,7 @@ int main()
 		}
 		LeaveCriticalSection(&g_csSessions);
 
+		// 장애물 - 총알
 		for (const Obstacle& obs : g_obstacles) {
 			for (auto it = g_bullets.begin(); it != g_bullets.end(); ) {
 				Bullet& bullet = *it;

@@ -1,4 +1,4 @@
-//Microsoft Visual C++에서 생성한 리소스 스크립트입니다.
+// Microsoft Visual C++ generated resource script.
 //
 #pragma code_page(65001)
 
@@ -7,7 +7,7 @@
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
 //
-// TEXTINCLUDE 리소스에서 생성되었습니다.
+// Generated from the TEXTINCLUDE 2 resource.
 //
 #ifndef APSTUDIO_INVOKED
 #include "targetver.h"
@@ -15,44 +15,49 @@
 #define APSTUDIO_HIDDEN_SYMBOLS
 #include "windows.h"
 #undef APSTUDIO_HIDDEN_SYMBOLS
+
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
+/////////////////////////////////////////////////////////////////////////////
+// 한국어(대한민국) resources
+
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_KOR)
-LANGUAGE 18, 1
+LANGUAGE LANG_KOREAN, SUBLANG_DEFAULT
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// 아이콘
+// Icon
 //
 
-// 애플리케이션 아이콘이 모든 시스템에서 일관된 상태로 유지되도록
-// 가장 낮은 ID 값을 가진 아이콘이 맨 처음 배치됩니다.
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_SMALL               ICON                    "small.ico"
 
-IDI_LABPROJECT0201       ICON         "3DGP.ico"
-IDI_SMALL               ICON         "small.ico"
+IDI_LABPROJECT0201      ICON                    "3DGP.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// 메뉴
+// Menu
 //
 
 IDC_LABPROJECT0201 MENU
 BEGIN
     POPUP "파일(&F)"
     BEGIN
-        MENUITEM "끝내기(&X)",                IDM_EXIT
+        MENUITEM "끝내기(&X)",                     IDM_EXIT
     END
     POPUP "도움말(&H)"
     BEGIN
-        MENUITEM "정보(&A)...",           IDM_ABOUT
+        MENUITEM "정보(&A)...",                   IDM_ABOUT
     END
 END
 
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// 액셀러레이터 키
+// Accelerator
 //
 
 IDC_LABPROJECT0201 ACCELERATORS
@@ -64,19 +69,30 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// 대화 상자
+// Dialog
 //
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "정보 LabProject02-01"
-FONT 9, "MS Shell Dlg"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,21,20
     LTEXT           "LabProject02-01, 버전 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
     LTEXT           "Copyright (C) 2020",IDC_STATIC,42,26,114,8
     DEFPUSHBUTTON   "확인",IDOK,113,41,50,14,WS_GROUP
 END
+
+IDD_DIALOG1 DIALOGEX 0, 0, 232, 47
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "접속",IDOK,169,19,50,14
+    EDITTEXT        IDC_EDIT1,46,19,115,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,7,21,40,14,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -93,20 +109,30 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 55
     END
+
+    IDD_DIALOG1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 225
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 40
+    END
 END
 #endif    // APSTUDIO_INVOKED
+
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
 // TEXTINCLUDE
 //
-1 TEXTINCLUDE
+
+1 TEXTINCLUDE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE
+2 TEXTINCLUDE 
 BEGIN
     "#ifndef APSTUDIO_INVOKED\r\n"
     "#include ""targetver.h""\r\n"
@@ -117,7 +143,7 @@ BEGIN
     "\0"
 END
 
-3 TEXTINCLUDE
+3 TEXTINCLUDE 
 BEGIN
     "\r\n"
     "\0"
@@ -125,18 +151,19 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
-// 문자열 테이블
+// String Table
 //
 
 STRINGTABLE
 BEGIN
-   IDC_3DGP   "3DGP"
-   IDS_APP_TITLE       "3DGP"
+    IDS_APP_TITLE           "3DGP"
+    IDC_3DGP                "3DGP"
 END
 
-#endif
+#endif    // 한국어(대한민국) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -144,8 +171,10 @@ END
 #ifndef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
-// TEXTINCLUDE 리소스에서 생성되었습니다.
+// Generated from the TEXTINCLUDE 3 resource.
 //
+
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
+

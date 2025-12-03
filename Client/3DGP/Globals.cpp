@@ -3,7 +3,7 @@
 
 
 
-
+char								g_ipAddress[16];
 int									g_myId;
 std::atomic<uint8_t>				g_inputFlag;
 std::atomic<uint16_t>				g_yawAngle;

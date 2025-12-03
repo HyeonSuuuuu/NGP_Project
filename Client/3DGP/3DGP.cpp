@@ -15,6 +15,7 @@ TCHAR szTitle[MAX_LOADSTRING];					// 제목 표시줄 텍스트입니다.
 TCHAR szWindowClass[MAX_LOADSTRING];			// 기본 창 클래스 이름입니다.
 
 CGameFramework		gGameFramework;
+HWND hEdit1, hEdit2;
 
 // 이 코드 모듈에 들어 있는 함수의 정방향 선언입니다.
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -33,7 +34,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	// TODO: 여기에 코드를 입력합니다.
 	MSG msg;
 	HACCEL hAccelTable;
-
+	DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
 	// 전역 문자열을 초기화합니다.
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadString(hInstance, IDC_3DGP, szWindowClass, MAX_LOADSTRING);
@@ -44,7 +45,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	{
 		return FALSE;
 	}
-
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_3DGP));
 
 	
@@ -71,6 +71,31 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	return (int)msg.wParam;
 }
 
+
+
+INT_PTR CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg) {
+	case WM_INITDIALOG:
+		hEdit1 = GetDlgItem(hDlg, IDC_EDIT1); // 텍스트박스
+		hEdit2 = GetDlgItem(hDlg, IDC_EDIT2); // 라벨
+		SetWindowTextA(hEdit2, "서버IP: ");
+		SetFocus(hEdit1);
+		return TRUE;
+	case WM_COMMAND:
+		switch (LOWORD(wParam)) {
+		case IDOK:
+			GetWindowTextA(hEdit1, g_ipAddress, 16);
+			EndDialog(hDlg, IDCANCEL);
+			return TRUE;
+		case IDCANCEL:
+			EndDialog(hDlg, IDCANCEL);
+			return TRUE;
+		}
+		return FALSE;
+	}
+	return FALSE;
+}
 
 
 //

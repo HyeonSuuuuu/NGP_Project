@@ -8,7 +8,7 @@ struct KillEvent {
 	int16_t displayTime;
 };
 
-
+extern char							g_ipAddress[16];
 extern int							g_myId;
 extern std::atomic<uint8_t>			g_inputFlag;
 extern std::atomic<uint16_t>		g_yawAngle;
