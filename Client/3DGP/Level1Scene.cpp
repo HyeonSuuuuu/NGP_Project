@@ -8,6 +8,7 @@
 CLevel1Scene::CLevel1Scene(CGameContext& gameContext)
 	: CScene(gameContext)
 {
+
 }
 CLevel1Scene::~CLevel1Scene()
 {
