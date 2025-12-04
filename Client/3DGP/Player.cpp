@@ -366,10 +366,10 @@ void CLevel2Player::OnUpdateTransform()
 
 void CLevel2Player::Animate(float fElapsedTime)
 {
-	CPlayer::Animate(fElapsedTime); // 일단 클라이언트가 입력값대로 움직임
+	CPlayer::Animate(fElapsedTime); // 일단 클라이언트가 입력값대로 움직임 (예측)
 
 	// 서버 데이터 간격만큼 선형 보간
-	float fSmoothingFactor = 0.5f; // Tick 차이가 서버랑 2배나니까 0.5로 설정
+	float fSmoothingFactor = 0.1f; // 조금씩 제자리를 찾도록
 
 
 	// 선형 보간(Lerp) 적용: 현재 위치에서 목표 위치로 일정 비율(fSmoothingFactor)만큼 이동

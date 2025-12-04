@@ -3,7 +3,7 @@
 
 
 
-// Àü¿ªº¯¼ö ===========================================
+// 전역변수 ===========================================
 GameTimer g_timer;
 std::vector<Session*>	g_sessions;
 CRITICAL_SECTION		g_csSessions;

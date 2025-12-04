@@ -216,7 +216,7 @@ void CLevel2Scene::ProcessInput()
 
 		g_inputFlag.store(dwDirection);
 		if (dwDirection)
-			m_spPlayer->Move(dwDirection, 0.1f); //  30FPS 0.2ϱ Ŭ  0.1
+			m_spPlayer->Move(dwDirection, 0.1f); //  30FPS에서0.2이므로 0.1
 		
 	}
 
