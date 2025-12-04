@@ -28,19 +28,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AircraftGameScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="SceneManager.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="MenuScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Level1Scene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
@@ -70,13 +58,7 @@
     <ClCompile Include="3DGP.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="Menu2Scene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Level2Scene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="ResultScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Globals.cpp">
@@ -88,21 +70,12 @@
     <ClCompile Include="..\..\Server\Server\Common.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AircraftGameScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="SceneManager.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="MenuScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Level1Scene.h">
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
@@ -142,13 +115,7 @@
       <Filter>리소스 파일</Filter>
     </ClInclude>
     <ClInclude Include="resource1.h" />
-    <ClInclude Include="Menu2Scene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Level2Scene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="ResultScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Globals.h">
@@ -162,6 +129,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Server\Server\Packet.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -92,10 +92,6 @@ void CLevel2Scene::Animate(float fElapsedTime)
 	LeaveCriticalSection(&g_csPlayers);
 
 	EnterCriticalSection(&g_csBullets);
-/*	if (m_nBullets > g_bullets.size()) {
-		for (int i = g_bullets.size(); i < m_nBullets; ++i)
-			m_bullets[i].SetActive(false);
-	}*/
 	m_nBullets = g_bullets.size();
 
 	for (int i = 0; i < m_nBullets; ++i) {
@@ -104,32 +100,6 @@ void CLevel2Scene::Animate(float fElapsedTime)
 	LeaveCriticalSection(&g_csBullets);
 
 	m_spPlayer->Animate(fElapsedTime);
-
-	//
-	//for (auto& object : m_objects) {
-	//	object.Animate(fElapsedTime);
-	//}
-	//for (auto& object : m_barrierObjects) {
-	//	object.Animate(fElapsedTime);
-	//}
-
-	//for (auto it = m_enemyObjects.begin(); it != m_enemyObjects.end();) {
-	//	if (it->m_bBlowingUp == false && it->m_bRemove == true) {
-	//		m_enemyObjects.erase(it);
-	//	}
-	//	else {
-	//		it->Animate(fElapsedTime);
-	//		it++;
-	//	}
-	//}
-	//CheckObjectByBulletCollisions();
-	//CheckPlayerByWallCollision();
-	//CheckPlayerByEnemyCollisions();
-
-	//if (m_enemyObjects.empty()) {
-	//	m_gameContext.m_bWin = true;
-	//	m_gameContext.m_sceneManager.ChangeScene(SCENE_TYPE::RESULT);
-	//}
 }
 
 void CLevel2Scene::Render(HDC hDCFrameBuffer)
@@ -249,15 +219,6 @@ void CLevel2Scene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM w
 {
 	switch (nMessageID)
 	{
-	case WM_RBUTTONDOWN:
-	{
-		::SetCapture(hWnd);
-		::GetCursorPos(&m_ptOldCursorPos);
-		if (m_bAutoAttack == true)
-			m_pLockedObject = PickObjectPointedByCursor(LOWORD(lParam), HIWORD(lParam), m_spPlayer->m_spCamera);
-
-	}
-		break;
 	case WM_LBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
@@ -273,150 +234,12 @@ void CLevel2Scene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM w
 	}
 }
 
-void CLevel2Scene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
-{
-	switch (nMessageID)
-	{
-	case WM_KEYDOWN:
-		switch (wParam)
-		{
-		/*case 'A':
-			m_bAutoAttack = !m_bAutoAttack;
-			break;
-		case 'S':
-		{
-			m_bShield = !m_bShield;
-			if (m_bShield)
-				m_spPlayer->SetColor(RGB(255, 255, 0));
-			else
-				m_spPlayer->SetColor(RGB(0, 0, 255));
-
-			break;
-		}
-			
-		case 'W':
-			m_gameContext.m_bWin = true;
-			m_gameContext.m_sceneManager.ChangeScene(SCENE_TYPE::RESULT);
-			break;
-		case VK_ESCAPE:
-			m_gameContext.m_sceneManager.ChangeScene(SCENE_TYPE::MENU2);
-			break;*/
-		case VK_RETURN:
-			break;
-		case VK_SPACE:
-			/*m_spPlayer->FireBullet(m_pLockedObject);
-			m_pLockedObject = NULL;*/
-			break;
-		default:
-			break;
-		}
-		break;
-	default:
-		break;
-	}
-
-}
-
 void CLevel2Scene::Enter()
 {
 	m_spPlayer->SetPosition(0, 0, 0);
-
-	// ü  
-	//CTankMesh* pTankMesh = new CTankMesh(6.f, 3.f, 6.f);
-	//int i = m_enemyObjects.size();
-
-	//while (i < 10) {
-	//	m_enemyObjects.emplace_back();
-	//	m_enemyObjects[i].SetMesh(pTankMesh);
-	//	m_enemyObjects[i].SetColor(RGB(255, 0, 0));
-	//	m_enemyObjects[i++].SetPosition(RandF(-50.f, 50.f), 0.f, RandF(10.f, 100.f));
-	//}
-
 }
 
 void CLevel2Scene::Exit()
 {
 	ReleaseCapture();
-}
-
-void CLevel2Scene::CheckObjectByBulletCollisions()
-{
-	/*CBulletObject** ppBullets = m_spPlayer->m_ppBullets;
-	for (auto& object : m_enemyObjects) {
-		for (int i = 0; i < BULLETS; ++i) {
-			if (ppBullets[i]->m_bActive && object.m_xmOOBB.Intersects(ppBullets[i]->m_xmOOBB))
-			{
-				object.m_bBlowingUp = true;
-				object.m_bRemove = true;
-				ppBullets[i]->Reset();
-			}
-		}
-	}
-
-	for (auto& object : m_barrierObjects) {
-		for (int i = 0; i < BULLETS; ++i) {
-			if (ppBullets[i]->m_bActive && object.m_xmOOBB.Intersects(ppBullets[i]->m_xmOOBB))
-			{
-				ppBullets[i]->Reset();
-			}
-		}
-	}*/
-
-}
-void CLevel2Scene::CheckPlayerByWallCollision()
-{
-
-	BoundingOrientedBox xmOOBBPlayerMoveCheck;
-	for (auto& object : m_barrierObjects) {
-		if (object.m_xmOOBB.Intersects(m_spPlayer->m_xmOOBB)) {
-			m_spPlayer->SetPosition(m_spPlayer->m_xmf3PrevPosition.x, m_spPlayer->m_xmf3PrevPosition.y, m_spPlayer->m_xmf3PrevPosition.z);
-		}
-		XMStoreFloat4(&xmOOBBPlayerMoveCheck.Orientation, XMQuaternionNormalize(XMLoadFloat4(&xmOOBBPlayerMoveCheck.Orientation)));
-	}
-}
-
-void CLevel2Scene::CheckPlayerByEnemyCollisions()
-{
-	if (m_bShield == false) {
-		for (auto& object : m_enemyObjects) {
-			if (m_spPlayer->m_xmOOBB.Intersects(object.m_xmOOBB)) {
-				m_gameContext.m_bWin = false;
-				::ReleaseCapture();
-				m_gameContext.m_sceneManager.ChangeScene(SCENE_TYPE::RESULT);
-			}
-		}
-	} else {
-		for (auto& object : m_enemyObjects) {
-			if (object.m_xmOOBB.Intersects(m_spPlayer->m_xmOOBB)) {
-				m_spPlayer->SetPosition(m_spPlayer->m_xmf3PrevPosition.x, m_spPlayer->m_xmf3PrevPosition.y, m_spPlayer->m_xmf3PrevPosition.z);
-			}
-		}
-	}
-
-}
-
-CEnemyObject* CLevel2Scene::PickObjectPointedByCursor(int xClient, int yClient, std::shared_ptr<CCamera> spCamera)
-{
-	XMFLOAT3 xmf3PickPosition;
-	xmf3PickPosition.x = (((2.0f * xClient) / (float)spCamera->m_Viewport.m_nWidth) - 1) / spCamera->m_xmf4x4PerspectiveProject._11;
-	xmf3PickPosition.y = -(((2.0f * yClient) / (float)spCamera->m_Viewport.m_nHeight) - 1) / spCamera->m_xmf4x4PerspectiveProject._22;
-	xmf3PickPosition.z = 1.0f;
-
-	XMVECTOR xmvPickPosition = XMLoadFloat3(&xmf3PickPosition);
-	XMMATRIX xmmtxView = XMLoadFloat4x4(&spCamera->m_xmf4x4View);
-
-	int nIntersected = 0;
-	float fNearestHitDistance = FLT_MAX;
-	CEnemyObject* pNearestObject = NULL;
-	for (auto& object : m_enemyObjects) {
-		float fHitDistance = FLT_MAX;
-		nIntersected = object.PickObjectByRayIntersection(xmvPickPosition, xmmtxView, &fHitDistance);
-		if ((nIntersected > 0) && (fHitDistance < fNearestHitDistance))
-		{
-			fNearestHitDistance = fHitDistance;
-			pNearestObject = &object;
-		}
-
-	}
-	return(pNearestObject);
 }

@@ -196,21 +196,6 @@ int CGameObject::PickObjectByRayIntersection(XMVECTOR& xmvPickPosition, XMMATRIX
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CWallsObject::CWallsObject()
-{
-}
-
-CWallsObject::~CWallsObject()
-{
-}
-
-void CWallsObject::Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera)
-{
-	CGameObject::Render(hDCFrameBuffer, &m_xmf4x4World, m_pMesh);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-//
 void CEnemyObject::SetYawRotation(float yawAngle)
 {
 
@@ -374,10 +359,3 @@ void CBulletObject::Animate(float fElapsedTime)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-void CAxisObject::Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera)
-{
-	CGraphicsPipeline::SetWorldTransform(&m_xmf4x4World);
-
-	m_pMesh->Render(hDCFrameBuffer);
-}
-

@@ -51,62 +51,13 @@ public:
 	std::shared_ptr<CCamera> GetCamera() { return(m_spCamera); }
 };
 
-#define BULLETS					50
-
-class CAirplanePlayer : public CPlayer
-{
-public:
-	CAirplanePlayer();
-	virtual ~CAirplanePlayer();
-
-	float						m_fBulletEffectiveRange = 150.0f;
-	CBulletObject*				m_ppBullets[BULLETS];
-
-	void FireBullet(CGameObject* pLockedObject);
-
-	virtual void OnUpdateTransform();
-	virtual void Animate(float fElapsedTime);
-	virtual void Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera);
-};
-
-
-class CLevel1Player : public CPlayer
-{
-public:
-	CLevel1Player();
-	virtual ~CLevel1Player();
-
-	virtual void OnUpdateTransform();
-	virtual void Animate(float fElapsedTime);
-	virtual void Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera);
-	
-	void AddPoint(const XMFLOAT3& point)
-	{
-		m_points.push_back(point);
-	}
-
-	XMFLOAT3 GetPosition(float t) const;
-	XMFLOAT3 GetTangent(float t) const;
-
-	bool isPathEnd();
-
-private:
-	std::vector<XMFLOAT3>		m_points;
-	float						m_fPathPosition = 0.f;
-	float						m_fPathSpeed = 0.1f;
-};
-
 class CLevel2Player : public CPlayer
 {
 public:
 	CLevel2Player();
 	virtual ~CLevel2Player();
 
-	float						m_fBulletEffectiveRange = 150.0f;
-	CBulletObject*				m_ppBullets[BULLETS];
 	float						m_fBarrelLength = 10.f;
-	
-	void FireBullet(CGameObject* pLockedObject);
 
 	virtual void OnUpdateTransform();
 	virtual void Animate(float fElapsedTime);

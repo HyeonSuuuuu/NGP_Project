@@ -149,214 +149,13 @@ void CPlayer::Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera)
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 //
-CAirplanePlayer::CAirplanePlayer()
-{
-	CCubeMesh* pBulletMesh = new CCubeMesh(1.0f, 4.0f, 1.0f);
-	for (int i = 0; i < BULLETS; i++)
-	{
-		m_ppBullets[i] = new CBulletObject(m_fBulletEffectiveRange);
-		m_ppBullets[i]->SetMesh(pBulletMesh);
-		m_ppBullets[i]->SetRotationAxis(XMFLOAT3(0.0f, 1.0f, 0.0f));
-		m_ppBullets[i]->SetRotationSpeed(360.0f);
-		m_ppBullets[i]->SetMovingSpeed(120.0f);
-		m_ppBullets[i]->SetActive(false);
-	}
-}
-
-CAirplanePlayer::~CAirplanePlayer()
-{
-	for (int i = 0; i < BULLETS; i++) if (m_ppBullets[i]) delete m_ppBullets[i];
-}
-
-void CAirplanePlayer::Animate(float fElapsedTime)
-{
-	CPlayer::Animate(fElapsedTime);
-
-	for (int i = 0; i < BULLETS; i++)
-	{
-		if (m_ppBullets[i]->m_bActive) m_ppBullets[i]->Animate(fElapsedTime);
-	}
-}
-
-void CAirplanePlayer::OnUpdateTransform()
-{
-	CPlayer::OnUpdateTransform();
-
-	m_xmf4x4World = Matrix4x4::Multiply(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90.0f), 0.0f, 0.0f), m_xmf4x4World);
-}
-
-void CAirplanePlayer::Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera)
-{
-	CPlayer::Render(hDCFrameBuffer, spCamera);
-
-	for (int i = 0; i < BULLETS; i++) if (m_ppBullets[i]->m_bActive) m_ppBullets[i]->Render(hDCFrameBuffer, spCamera);
-}
-
-void CAirplanePlayer::FireBullet(CGameObject* pLockedObject)
-{
-/*
-	if (pLockedObject) 
-	{
-		LookAt(pLockedObject->GetPosition(), XMFLOAT3(0.0f, 1.0f, 0.0f));
-		OnUpdateTransform();
-	}
-*/
-
-	CBulletObject* pBulletObject = NULL;
-	for (int i = 0; i < BULLETS; i++)
-	{
-		if (!m_ppBullets[i]->m_bActive)
-		{
-			pBulletObject = m_ppBullets[i];
-			break;
-		}
-	}
-
-	if (pBulletObject)
-	{
-		XMFLOAT3 xmf3Position = GetPosition();
-		XMFLOAT3 xmf3Direction = GetUp();
-		XMFLOAT3 xmf3FirePosition = Vector3::Add(xmf3Position, Vector3::ScalarProduct(xmf3Direction, 6.0f, false));
-
-		pBulletObject->m_xmf4x4World = m_xmf4x4World;
-
-		pBulletObject->SetFirePosition(xmf3FirePosition);
-		pBulletObject->SetMovingDirection(xmf3Direction);
-		pBulletObject->SetColor(RGB(255, 0, 0));
-		pBulletObject->SetActive(true);
-
-		if (pLockedObject)
-		{
-			pBulletObject->m_pLockedObject = pLockedObject;
-			pBulletObject->SetColor(RGB(0, 0, 255));
-		}
-	}
-}
-
-CLevel1Player::CLevel1Player() {}
-CLevel1Player::~CLevel1Player() {}
-
-void CLevel1Player::OnUpdateTransform()
-{
-	CPlayer::OnUpdateTransform();
-}
-
-void CLevel1Player::Animate(float fElapsedTime)
-{
-	m_fPathPosition += m_fPathSpeed * fElapsedTime;
-
-	// t가 1.0을 넘지 않게 제한
-	if (m_fPathPosition > 1.0f)
-		m_fPathPosition = 1.0f;
-
-	// 위치와 방향 갱신
-	XMFLOAT3 position = GetPosition(m_fPathPosition);
-	SetPosition(position.x, position.y, position.z);
-
-	XMFLOAT3 tangent = GetTangent(m_fPathPosition);
-	XMFLOAT3 up = XMFLOAT3(0, 1, 0); // 기본 업 벡터
-
-	LookTo(tangent, up);
-
-	CPlayer::Animate(fElapsedTime);
-}
-
-void CLevel1Player::Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera)
-{
-	CPlayer::Render(hDCFrameBuffer, spCamera);
-}
-
-XMFLOAT3 CLevel1Player::GetPosition(float t) const
-{
-	size_t count = m_points.size();
-	if (count < 4)
-		return XMFLOAT3(0, 0, 0);
-
-	size_t segmentCount = count - 3;
-	
-	float ft = t * segmentCount;
-	int i =  static_cast<int>(ft);
-	ft -= i;
-	if (i < 0)
-		i = 0;
-	if (i > segmentCount - 1)
-		i = segmentCount - 1;
-
-	XMVECTOR p0 = XMLoadFloat3(&m_points[i]);
-	XMVECTOR p1 = XMLoadFloat3(&m_points[i + 1]);
-	XMVECTOR p2 = XMLoadFloat3(&m_points[i + 2]);
-	XMVECTOR p3 = XMLoadFloat3(&m_points[i + 3]);
-	XMFLOAT3 xmfResult;
-	XMStoreFloat3(&xmfResult, XMVectorCatmullRom(p0, p1, p2, p3, ft));
-	return xmfResult;
-}
-
-XMFLOAT3 CLevel1Player::GetTangent(float t) const
-{
-	float delta = 0.001f;
-	XMFLOAT3 pos1 = GetPosition(t);
-	XMFLOAT3 pos2 = GetPosition(t + delta);
-	return Vector3::Normalize(Vector3::Subtract(pos2, pos1));
-}
-
-bool CLevel1Player::isPathEnd()
-{
-	if (m_fPathPosition == 1.f)
-		return true;
-	else
-		return false;
-}
 
 CLevel2Player::CLevel2Player()
 {
-	CCubeMesh* pBulletMesh = new CCubeMesh(1.0f, 1.0f, 1.0f);
-	for (int i = 0; i < BULLETS; i++)
-	{
-		m_ppBullets[i] = new CBulletObject(m_fBulletEffectiveRange);
-		m_ppBullets[i]->SetMesh(pBulletMesh);
-		m_ppBullets[i]->SetRotationAxis(XMFLOAT3(0.f, 0.f, 1.f));
-		m_ppBullets[i]->SetRotationSpeed(360.0f);
-		m_ppBullets[i]->SetMovingSpeed(120.0f);
-		m_ppBullets[i]->SetActive(false);
-	}
 }
 
 CLevel2Player::~CLevel2Player()
 {
-	for (int i = 0; i < BULLETS; i++) if (m_ppBullets[i]) delete m_ppBullets[i];
-}
-
-void CLevel2Player::FireBullet(CGameObject* pLockedObject)
-{
-	CBulletObject* pBulletObject = NULL;
-	for (int i = 0; i < BULLETS; i++)
-	{
-		if (!m_ppBullets[i]->m_bActive)
-		{
-			pBulletObject = m_ppBullets[i];
-			break;
-		}
-	}
-
-	if (pBulletObject)
-	{
-		XMFLOAT3 xmf3Position = GetPosition();
-		XMFLOAT3 xmf3Direction = GetLook();
-		XMFLOAT3 xmf3FirePosition = Vector3::Add(xmf3Position, Vector3::ScalarProduct(xmf3Direction, m_fBarrelLength, false));
-
-		pBulletObject->m_xmf4x4World = m_xmf4x4World;
-
-		pBulletObject->SetFirePosition(xmf3FirePosition);
-		pBulletObject->SetMovingDirection(xmf3Direction);
-		pBulletObject->SetColor(RGB(255, 0, 0));
-		pBulletObject->SetActive(true);
-
-		if (pLockedObject)
-		{
-			pBulletObject->m_pLockedObject = pLockedObject;
-			pBulletObject->SetColor(RGB(0, 0, 255));
-		}
-	}
 }
 
 void CLevel2Player::OnUpdateTransform()
@@ -377,18 +176,9 @@ void CLevel2Player::Animate(float fElapsedTime)
 	float newZ = m_xmf3Position.z + (m_targetZ - m_xmf3Position.z) * fSmoothingFactor;
 
 	SetPosition(newX, 0, newZ);
-
-
-
-/*	for (int i = 0; i < BULLETS; i++)
-	{
-		if (m_ppBullets[i]->m_bActive) m_ppBullets[i]->Animate(fElapsedTime);
-	}*/
 }
 
 void CLevel2Player::Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera)
 {
 	CPlayer::Render(hDCFrameBuffer, spCamera);
-
-	for (int i = 0; i < BULLETS; i++) if (m_ppBullets[i]->m_bActive) m_ppBullets[i]->Render(hDCFrameBuffer, spCamera);
 }

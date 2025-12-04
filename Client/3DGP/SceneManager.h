@@ -6,12 +6,8 @@ class CGameContext;
 
 enum class SCENE_TYPE {
 	NONE,
-	MENU,
-	MENU2,
-	AIRPLANE,
-	LEVEL1,
 	LEVEL2,
-	RESULT,
+
 	END,
 };
 

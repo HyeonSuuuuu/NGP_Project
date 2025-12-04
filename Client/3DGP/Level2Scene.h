@@ -24,17 +24,11 @@ public:
 
 	virtual void ProcessInput() override;
 	virtual void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) override;
-	virtual void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) override;
 
 	virtual void Enter();
 	virtual void Exit();
 
-
-	void CheckPlayerByWallCollision();
-	void CheckObjectByBulletCollisions();
-	void CheckPlayerByEnemyCollisions();
 	void SetPlayer(std::shared_ptr<CLevel2Player> player) { m_spPlayer = player; }
-	CEnemyObject* PickObjectPointedByCursor(int xClient, int yClient, std::shared_ptr<CCamera> spCamera);
 
 private:
 	std::shared_ptr<CLevel2Player>						m_spPlayer = nullptr;

@@ -501,7 +501,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Server\Server\Common.cpp" />
-    <ClCompile Include="AircraftGameScene.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="NetworkThread.cpp" />
     <ClCompile Include="GameFramework.cpp" />
@@ -509,13 +508,9 @@
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="GraphicsPipeline.cpp" />
     <ClCompile Include="3DGP.cpp" />
-    <ClCompile Include="Level1Scene.cpp" />
     <ClCompile Include="Level2Scene.cpp" />
-    <ClCompile Include="Menu2Scene.cpp" />
-    <ClCompile Include="MenuScene.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -527,7 +522,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\Server\Server\Common.h" />
     <ClInclude Include="..\..\Server\Server\Packet.h" />
-    <ClInclude Include="AircraftGameScene.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="NetworkThread.h" />
     <ClInclude Include="GameContext.h" />
@@ -536,15 +530,11 @@
     <ClInclude Include="Globals.h" />
     <ClInclude Include="GraphicsPipeline.h" />
     <ClInclude Include="3DGP.h" />
-    <ClInclude Include="Level1Scene.h" />
     <ClInclude Include="Level2Scene.h" />
-    <ClInclude Include="Menu2Scene.h" />
-    <ClInclude Include="MenuScene.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="resource1.h" />
-    <ClInclude Include="ResultScene.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="stdafx.h" />

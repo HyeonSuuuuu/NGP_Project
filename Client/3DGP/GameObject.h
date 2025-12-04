@@ -140,20 +140,6 @@ public:
 
 };
 
-
-class CWallsObject : public CGameObject
-{
-public:
-	CWallsObject();
-	virtual ~CWallsObject();
-
-public:
-	BoundingOrientedBox			m_xmOOBBPlayerMoveCheck = BoundingOrientedBox();
-	XMFLOAT4					m_pxmf4WallPlanes[6];
-
-	virtual void Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera);
-};
-
 class CBulletObject : public CGameObject
 {
 public:
@@ -177,14 +163,4 @@ public:
 	void SetFirePosition(XMFLOAT3 xmf3FirePosition);
 	void Reset();
 };
-
-class CAxisObject : public CGameObject
-{
-public:
-	CAxisObject() { }
-	virtual ~CAxisObject() { }
-
-	virtual void Render(HDC hDCFrameBuffer, std::shared_ptr<CCamera> spCamera);
-};
-
 
