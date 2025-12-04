@@ -27,7 +27,11 @@ int main()
 	// GameLoop
 	while (g_isRunning.load()) {
 		g_timer.Tick(30.f);
-		
+		if (!(tickCount % 30)) {
+			std::cout << "\rFPS: ";
+			std::cout.width(2);
+			std::cout << g_timer.GetFrameRate();
+		}
 		// TODO: 모든 RecvEvent 대기
 		WaitAllRecvEvent(recvEvents);
 
@@ -273,7 +277,8 @@ void InitNetwork(SOCKET& listen_sock)
 	listen_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (listen_sock == INVALID_SOCKET)
 		err_quit("listen socket()");
-
+	int flag = 1;
+	setsockopt(listen_sock, SOL_SOCKET, TCP_NODELAY, (const char*)&flag, sizeof(flag));
 	struct sockaddr_in serveraddr;
 	memset(&serveraddr, 0, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;

@@ -7,6 +7,17 @@
 
 int count;
 
+DWORD WINAPI SendThread(void* args)
+{
+	SOCKET sock = (SOCKET)args;
+	CGameTimer timer;
+	char buf[65536];
+	while (true) {
+		timer.Tick(30.f);
+		SendInputPacket(sock);
+	}
+}
+
 DWORD WINAPI NetworkThread(void* args)
 {
 	char buf[65536];
@@ -18,12 +29,14 @@ DWORD WINAPI NetworkThread(void* args)
 		recv(sock, buf, header.size, MSG_WAITALL);
 		ProcessEnterPacket(buf);
 	}
+	// Send랑 Recv 분리
+	HANDLE network = CreateThread(NULL, NULL, SendThread, (void*)sock, 0, NULL);
+	if (network) CloseHandle(network);
+
 
 	CGameTimer timer;
 	while (true) {
 		count++;
-		timer.Tick(30.f);
-		SendInputPacket(sock);
 		recv(sock, reinterpret_cast<char*>(&header), sizeof(PacketHeader), MSG_WAITALL);
 		if (header.type == SC_SNAPSHOT) {
 			recv(sock, buf, header.size, MSG_WAITALL);
@@ -64,7 +77,9 @@ void ConnectServer(SOCKET& sock)
 	}
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == INVALID_SOCKET) err_quit("socket()");
-	
+	int flag = 1;
+	setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int));
+
 	struct sockaddr_in server_addr;
 	memset(&server_addr, 0, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;

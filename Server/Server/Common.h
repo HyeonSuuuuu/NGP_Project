@@ -33,7 +33,7 @@ struct Bullet
 #pragma pack(pop)
 
 // 상수 ===========================================
-constexpr int SERVER_PORT = 9000;
+constexpr int SERVER_PORT = 4000;
 constexpr int WORLD_SIZE = 100;
 constexpr int MAX_PLAYERS = 64; // 이벤트 최대가 64
 

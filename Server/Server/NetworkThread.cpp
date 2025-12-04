@@ -48,7 +48,7 @@ DWORD WINAPI NetworkThread(void* args)
         // recv_event Set
         SetEvent(session.recvEvent);
 
-        // send_event 기다림
+        //send_event 기다림
 		WaitForSingleObject(g_sendevent, INFINITE);
 
         // send 처리
